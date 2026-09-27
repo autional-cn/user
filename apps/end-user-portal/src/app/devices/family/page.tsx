@@ -1,0 +1,246 @@
+'use client';
+import { useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router';
+import { useTenantSlug } from '@autional-cn/shared';
+import { buildNavHref } from '@/lib/nav';
+import { ROUTES } from '@/lib/routes';
+import { useTranslation } from 'react-i18next';
+import { Users, ArrowLeft, Trash2, UserPlus, Crown, ShieldCheck, Eye } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import {
+	useFamilyMembers,
+	useAddFamilyMember,
+	useRemoveFamilyMember,
+	type FamilyMember,
+} from '@/hooks/queries';
+import {
+	ErrorState,
+	Button,
+	Input,
+	Label,
+	SectionCard,
+	LoadingScreen,
+	ConfirmDialog,
+} from '@autional-cn/ui';
+
+const roleConfig: Record<string, { icon: typeof ShieldCheck; label: string; color: string }> = {
+	parent_admin: { icon: Crown, label: 'Parent Admin', color: 'text-amber-600' },
+	child_limited: { icon: ShieldCheck, label: 'Child (Limited)', color: 'text-primary-600' },
+	guest_viewer: { icon: Eye, label: 'Guest Viewer', color: 'text-neutral-500' },
+};
+
+const roleOptions = [
+	{ value: 'parent_admin', label: 'Parent Admin' },
+	{ value: 'child_limited', label: 'Child (Limited)' },
+	{ value: 'guest_viewer', label: 'Guest Viewer' },
+];
+
+function getRoleConfig(role?: string) {
+	return (
+		roleConfig[role || ''] || { icon: Users, label: role || 'Unknown', color: 'text-neutral-500' }
+	);
+}
+
+export default function FamilyAccessPage() {
+	const tenantSlug = useTenantSlug();
+	const { t } = useTranslation();
+	const toast = useToast();
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
+	const deviceId = searchParams.get('deviceId') || '';
+
+	const { data: members = [], isLoading, error, refetch } = useFamilyMembers(deviceId);
+	const addMutation = useAddFamilyMember();
+	const removeMutation = useRemoveFamilyMember();
+
+	const [showForm, setShowForm] = useState(false);
+	const [email, setEmail] = useState('');
+	const [role, setRole] = useState<string>('guest_viewer');
+	const [removeTarget, setRemoveTarget] = useState<FamilyMember | null>(null);
+
+	const handleAdd = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const trimmedEmail = email.trim();
+		if (!trimmedEmail) {
+			toast.error(t('devices.family.emailRequired'));
+			return;
+		}
+		try {
+			await addMutation.mutateAsync({ deviceId, email: trimmedEmail, role });
+			toast.success(t('devices.family.addSuccess'));
+			setEmail('');
+			setRole('guest_viewer');
+			setShowForm(false);
+		} catch (err: any) {
+			toast.error(err?.message || t('devices.family.addError'));
+		}
+	};
+
+	const handleRemove = async () => {
+		if (!removeTarget) return;
+		try {
+			await removeMutation.mutateAsync({ deviceId, memberId: removeTarget.id });
+			toast.success(t('devices.family.removeSuccess'));
+			setRemoveTarget(null);
+		} catch (err: any) {
+			toast.error(err?.message || t('devices.family.removeError'));
+		}
+	};
+
+	if (!deviceId) {
+		return (
+			<div className="flex flex-col items-center justify-center py-20">
+				<Users size={48} className="text-neutral-300" />
+				<p className="mt-4 text-sm text-neutral-500">{t('devices.family.noDevice')}</p>
+				<button
+					onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
+					className="mt-4 text-sm text-primary-600 hover:text-primary-700"
+				>
+					{t('devices.family.backToDevices')}
+				</button>
+			</div>
+		);
+	}
+
+	// ADR-N2-B 移除（family-access-rebac 2026-08-07）: 后端 3 端点已实现（方案 C），
+	// 404 不再代表"功能不可用"，直接走下方 ErrorState 渲染。
+	return (
+		<div className="space-y-6">
+			<button
+				onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
+				className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+			>
+				<ArrowLeft size={14} />
+				{t('devices.family.back')}
+			</button>
+
+			<div className="flex items-center justify-between">
+				<div>
+					<h2 className="text-xl font-bold text-neutral-900">{t('devices.family.title')}</h2>
+					<p className="mt-1 text-sm text-neutral-500">{t('devices.family.subtitle')}</p>
+				</div>
+				{!showForm && (
+					<button
+						onClick={() => setShowForm(true)}
+						className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+					>
+						<UserPlus size={14} />
+						{t('devices.family.addMember')}
+					</button>
+				)}
+			</div>
+
+			{showForm && (
+				<SectionCard padding="md">
+					<form onSubmit={handleAdd} className="space-y-4">
+						<h3 className="text-base font-semibold text-neutral-900">
+							{t('devices.family.addTitle')}
+						</h3>
+						<div className="space-y-2">
+							<Label htmlFor="member-email" required>
+								{t('devices.family.emailLabel')}
+							</Label>
+							<Input
+								id="member-email"
+								type="email"
+								placeholder={t('devices.family.emailPlaceholder')}
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								disabled={addMutation.isPending}
+							/>
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="member-role">{t('devices.family.roleLabel')}</Label>
+							<select
+								id="member-role"
+								value={role}
+								onChange={(e) => setRole(e.target.value)}
+								disabled={addMutation.isPending}
+								className="h-10 w-full rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+							>
+								{roleOptions.map((opt) => (
+									<option key={opt.value} value={opt.value}>
+										{opt.label}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="flex items-center gap-2">
+							<Button type="submit" size="sm" isLoading={addMutation.isPending}>
+								{addMutation.isPending ? t('devices.family.adding') : t('devices.family.add')}
+							</Button>
+							<Button type="button" variant="ghost" size="sm" onClick={() => setShowForm(false)}>
+								{t('devices.family.cancel')}
+							</Button>
+						</div>
+					</form>
+				</SectionCard>
+			)}
+
+			{isLoading ? (
+				<LoadingScreen message={t('devices.family.loading')} />
+			) : error ? (
+				<ErrorState
+					message={t('devices.family.error')}
+					className="min-h-[30vh]"
+					onRetry={() => refetch()}
+				/>
+			) : (
+				<SectionCard padding="none">
+					{members.length === 0 ? (
+						<div className="flex flex-col items-center justify-center py-12 text-center">
+							<Users size={40} className="text-neutral-300" />
+							<p className="mt-4 text-sm text-neutral-500">{t('devices.family.empty')}</p>
+						</div>
+					) : (
+						<ul className="divide-y divide-neutral-100">
+							{members.map((member) => {
+								const cfg = getRoleConfig(member.role);
+								const RoleIcon = cfg.icon;
+								return (
+									<li key={member.id} className="flex items-center justify-between gap-4 p-4">
+										<div className="flex items-center gap-3">
+											<div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
+												<Users size={16} />
+											</div>
+											<div>
+												<p className="text-sm font-medium text-neutral-900">
+													{member.username || member.email || member.id}
+												</p>
+												<div className={`flex items-center gap-1 text-xs ${cfg.color}`}>
+													<RoleIcon size={12} />
+													{cfg.label}
+												</div>
+											</div>
+										</div>
+										<button
+											onClick={() => setRemoveTarget(member)}
+											disabled={removeMutation.isPending}
+											className="flex items-center gap-1 rounded-md border border-danger/20 bg-danger/5 px-2.5 py-1.5 text-sm font-medium text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
+											aria-label={t('devices.family.remove')}
+										>
+											<Trash2 size={14} />
+											<span className="hidden sm:inline">{t('devices.family.remove')}</span>
+										</button>
+									</li>
+								);
+							})}
+						</ul>
+					)}
+				</SectionCard>
+			)}
+
+			<ConfirmDialog
+				open={removeTarget !== null}
+				title={t('devices.family.confirmRemoveTitle')}
+				description={t('devices.family.confirmRemoveDesc', {
+					name: removeTarget?.username || removeTarget?.email || removeTarget?.id || '',
+				})}
+				variant="danger"
+				confirmText={t('devices.family.removeConfirm')}
+				onConfirm={handleRemove}
+				onCancel={() => setRemoveTarget(null)}
+			/>
+		</div>
+	);
+}

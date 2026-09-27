@@ -1,0 +1,207 @@
+import {
+	useQuery,
+	useMutation,
+	useQueryClient,
+	type UseQueryResult,
+	type UseMutationResult,
+} from '@tanstack/react-query';
+import { useAuth } from '@autional-cn/shared';
+import {
+	authMeSessions,
+	authMeSessionsBySessionsDelete,
+	authMeSessionsDelete,
+	mfaStatusByStatus,
+	mfaTotpEnablePost,
+	mfaTotpVerifyPost,
+	mfaTotpDisablePost,
+	mfaBackupCodesGeneratePost,
+	authMeWebauthnCredentials,
+	authMeWebauthnCredentialsByWebauthnCredentialsDelete,
+	adminUsersOauthConnectionsByUsers,
+	authOauthUnbindPost,
+} from '@autional-cn/shared/generated/api';
+import type {
+	SessionInfo,
+	MFAStatus,
+	TOTPSetup,
+	PasskeyCredential,
+	OAuthConnectionItem,
+} from './types';
+import type { PaginatedList } from './types';
+import { queryKeys } from './query-keys';
+
+export function useSessions(
+	page?: number,
+	pageSize?: number,
+): UseQueryResult<SessionInfo[], Error> {
+	const { userId } = useAuth();
+	return useQuery<SessionInfo[], Error>({
+		queryKey: queryKeys.sessions,
+		queryFn: async () => {
+			const res = await authMeSessions({ page, page_size: pageSize });
+			return (res as { items?: SessionInfo[] }).items || [];
+		},
+		enabled: !!userId,
+		retry: 1,
+	});
+}
+
+export function useRevokeSession(): UseMutationResult<unknown, Error, string> {
+	const qc = useQueryClient();
+	return useMutation<unknown, Error, string>({
+		mutationFn: authMeSessionsBySessionsDelete,
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.sessions }),
+	});
+}
+
+export function useRevokeAllSessions(): UseMutationResult<
+	unknown,
+	Error,
+	{ exceptCurrent?: boolean }
+> {
+	const qc = useQueryClient();
+	return useMutation<unknown, Error, { exceptCurrent?: boolean }>({
+		mutationFn: async (data) => {
+			if (data.exceptCurrent) {
+				const sessions = await authMeSessions({});
+				const others = ((sessions as { items?: SessionInfo[] }).items || []).filter(
+					(s) => !s.isCurrentSession,
+				);
+				await Promise.all(others.map((s) => authMeSessionsBySessionsDelete(s.id)));
+			} else {
+				await authMeSessionsDelete();
+			}
+		},
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.sessions }),
+	});
+}
+
+async function getMFAStatus(userId: string): Promise<MFAStatus> {
+	return mfaStatusByStatus(userId) as Promise<MFAStatus>;
+}
+
+async function enableTOTP(): Promise<TOTPSetup> {
+	return mfaTotpEnablePost({}) as Promise<TOTPSetup>;
+}
+
+async function verifyTOTP(data: { code: string; userId: string }): Promise<unknown> {
+	return mfaTotpVerifyPost(data);
+}
+
+async function disableTOTP(data: { code: string; userId: string }): Promise<unknown> {
+	return mfaTotpDisablePost(data);
+}
+
+async function generateBackupCodes(data?: {
+	userId?: string;
+}): Promise<{ codes?: string[]; message?: string }> {
+	return mfaBackupCodesGeneratePost(data || {}) as Promise<{ codes?: string[]; message?: string }>;
+}
+
+export function useMFAStatus(): UseQueryResult<MFAStatus, Error> {
+	const { userId } = useAuth();
+	return useQuery<MFAStatus, Error>({
+		queryKey: queryKeys.mfa(userId || ''),
+		queryFn: () => getMFAStatus(userId || ''),
+		enabled: !!userId,
+		retry: 1,
+	});
+}
+
+export function useEnableTOTP(): UseMutationResult<TOTPSetup, Error, void> {
+	return useMutation<TOTPSetup, Error, void>({
+		mutationFn: enableTOTP,
+	});
+}
+
+export function useVerifyTOTP(): UseMutationResult<unknown, Error, string> {
+	const qc = useQueryClient();
+	const { userId } = useAuth();
+	return useMutation<unknown, Error, string>({
+		mutationFn: (code: string) => verifyTOTP({ code, userId: userId || '' }),
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.mfa(userId || '') }),
+	});
+}
+
+export function useDisableTOTP(): UseMutationResult<unknown, Error, string> {
+	const qc = useQueryClient();
+	const { userId } = useAuth();
+	return useMutation<unknown, Error, string>({
+		mutationFn: (code: string) => disableTOTP({ code, userId: userId || '' }),
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.mfa(userId || '') }),
+	});
+}
+
+export function useGenerateBackupCodes(): UseMutationResult<
+	{ codes?: string[]; message?: string },
+	Error,
+	void
+> {
+	const { userId } = useAuth();
+	return useMutation<{ codes?: string[]; message?: string }, Error, void>({
+		mutationFn: () => generateBackupCodes({ userId: userId || '' }),
+	});
+}
+
+async function getPasskeys(): Promise<PasskeyCredential[]> {
+	// 2026-08-17 修复：authMeWebauthnCredentials 经 apiClient 拦截器已解包为数组本身
+	// （原 `(data as {data?: PasskeyCredential[]})?.data` 对数组取 .data 永远 undefined → 列表恒空）
+	const data = await authMeWebauthnCredentials();
+	return (Array.isArray(data) ? data : (data as { items?: PasskeyCredential[] })?.items) || [];
+}
+
+async function deletePasskey(id: string): Promise<unknown> {
+	return authMeWebauthnCredentialsByWebauthnCredentialsDelete(id);
+}
+
+export function usePasskeys(): UseQueryResult<PasskeyCredential[], Error> {
+	return useQuery<PasskeyCredential[], Error>({
+		queryKey: queryKeys.passkeys,
+		queryFn: getPasskeys,
+		retry: 1,
+	});
+}
+
+export function useDeletePasskey(): UseMutationResult<unknown, Error, string> {
+	const qc = useQueryClient();
+	return useMutation<unknown, Error, string>({
+		mutationFn: deletePasskey,
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.passkeys }),
+	});
+}
+
+async function getOAuthConnections(userId: string): Promise<OAuthConnectionItem[]> {
+	try {
+		// 2026-08-17 修复：adminUsersOauthConnectionsByUsers 返回扁平列表 { items }（拦截器已解包），
+		// 原 `data?.data?.connections || data?.data` 全部 undefined → 连接恒空列表。
+		const data = (await adminUsersOauthConnectionsByUsers(userId)) as {
+			items?: OAuthConnectionItem[];
+		};
+		return data?.items || [];
+	} catch {
+		return [];
+	}
+}
+
+async function unbindOAuthConnection(provider: string) {
+	await authOauthUnbindPost({ provider });
+}
+
+export function useOAuthConnections(): UseQueryResult<OAuthConnectionItem[], Error> {
+	const { userId } = useAuth();
+	return useQuery<OAuthConnectionItem[], Error>({
+		queryKey: queryKeys.oauthConnections(userId || ''),
+		queryFn: () => getOAuthConnections(userId || ''),
+		enabled: !!userId,
+		retry: 1,
+	});
+}
+
+export function useUnbindOAuth(): UseMutationResult<unknown, Error, string> {
+	const qc = useQueryClient();
+	const { userId } = useAuth();
+	return useMutation<unknown, Error, string>({
+		mutationFn: unbindOAuthConnection,
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.oauthConnections(userId || '') }),
+	});
+}

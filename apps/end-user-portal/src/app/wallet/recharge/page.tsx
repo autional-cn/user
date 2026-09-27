@@ -1,0 +1,258 @@
+'use client';
+
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuth, useTenantSlug } from '@autional-cn/shared';
+import { paymentsByPayments } from '@autional-cn/shared/generated/api';
+import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { useTranslation } from 'react-i18next';
+import { Wallet, CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { useWalletBalance, useRechargeWallet } from '@/hooks/queries';
+import { buildNavHref } from '@/lib/nav';
+import { ROUTES } from '@/lib/routes';
+import { rechargeSchema, type RechargeFormData } from '@/lib/validators';
+import { isNotFoundError } from '@/lib/api-error';
+
+const PRESET_AMOUNTS = [100, 500, 1000];
+
+export default function WalletRechargePage() {
+	const tenantSlug = useTenantSlug();
+	const { t } = useTranslation();
+	const navigate = useNavigate();
+	const { user } = useAuth();
+	const userId = user?.id || '';
+	const {
+		data: balance,
+		isLoading: balanceLoading,
+		error: balanceError,
+		refetch: refetchBalance,
+	} = useWalletBalance();
+	const recharge = useRechargeWallet();
+
+	const channels = [
+		{ code: 'wechat', label: t('wallet.recharge.channels.wechat'), icon: '💬' },
+		{ code: 'alipay', label: t('wallet.recharge.channels.alipay'), icon: '🔵' },
+	];
+
+	const {
+		register,
+		handleSubmit,
+		watch,
+		setValue,
+		formState: { errors, isSubmitting },
+	} = useForm<RechargeFormData>({
+		resolver: zodResolver(rechargeSchema),
+		defaultValues: { amount: '100', customAmount: '' },
+	});
+
+	const watchedAmount = watch('amount');
+	const watchedCustomAmount = watch('customAmount');
+
+	const [channel, setChannel] = useState('wechat');
+	const [polling, setPolling] = useState(false);
+	const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+	const [resultKey, setResultKey] = useState<string>('');
+	const [resultAmount, setResultAmount] = useState<string>('');
+
+	const selectedAmount = watchedCustomAmount ? Number(watchedCustomAmount) : Number(watchedAmount);
+
+	const onRecharge = async () => {
+		setStatus('idle');
+		try {
+			const res = await recharge.mutateAsync({ userId, amount: selectedAmount, channel });
+			if (res.paymentUrl) {
+				window.open(res.paymentUrl, '_blank');
+			}
+			if (res.paymentId) {
+				setPolling(true);
+				pollPaymentStatus(res.paymentId);
+			} else {
+				setStatus('success');
+				setResultKey('wallet.recharge.submitted');
+			}
+		} catch (e: unknown) {
+			setStatus('error');
+			setResultKey(e instanceof Error ? e.message : 'wallet.recharge.submitFailed');
+		}
+	};
+
+	const pollPaymentStatus = async (paymentId: string) => {
+		const maxAttempts = 30;
+		for (let i = 0; i < maxAttempts; i++) {
+			await new Promise((r) => setTimeout(r, 2000));
+			try {
+				const data = await paymentsByPayments(paymentId);
+				if (data.status === 'completed' || data.status === 'paid') {
+					setPolling(false);
+					setStatus('success');
+					setResultKey('wallet.recharge.success');
+					setResultAmount(selectedAmount.toFixed(2));
+					return;
+				}
+				if (data.status === 'failed' || data.status === 'cancelled') {
+					setPolling(false);
+					setStatus('error');
+					setResultKey('wallet.recharge.failedOrCancelled');
+					return;
+				}
+			} catch {
+				// continue polling
+			}
+		}
+		setPolling(false);
+		setStatus('error');
+		setResultKey('wallet.recharge.timeout');
+	};
+
+	if (balanceLoading) return <LoadingScreen message={t('wallet.loadingBalance', '正在加载钱包余额…')} />;
+
+	if (balanceError) {
+		if (isNotFoundError(balanceError)) {
+			return (
+				<EmptyState
+					title={t('wallet.empty', '暂无钱包数据')}
+					description={t('wallet.emptyDesc', '当前账户尚未开通钱包，完成充值后即可使用')}
+				/>
+			);
+		}
+		return (
+			<ErrorState
+				message={t('wallet.loadBalanceError', '钱包余额加载失败')}
+				onRetry={() => refetchBalance()}
+			/>
+		);
+	}
+
+	const currentBalance = parseFloat(
+		balance?.balance || balance?.available || balance?.availableBalance || '0',
+	);
+
+	return (
+		<div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+			<h1 className="text-2xl font-bold">{t('wallet.recharge.title')}</h1>
+
+			<div className="bg-white rounded-lg border p-6 flex items-center gap-4">
+				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+					<Wallet className="w-6 h-6 text-green-600" />
+				</div>
+				<div>
+					<div className="text-sm text-gray-500">{t('wallet.recharge.currentBalance')}</div>
+					<div className="text-2xl font-bold text-green-600">¥{currentBalance.toFixed(2)}</div>
+				</div>
+			</div>
+
+			<form
+				onSubmit={handleSubmit(onRecharge)}
+				className="bg-white rounded-lg border p-6 space-y-5"
+			>
+				<h2 className="text-lg font-semibold">{t('wallet.recharge.amount')}</h2>
+
+				<div className="flex gap-3 flex-wrap">
+					{PRESET_AMOUNTS.map((a) => (
+						<button
+							key={a}
+							type="button"
+							onClick={() => {
+								setValue('amount', String(a));
+								setValue('customAmount', '');
+							}}
+							className={`px-6 py-3 rounded-lg border text-lg font-semibold transition-colors ${
+								Number(watchedAmount) === a && !watchedCustomAmount
+									? 'border-primary bg-primary-50 text-primary'
+									: 'border-gray-200 hover:border-primary'
+							}`}
+						>
+							¥{a}
+						</button>
+					))}
+					<div className="relative">
+						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
+						<input
+							type="number"
+							placeholder={t('wallet.recharge.custom')}
+							{...register('customAmount', {
+								onChange: () => setValue('amount', '0'),
+							})}
+							className="w-32 pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-primary focus:outline-none"
+						/>
+					</div>
+				</div>
+
+				{errors.amount && (
+					<p className="text-sm text-red-500">
+						{t(errors.amount.message || 'wallet.recharge.amountRequired')}
+					</p>
+				)}
+
+				<h2 className="text-lg font-semibold pt-2">{t('wallet.recharge.paymentMethod')}</h2>
+				<div className="flex gap-3">
+					{channels.map((ch) => (
+						<button
+							key={ch.code}
+							type="button"
+							onClick={() => setChannel(ch.code)}
+							className={`flex items-center gap-2 px-5 py-3 rounded-lg border transition-colors ${
+								channel === ch.code
+									? 'border-primary bg-primary-50 text-primary'
+									: 'border-gray-200 hover:border-primary'
+							}`}
+						>
+							<span className="text-xl">{ch.icon}</span>
+							<span className="font-medium">{ch.label}</span>
+						</button>
+					))}
+				</div>
+
+				<button
+					type="submit"
+					disabled={!selectedAmount || selectedAmount <= 0 || isSubmitting || polling}
+					className="w-full py-4 rounded-lg bg-primary text-white font-semibold text-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+				>
+					{isSubmitting || polling ? (
+						<>
+							<Loader2 className="w-5 h-5 animate-spin" />
+							{polling ? t('wallet.recharge.waitingPayment') : t('wallet.recharge.submitting')}
+						</>
+					) : (
+						<>
+							<CreditCard className="w-5 h-5" />
+							{t('wallet.recharge.rechargeNow', { amount: selectedAmount.toFixed(2) })}
+						</>
+					)}
+				</button>
+
+				{status === 'success' && (
+					<div className="flex items-center gap-2 p-4 rounded-lg bg-green-50 text-green-700">
+						<CheckCircle className="w-5 h-5" />
+						<span className="font-medium">
+							{resultAmount ? t(resultKey, { amount: resultAmount }) : t(resultKey)}
+						</span>
+						<button
+							type="button"
+							onClick={() => navigate(buildNavHref(ROUTES.payments, tenantSlug))}
+							className="ml-auto text-sm text-primary hover:underline"
+						>
+							{t('wallet.recharge.viewPaymentRecords')}
+						</button>
+					</div>
+				)}
+
+				{status === 'error' && (
+					<div className="flex items-center gap-2 p-4 rounded-lg bg-red-50 text-red-700">
+						<XCircle className="w-5 h-5" />
+						<span className="font-medium">{t(resultKey)}</span>
+						<button
+							type="button"
+							onClick={() => setStatus('idle')}
+							className="ml-auto text-sm text-primary hover:underline"
+						>
+							{t('wallet.recharge.retry')}
+						</button>
+					</div>
+				)}
+			</form>
+		</div>
+	);
+}

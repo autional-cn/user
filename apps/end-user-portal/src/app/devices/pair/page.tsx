@@ -1,0 +1,103 @@
+'use client';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useTenantSlug } from '@autional-cn/shared';
+import { buildNavHref } from '@/lib/nav';
+import { ROUTES } from '@/lib/routes';
+import { useMutation } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { Smartphone, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { useToast } from '@/hooks/use-toast';
+
+export default function DevicePairingPage() {
+	const tenantSlug = useTenantSlug();
+
+	const { t } = useTranslation();
+	const toast = useToast();
+	const navigate = useNavigate();
+	const [code, setCode] = useState('');
+	const [success, setSuccess] = useState(false);
+
+	const pairMutation = useMutation({
+		mutationFn: async (userCode: string) => {
+			const { iotsPairPost } = await import('@autional-cn/shared/generated/api');
+			return iotsPairPost({ user_code: userCode } as any);
+		},
+	});
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		const trimmed = code.trim();
+		if (!trimmed) {
+			toast.error(t('devices.pair.codeRequired'));
+			return;
+		}
+		try {
+			await pairMutation.mutateAsync(trimmed);
+			setSuccess(true);
+			toast.success(t('devices.pair.success'));
+			setTimeout(() => navigate(buildNavHref(ROUTES.devices, tenantSlug)), 1500);
+		} catch (err: any) {
+			const message = err?.response?.data?.message || err?.message || t('devices.pair.error');
+			toast.error(message);
+		}
+	};
+
+	if (pairMutation.isPending) return <LoadingScreen message={t('devices.pair.pairing')} />;
+
+	return (
+		<div className="space-y-6">
+			<button
+				onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
+				className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+			>
+				<ArrowLeft size={14} />
+				{t('devices.pair.back')}
+			</button>
+
+			<div>
+				<h2 className="text-xl font-bold text-neutral-900">{t('devices.pair.title')}</h2>
+				<p className="mt-1 text-sm text-neutral-500">{t('devices.pair.subtitle')}</p>
+			</div>
+
+			{success ? (
+				<div className="rounded-lg border border-emerald-200 bg-emerald-50 p-8 text-center shadow-sm">
+					<CheckCircle2 size={48} className="mx-auto text-emerald-500" />
+					<h3 className="mt-4 text-lg font-semibold text-emerald-800">
+						{t('devices.pair.successTitle')}
+					</h3>
+					<p className="mt-2 text-sm text-emerald-600">{t('devices.pair.successMessage')}</p>
+				</div>
+			) : pairMutation.isError ? (
+				<ErrorState message={t('devices.pair.errorRetry')} className="min-h-[40vh]" />
+			) : (
+				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+					<div className="mb-6 flex items-start gap-3 rounded-md bg-primary-50 p-4">
+						<Smartphone size={20} className="mt-0.5 shrink-0 text-primary-600" />
+						<p className="text-sm text-primary-800">{t('devices.pair.instructions')}</p>
+					</div>
+
+					<form onSubmit={handleSubmit} className="space-y-4">
+						<div className="space-y-2">
+							<Label htmlFor="pairing-code" required>
+								{t('devices.pair.codeLabel')}
+							</Label>
+							<Input
+								id="pairing-code"
+								placeholder={t('devices.pair.codePlaceholder')}
+								value={code}
+								onChange={(e) => setCode(e.target.value)}
+								autoFocus
+								disabled={pairMutation.isPending}
+							/>
+						</div>
+						<Button type="submit" isLoading={pairMutation.isPending} fullWidth>
+							{pairMutation.isPending ? t('devices.pair.pairing') : t('devices.pair.submit')}
+						</Button>
+					</form>
+				</div>
+			)}
+		</div>
+	);
+}
