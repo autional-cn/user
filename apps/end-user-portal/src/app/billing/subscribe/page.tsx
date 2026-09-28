@@ -163,7 +163,7 @@ export default function SubscribePage() {
 					onClick={() => setBillingCycle('monthly')}
 					className={`px-4 py-2 rounded-l-lg border font-medium transition-colors ${
 						billingCycle === 'monthly'
-							? 'bg-primary text-white border-primary'
+							? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
 							: 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
 					}`}
 				>
@@ -173,7 +173,7 @@ export default function SubscribePage() {
 					onClick={() => setBillingCycle('yearly')}
 					className={`px-4 py-2 rounded-r-lg border font-medium transition-colors ${
 						billingCycle === 'yearly'
-							? 'bg-primary text-white border-primary'
+							? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
 							: 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
 					}`}
 				>
@@ -241,7 +241,7 @@ export default function SubscribePage() {
 											handleSubscribe();
 										}}
 										disabled={subscribeStatus === 'submitting'}
-										className="w-full py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 mt-2"
+										className="w-full py-2.5 rounded-lg bg-[var(--color-brand)] text-white font-medium hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 mt-2"
 									>
 										{subscribeStatus === 'submitting' ? (
 											<Loader2 className="w-4 h-4 animate-spin" />
@@ -272,7 +272,7 @@ export default function SubscribePage() {
 					<span className="font-medium">{resultMsg}</span>
 					<button
 						onClick={() => setSubscribeStatus('idle')}
-						className="ml-auto text-sm text-primary hover:underline"
+						className="ml-auto text-sm text-[var(--color-brand)] hover:underline"
 					>
 						{t('common.retry')}
 					</button>

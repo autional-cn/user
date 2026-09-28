@@ -285,7 +285,7 @@ export default function StoragePage() {
 					</div>
 					<div className="w-full bg-gray-200 rounded-full h-2">
 						<div
-							className="bg-primary h-2 rounded-full transition-all"
+							className="bg-[var(--color-brand)] h-2 rounded-full transition-all"
 							style={{ width: `${Math.min(quotaData.usagePercent || 0, 100)}%` }}
 						/>
 					</div>
@@ -299,7 +299,7 @@ export default function StoragePage() {
 						{i > 0 && <span className="text-gray-300">/</span>}
 						<button
 							onClick={() => navigateBreadcrumb(i - 1)}
-							className={`hover:text-primary hover:underline ${i === breadcrumbs.length - 1 ? 'text-gray-900 font-medium' : ''}`}
+							className={`hover:text-[var(--color-brand)] hover:underline ${i === breadcrumbs.length - 1 ? 'text-gray-900 font-medium' : ''}`}
 						>
 							{b.name}
 						</button>
@@ -344,7 +344,7 @@ export default function StoragePage() {
 				</button>
 				<button
 					onClick={() => fileInputRef.current?.click()}
-					className="flex items-center gap-1.5 px-3 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary/90"
+					className="flex items-center gap-1.5 px-3 py-2 bg-[var(--color-brand)] text-white rounded-md text-sm hover:bg-[var(--color-brand)]/90"
 				>
 					<Upload size={16} />
 					<span className="hidden sm:inline">{t('storage.upload')}</span>
@@ -475,7 +475,7 @@ export default function StoragePage() {
 						<button
 							onClick={() => newFolderName.trim() && createFolderMut.mutate(newFolderName.trim())}
 							disabled={createFolderMut.isPending || !newFolderName.trim()}
-							className="px-4 py-2 bg-primary text-white rounded-md text-sm disabled:opacity-50"
+							className="px-4 py-2 bg-[var(--color-brand)] text-white rounded-md text-sm disabled:opacity-50"
 						>
 							{createFolderMut.isPending ? t('common.saving') : t('common.create')}
 						</button>
@@ -517,7 +517,7 @@ export default function StoragePage() {
 								renameEntryMut.mutate({ entry: renameTarget!, name: renameName.trim() })
 							}
 							disabled={renameEntryMut.isPending || !renameName.trim()}
-							className="px-4 py-2 bg-primary text-white rounded-md text-sm disabled:opacity-50"
+							className="px-4 py-2 bg-[var(--color-brand)] text-white rounded-md text-sm disabled:opacity-50"
 						>
 							{renameEntryMut.isPending ? t('common.saving') : t('common.save')}
 						</button>

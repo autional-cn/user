@@ -81,7 +81,7 @@ export default function CompliancePage() {
 		<div className="max-w-3xl mx-auto py-8 px-4">
 			<div className="mb-8">
 				<h1 className="text-2xl font-bold flex items-center gap-2">
-					<ShieldCheck className="w-7 h-7 text-primary" />
+					<ShieldCheck className="w-7 h-7 text-[var(--color-brand)]" />
 					{t('compliance.title', '组织合规状态')}
 				</h1>
 				<p className="text-muted-foreground mt-1">
@@ -92,7 +92,7 @@ export default function CompliancePage() {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
 				<div className="rounded-lg border bg-card p-6">
 					<div className="flex items-center gap-3 mb-4">
-						<Award className="w-5 h-5 text-primary" />
+						<Award className="w-5 h-5 text-[var(--color-brand)]" />
 						<span className="font-medium">{t('compliance.score', '合规评分')}</span>
 					</div>
 					<div className="flex items-baseline gap-2">
@@ -118,7 +118,7 @@ export default function CompliancePage() {
 
 				<div className="rounded-lg border bg-card p-6">
 					<div className="flex items-center gap-3 mb-4">
-						<FileSearch className="w-5 h-5 text-primary" />
+						<FileSearch className="w-5 h-5 text-[var(--color-brand)]" />
 						<span className="font-medium">{t('compliance.standards', '遵守标准')}</span>
 					</div>
 					{hasStandards ? (
@@ -148,7 +148,7 @@ export default function CompliancePage() {
 						{frameworks.map((fw: string) => (
 							<span
 								key={fw}
-								className="px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium"
+								className="px-3 py-1 rounded-full bg-[var(--color-brand)]/10 text-[var(--color-brand)] text-sm font-medium"
 							>
 								{fw.toUpperCase()}
 							</span>

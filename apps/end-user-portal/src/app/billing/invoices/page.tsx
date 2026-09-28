@@ -120,7 +120,7 @@ export default function InvoicesPage() {
 								<td className="px-4 py-3 text-right">
 									<button
 										onClick={() => setSelectedInvoice(inv.invoiceNumber || '')}
-										className="inline-flex items-center gap-1 text-primary hover:text-primary-600 text-sm font-medium"
+										className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:text-primary-600 text-sm font-medium"
 									>
 										<Eye className="w-4 h-4" />
 										{t('billing.invoices.detail')}
@@ -281,7 +281,7 @@ export default function InvoicesPage() {
 								<a
 									href={`/billing/api/v1/billing/invoice/${selectedInvoice}/export`}
 									target="_blank"
-									className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary-600 font-medium"
+									className="inline-flex items-center gap-2 text-sm text-[var(--color-brand)] hover:text-primary-600 font-medium"
 								>
 									<Download className="w-4 h-4" />
 									{t('billing.invoices.exportPdf')}
@@ -290,7 +290,7 @@ export default function InvoicesPage() {
 						</div>
 						<button
 							onClick={() => setSelectedInvoice(null)}
-							className="w-full mt-6 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-600 transition-colors"
+							className="w-full mt-6 py-2.5 rounded-lg bg-[var(--color-brand)] text-white font-medium hover:bg-primary-600 transition-colors"
 						>
 							{t('common.close')}
 						</button>

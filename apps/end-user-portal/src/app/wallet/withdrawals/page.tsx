@@ -137,7 +137,7 @@ export default function WithdrawalsPage() {
 							type="number"
 							placeholder={t('wallet.withdrawals.amountPlaceholder')}
 							{...register('amount')}
-							className="w-full pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-primary focus:outline-none"
+							className="w-full pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-[var(--color-brand)] focus:outline-none"
 						/>
 					</div>
 					{errors.amount && (
@@ -160,8 +160,8 @@ export default function WithdrawalsPage() {
 								onClick={() => setValue('method', ch.code)}
 								className={`flex items-center gap-2 px-5 py-3 rounded-lg border transition-colors ${
 									watch('method') === ch.code
-										? 'border-primary bg-primary-50 text-primary'
-										: 'border-gray-200 hover:border-primary'
+										? 'border-[var(--color-brand)] bg-primary-50 text-[var(--color-brand)]'
+										: 'border-gray-200 hover:border-[var(--color-brand)]'
 								}`}
 							>
 								{ch.icon}
@@ -179,14 +179,14 @@ export default function WithdrawalsPage() {
 						placeholder={t('wallet.withdrawals.remarkPlaceholder')}
 						{...register('notes')}
 						rows={3}
-						className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-primary focus:outline-none resize-none"
+						className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[var(--color-brand)] focus:outline-none resize-none"
 					/>
 				</div>
 
 				<button
 					type="submit"
 					disabled={isSubmitting}
-					className="w-full py-4 rounded-lg bg-primary text-white font-semibold text-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+					className="w-full py-4 rounded-lg bg-[var(--color-brand)] text-white font-semibold text-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
 				>
 					{isSubmitting ? (
 						<>
@@ -210,7 +210,7 @@ export default function WithdrawalsPage() {
 						<button
 							type="button"
 							onClick={() => setFormStatus('idle')}
-							className="ml-auto text-sm text-primary hover:underline"
+							className="ml-auto text-sm text-[var(--color-brand)] hover:underline"
 						>
 							{t('wallet.withdrawals.continueWithdraw')}
 						</button>
@@ -224,7 +224,7 @@ export default function WithdrawalsPage() {
 						<button
 							type="button"
 							onClick={() => setFormStatus('idle')}
-							className="ml-auto text-sm text-primary hover:underline"
+							className="ml-auto text-sm text-[var(--color-brand)] hover:underline"
 						>
 							{t('wallet.withdrawals.retry')}
 						</button>

@@ -160,8 +160,8 @@ export default function WalletRechargePage() {
 							}}
 							className={`px-6 py-3 rounded-lg border text-lg font-semibold transition-colors ${
 								Number(watchedAmount) === a && !watchedCustomAmount
-									? 'border-primary bg-primary-50 text-primary'
-									: 'border-gray-200 hover:border-primary'
+									? 'border-[var(--color-brand)] bg-primary-50 text-[var(--color-brand)]'
+									: 'border-gray-200 hover:border-[var(--color-brand)]'
 							}`}
 						>
 							¥{a}
@@ -175,7 +175,7 @@ export default function WalletRechargePage() {
 							{...register('customAmount', {
 								onChange: () => setValue('amount', '0'),
 							})}
-							className="w-32 pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-primary focus:outline-none"
+							className="w-32 pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-[var(--color-brand)] focus:outline-none"
 						/>
 					</div>
 				</div>
@@ -195,8 +195,8 @@ export default function WalletRechargePage() {
 							onClick={() => setChannel(ch.code)}
 							className={`flex items-center gap-2 px-5 py-3 rounded-lg border transition-colors ${
 								channel === ch.code
-									? 'border-primary bg-primary-50 text-primary'
-									: 'border-gray-200 hover:border-primary'
+									? 'border-[var(--color-brand)] bg-primary-50 text-[var(--color-brand)]'
+									: 'border-gray-200 hover:border-[var(--color-brand)]'
 							}`}
 						>
 							<span className="text-xl">{ch.icon}</span>
@@ -208,7 +208,7 @@ export default function WalletRechargePage() {
 				<button
 					type="submit"
 					disabled={!selectedAmount || selectedAmount <= 0 || isSubmitting || polling}
-					className="w-full py-4 rounded-lg bg-primary text-white font-semibold text-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+					className="w-full py-4 rounded-lg bg-[var(--color-brand)] text-white font-semibold text-lg hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
 				>
 					{isSubmitting || polling ? (
 						<>
@@ -232,7 +232,7 @@ export default function WalletRechargePage() {
 						<button
 							type="button"
 							onClick={() => navigate(buildNavHref(ROUTES.payments, tenantSlug))}
-							className="ml-auto text-sm text-primary hover:underline"
+							className="ml-auto text-sm text-[var(--color-brand)] hover:underline"
 						>
 							{t('wallet.recharge.viewPaymentRecords')}
 						</button>
@@ -246,7 +246,7 @@ export default function WalletRechargePage() {
 						<button
 							type="button"
 							onClick={() => setStatus('idle')}
-							className="ml-auto text-sm text-primary hover:underline"
+							className="ml-auto text-sm text-[var(--color-brand)] hover:underline"
 						>
 							{t('wallet.recharge.retry')}
 						</button>

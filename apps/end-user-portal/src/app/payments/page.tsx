@@ -123,7 +123,7 @@ export default function PaymentsPage() {
 								<td className="px-4 py-3 text-right">
 									<button
 										onClick={() => setReceiptPaymentId(p.paymentId || '')}
-										className="inline-flex items-center gap-1 text-primary hover:text-primary-600 text-sm font-medium"
+										className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:text-primary-600 text-sm font-medium"
 									>
 										<Eye className="w-4 h-4" />
 										{t('payments.receipt')}
@@ -174,7 +174,7 @@ export default function PaymentsPage() {
 				footer={
 					<button
 						onClick={() => setReceiptPaymentId(null)}
-						className="w-full py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-600 transition-colors"
+						className="w-full py-2.5 rounded-lg bg-[var(--color-brand)] text-white font-medium hover:bg-primary-600 transition-colors"
 					>
 						{t('common.close')}
 					</button>
