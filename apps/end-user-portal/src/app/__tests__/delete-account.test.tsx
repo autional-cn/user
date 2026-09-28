@@ -37,7 +37,7 @@ vi.mock('@autional-cn/shared', () => ({
 vi.mock('@autional-cn/shared/generated/api', () => ({
 	authMeDeleteAccountPost: (...args: any[]) => mockPost(...args),
 	PublicAuthConfigByAuthConfig: async () => ({
-		password_policy: { password_transmission: 'plain' },
+		passwordPolicy: { passwordTransmission: 'plain' },
 	}),
 }));
 

@@ -5,7 +5,10 @@ import {
 	OAuthCallbackPage,
 	TenantIndexGuard,
 	TenantSlugProvider,
+	TenantRootRedirect,
 	useTenantSlugFromUrl,
+	useBranding,
+	BrandingInitializer,
 } from '@autional-cn/shared';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -62,11 +65,17 @@ function LayoutWrapper() {
 }
 
 export default function App() {
+	useBranding();
+
 	return (
 		<ErrorBoundary>
+			<BrandingInitializer />
 			<Suspense fallback={<LoadingScreen message="加载中…" />}>
 				<Routes>
 					<Route path="/oauth/callback" element={<OAuthCallbackPage />} />
+
+					{/* 裸根漏斗：有会话直达 /<slug>，否则整页跳 brand 选品牌 */}
+					<Route path="/" element={<TenantRootRedirect />} />
 
 					<Route
 						path="/:tenantSlug"
