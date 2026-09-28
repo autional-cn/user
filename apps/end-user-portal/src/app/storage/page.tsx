@@ -316,7 +316,7 @@ export default function StoragePage() {
 						placeholder={t('storage.search')}
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						className="w-full pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+						className="w-full pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
 					/>
 				</div>
 				{folderStack.length > 0 && (
@@ -493,7 +493,7 @@ export default function StoragePage() {
 						createFolderMut.mutate(newFolderName.trim())
 					}
 					placeholder={t('storage.folderName')}
-					className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+					className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
 				/>
 			</Modal>
 
@@ -534,7 +534,7 @@ export default function StoragePage() {
 						renameName.trim() &&
 						renameEntryMut.mutate({ entry: renameTarget!, name: renameName.trim() })
 					}
-					className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+					className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
 				/>
 			</Modal>
 		</div>

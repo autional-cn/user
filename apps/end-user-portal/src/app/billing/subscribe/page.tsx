@@ -194,7 +194,7 @@ export default function SubscribePage() {
 							onClick={() => setSelectedPlan(plan)}
 							className={`relative bg-white rounded-xl border-2 p-6 cursor-pointer transition-all ${
 								isSelected
-									? `ring-2 ${planActiveColors[plan.plan] || 'ring-primary bg-primary-50'}`
+									? `ring-2 ${planActiveColors[plan.plan] || 'ring-[var(--color-brand)] bg-primary-50'}`
 									: planColors[plan.plan] || 'border-gray-200'
 							} hover:shadow-lg`}
 						>

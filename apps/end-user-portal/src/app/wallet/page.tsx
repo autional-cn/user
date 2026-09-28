@@ -307,7 +307,7 @@ export default function WalletPage() {
 							value={couponCode}
 							onChange={(e) => setCouponCode(e.target.value)}
 							placeholder={t('wallet.enterCouponCode')}
-							className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+							className="flex-1 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
 						/>
 						<button
 							onClick={handleRedeem}
