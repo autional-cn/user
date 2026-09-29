@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider, ThemeProvider } from '@autional-cn/ui';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
+import './non-tenant-segments';
 import './app/globals.css';
 import './i18n';
 
