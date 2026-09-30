@@ -20,6 +20,10 @@ export default defineConfig({
       srcDir: 'service-worker',
       filename: 'sw.js',
       manifest: false,
+      // U83：全自动即时更新 —— 配合 sw.js 的 self.skipWaiting()/clients.claim()，
+      // 客户端脚本在 activated(isUpdate) 时自动 reload（此前缺省 'prompt' 且无 onNeedRefresh
+      // 消费方 ⇒ 新 SW 长期停在 waiting，修复对回访者不可见）。
+      registerType: 'autoUpdate',
       injectManifest: {
         globDirectory: 'dist',
         globPatterns: ['**/*.{js,css,html,png,svg}'],
