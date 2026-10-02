@@ -52,8 +52,8 @@ importers:
         specifier: 0.1.0-rc
         version: 0.1.0-rc(tailwindcss@3.4.19)
       '@autional-cn/tokens':
-        specifier: 0.1.0-rc
-        version: 0.1.0-rc
+        specifier: 0.1.0-rc.2
+        version: 0.1.0-rc.2
       '@autional-cn/ui':
         specifier: 0.1.0-rc
         version: 0.1.0-rc(antd@6.6.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react@19.2.5)
@@ -245,6 +245,9 @@ packages:
 
   '@autional-cn/tokens@0.1.0-rc':
     resolution: {integrity: sha512-L0G4zxni+1jkpgNVdJ7cF6rAsEZeHoGXVGBM0YVlnw7pcB1NfoXyFNmm7yss0Jmu2eG9joIdbQh1EqVMipbSMg==}
+
+  '@autional-cn/tokens@0.1.0-rc.2':
+    resolution: {integrity: sha512-YfcPSaT2hNc2HZg+u+/0Lwc4KsFTj6tkwJ81PtBoa4r71ZaNxWzROwh+fVKdaftGaxXWpuO+pLt/woGTvEeMRA==}
 
   '@autional-cn/tsconfig@0.1.0-rc':
     resolution: {integrity: sha512-XY7N2lbMlR1D+OlkxDAw9Pz9CleV4UZ14RfWkkhGTZbbHvxT/d69H8GXWhyc9/634RoEUyVajYmjT75cZbKF4A==}
@@ -4233,6 +4236,8 @@ snapshots:
       tailwindcss: 3.4.19
 
   '@autional-cn/tokens@0.1.0-rc': {}
+
+  '@autional-cn/tokens@0.1.0-rc.2': {}
 
   '@autional-cn/tsconfig@0.1.0-rc': {}
 
