@@ -123,7 +123,7 @@ export default function DevicesPage() {
 												<span
 													className={`rounded-full px-2 py-0.5 text-xs font-medium ${
 														statusVariant === 'success'
-															? 'bg-emerald-50 text-emerald-700'
+															? 'bg-success-soft text-success'
 															: statusVariant === 'danger'
 																? 'bg-danger/10 text-danger'
 																: statusVariant === 'warning'
@@ -150,7 +150,7 @@ export default function DevicesPage() {
 												{thing.online !== undefined && (
 													<span className="flex items-center gap-1">
 														{thing.online ? (
-															<Wifi size={14} className="text-emerald-500" />
+															<Wifi size={14} className="text-success" />
 														) : (
 															<WifiOff size={14} className="text-neutral-500" />
 														)}

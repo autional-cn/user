@@ -259,7 +259,7 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 								<button
 									onClick={handleCancelChange}
 									disabled={cancelEmailMut.isPending || cancelPhoneMut.isPending}
-									className="text-sm text-red-600 hover:underline disabled:text-neutral-500"
+									className="text-sm text-danger-text hover:underline disabled:text-neutral-500"
 								>
 									{t('profile.identifierChange.cancelChange')}
 								</button>
@@ -294,7 +294,7 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 
 				{step === 'done' && (
 					<div className="mt-4 space-y-4">
-						<p className="text-sm text-emerald-700">{t('profile.identifierChange.changed')}</p>
+						<p className="text-sm text-success-text">{t('profile.identifierChange.changed')}</p>
 						<label className="flex items-center gap-2 text-sm text-neutral-700">
 							<input
 								type="checkbox"

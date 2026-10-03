@@ -93,15 +93,15 @@ export default function DeviceTransferPage() {
 			)}
 
 			{status === 'success' ? (
-				<div className="rounded-lg border border-emerald-200 bg-emerald-50 p-8 text-center space-y-4">
+				<div className="rounded-lg border border-success-soft bg-success-soft p-8 text-center space-y-4">
 					<div className="flex justify-center">
-						<CheckCircle size={48} className="text-emerald-500" />
+						<CheckCircle size={48} className="text-success" />
 					</div>
 					<div>
-						<h3 className="text-lg font-semibold text-emerald-800">
+						<h3 className="text-lg font-semibold text-success-text">
 							{t('devices.transfer.successTitle')}
 						</h3>
-						<p className="mt-1 text-sm text-emerald-600">{t('devices.transfer.successDesc')}</p>
+						<p className="mt-1 text-sm text-success-text">{t('devices.transfer.successDesc')}</p>
 					</div>
 					<div className="flex items-center justify-center gap-3">
 						<Button
@@ -141,7 +141,7 @@ export default function DeviceTransferPage() {
 						</div>
 
 						{status === 'error' && (
-							<div className="flex items-center gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+							<div className="flex items-center gap-2 rounded-md border border-danger-soft bg-danger-soft p-3 text-sm text-danger-text">
 								<XCircle size={16} className="shrink-0" />
 								<span>{errorMsg}</span>
 							</div>

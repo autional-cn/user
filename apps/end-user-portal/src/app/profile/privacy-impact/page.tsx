@@ -47,9 +47,9 @@ interface FieldExposure {
 
 const RISK_COLORS = {
 	low: {
-		bg: 'bg-emerald-50',
-		text: 'text-emerald-700',
-		border: 'border-emerald-200',
+		bg: 'bg-success-soft',
+		text: 'text-success',
+		border: 'border-success-soft',
 		icon: CheckCircle2,
 	},
 	medium: {
@@ -58,13 +58,13 @@ const RISK_COLORS = {
 		border: 'border-amber-200',
 		icon: AlertTriangle,
 	},
-	high: { bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200', icon: AlertTriangle },
+	high: { bg: 'bg-danger-soft', text: 'text-danger', border: 'border-danger-soft', icon: AlertTriangle },
 };
 
 const RISK_BAR_COLORS = {
-	low: 'bg-emerald-500',
+	low: 'bg-success',
 	medium: 'bg-amber-500',
-	high: 'bg-rose-500',
+	high: 'bg-danger',
 };
 
 // 风险等级 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
@@ -188,7 +188,7 @@ export default function PrivacyImpactPage() {
 			render: (_: unknown, field: FieldExposure) => (
 				<div className="flex items-center gap-3">
 					{field.riskLevel === 'high' ? (
-						<EyeOff size={16} className="text-rose-400" />
+						<EyeOff size={16} className="text-danger" />
 					) : (
 						<Eye size={16} className="text-neutral-500" />
 					)}
@@ -292,16 +292,16 @@ export default function PrivacyImpactPage() {
 
 			{/* Recommendations */}
 			{impact?.recommendations && impact.recommendations.length > 0 && (
-				<div className="rounded-lg border border-blue-200 bg-blue-50 p-6">
+				<div className="rounded-lg border border-info-soft bg-info-soft p-6">
 					<div className="flex items-start gap-3">
-						<Info size={20} className="text-blue-600 shrink-0 mt-0.5" />
+						<Info size={20} className="text-info shrink-0 mt-0.5" />
 						<div>
-							<h3 className="text-sm font-semibold text-blue-800">
+							<h3 className="text-sm font-semibold text-info-text">
 								{t('privacyImpact.recommendations')}
 							</h3>
 							<ul className="mt-2 list-inside list-disc space-y-1">
 								{impact.recommendations.map((rec, idx) => (
-									<li key={idx} className="text-sm text-blue-700">
+									<li key={idx} className="text-sm text-info-text">
 										{rec}
 									</li>
 								))}

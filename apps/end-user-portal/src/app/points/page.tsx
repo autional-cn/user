@@ -29,7 +29,7 @@ import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
 import { isNotFoundError } from '@/lib/api-error';
 
 // 交易类型 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
-// 原来这里是一张 typeBadges 表，8 种类型各配一对裸色阶（text-green-600 bg-green-50 …）：
+// 原来这里是一张 typeBadges 表，8 种类型各配一对裸色阶（text-success bg-success-soft …）：
 // 配色散在业务侧，而且没有一对做过对比度验证；cyan/orange 这两档在设计系统里根本没有对应色。
 const STATUS_VARIANTS: Record<string, StatusVariant> = {
 	earn: 'success',
@@ -119,7 +119,7 @@ export default function PointsPage() {
 			align: 'right',
 			// 正负号与配色都原样保留：+N 绿、-N 红
 			render: (v: number | undefined) => (
-				<span className={'font-mono ' + ((v ?? 0) > 0 ? 'text-green-600' : 'text-red-600')}>
+				<span className={'font-mono ' + ((v ?? 0) > 0 ? 'text-success-text' : 'text-danger-text')}>
 					{(v ?? 0) > 0 ? '+' : ''}
 					{v?.toLocaleString() ?? 0}
 				</span>
@@ -155,12 +155,12 @@ export default function PointsPage() {
 					value={balance.toLocaleString()}
 				/>
 				<Card
-					icon={<Clock className="w-5 h-5 text-blue-500" />}
+					icon={<Clock className="w-5 h-5 text-info" />}
 					label={t('points.frozenPoints')}
 					value={frozen.toLocaleString()}
 				/>
 				<Card
-					icon={<DollarSign className="w-5 h-5 text-green-500" />}
+					icon={<DollarSign className="w-5 h-5 text-success" />}
 					label={t('points.redeemableCash')}
 					value={value?.cashValue ?? '-'}
 				/>
@@ -170,21 +170,21 @@ export default function PointsPage() {
 					value={risk?.riskScore != null ? `${risk.riskScore}${t('points.scoreSuffix')}` : '-'}
 					valueClassName={
 						risk?.riskLevel === 'high'
-							? 'text-red-500'
+							? 'text-danger'
 							: risk?.riskLevel === 'medium'
 								? 'text-amber-500'
-								: 'text-green-500'
+								: 'text-success'
 					}
 				/>
 				<Card
-					icon={<AlertTriangle className="w-5 h-5 text-red-500" />}
+					icon={<AlertTriangle className="w-5 h-5 text-danger" />}
 					label={t('points.expiringSoon')}
 					value={
 						(expiringData?.totalExpiring ?? 0) > 0
 							? `${expiringData?.totalExpiring?.toLocaleString()}${t('points.pointsUnit')}`
 							: t('points.none')
 					}
-					valueClassName={(expiringData?.totalExpiring ?? 0) > 0 ? 'text-red-500' : 'text-neutral-500'}
+					valueClassName={(expiringData?.totalExpiring ?? 0) > 0 ? 'text-danger' : 'text-neutral-500'}
 				/>
 			</div>
 
@@ -193,12 +193,12 @@ export default function PointsPage() {
 					<StatBox
 						label={t('points.totalEarned')}
 						value={stats.totalEarned?.toLocaleString()}
-						icon={<TrendingUp className="w-4 h-4 text-green-500" />}
+						icon={<TrendingUp className="w-4 h-4 text-success" />}
 					/>
 					<StatBox
 						label={t('points.totalSpent')}
 						value={stats.totalSpent?.toLocaleString()}
-						icon={<TrendingDown className="w-4 h-4 text-red-500" />}
+						icon={<TrendingDown className="w-4 h-4 text-danger" />}
 					/>
 					<StatBox
 						label={t('points.earnedThisMonth')}

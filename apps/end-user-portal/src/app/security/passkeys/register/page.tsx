@@ -163,15 +163,15 @@ export default function PasskeyRegisterPage() {
 					<p className="mt-2 text-sm text-neutral-600">{t('security.passkeys.register.desc')}</p>
 					<ul className="mt-4 space-y-2 text-left text-sm text-neutral-600">
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('security.passkeys.register.benefit1')}
 						</li>
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('security.passkeys.register.benefit2')}
 						</li>
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('security.passkeys.register.benefit3')}
 						</li>
 					</ul>
@@ -218,7 +218,7 @@ export default function PasskeyRegisterPage() {
 								placeholder={t('security.passkeys.register.passwordPlaceholder')}
 								className="w-full rounded-lg border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
 							/>
-							{passwordError && <p className="mt-1 text-sm text-red-600">{passwordError}</p>}
+							{passwordError && <p className="mt-1 text-sm text-danger-text">{passwordError}</p>}
 						</div>
 						<div className="flex justify-end gap-3">
 							<Button
@@ -254,14 +254,14 @@ export default function PasskeyRegisterPage() {
 			)}
 
 			{step === 'error' && (
-				<div className="rounded-lg border border-red-200 bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
+				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
+					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<AlertTriangle size={32} />
 					</div>
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('security.passkeys.register.errorTitle')}
 					</h3>
-					<p className="mt-2 text-sm text-red-600">{errorMsg}</p>
+					<p className="mt-2 text-sm text-danger-text">{errorMsg}</p>
 					<div className="mt-6 flex justify-center gap-3">
 						<Button onClick={() => setStep('idle')} variant="outline">
 							{t('common.cancel')}
@@ -274,8 +274,8 @@ export default function PasskeyRegisterPage() {
 			)}
 
 			{step === 'success' && (
-				<div className="rounded-lg border border-emerald-200 bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
+					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
 						<CheckCircle2 size={32} />
 					</div>
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">

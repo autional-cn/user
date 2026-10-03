@@ -135,12 +135,12 @@ export default function WalletRechargePage() {
 			<h1 className="text-2xl font-bold">{t('wallet.recharge.title')}</h1>
 
 			<div className="bg-white rounded-lg border p-6 flex items-center gap-4">
-				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-					<Wallet className="w-6 h-6 text-green-600" />
+				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-success-soft">
+					<Wallet className="w-6 h-6 text-success" />
 				</div>
 				<div>
 					<div className="text-sm text-neutral-600">{t('wallet.recharge.currentBalance')}</div>
-					<div className="text-2xl font-bold text-green-600">¥{currentBalance.toFixed(2)}</div>
+					<div className="text-2xl font-bold text-success-text">¥{currentBalance.toFixed(2)}</div>
 				</div>
 			</div>
 
@@ -228,7 +228,7 @@ export default function WalletRechargePage() {
 				</button>
 
 				{status === 'success' && (
-					<div className="flex items-center gap-2 p-4 rounded-lg bg-green-50 text-green-700">
+					<div className="flex items-center gap-2 p-4 rounded-lg bg-success-soft text-success-text">
 						<CheckCircle className="w-5 h-5" />
 						<span className="font-medium">
 							{resultAmount ? t(resultKey, { amount: resultAmount }) : t(resultKey)}
@@ -244,7 +244,7 @@ export default function WalletRechargePage() {
 				)}
 
 				{status === 'error' && (
-					<div className="flex items-center gap-2 p-4 rounded-lg bg-red-50 text-red-700">
+					<div className="flex items-center gap-2 p-4 rounded-lg bg-danger-soft text-danger-text">
 						<XCircle className="w-5 h-5" />
 						<span className="font-medium">{t(resultKey)}</span>
 						<button

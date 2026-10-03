@@ -29,21 +29,21 @@ const CYCLE_DISCOUNT: Record<string, number> = {
 
 const planIcons: Record<string, React.ReactNode> = {
 	free: <Zap className="w-8 h-8 text-neutral-500" />,
-	basic: <Zap className="w-8 h-8 text-blue-500" />,
+	basic: <Zap className="w-8 h-8 text-info" />,
 	pro: <Crown className="w-8 h-8 text-amber-500" />,
 	enterprise: <Building2 className="w-8 h-8 text-purple-500" />,
 };
 
 const planColors: Record<string, string> = {
 	free: 'border-neutral-300',
-	basic: 'border-blue-300',
+	basic: 'border-info',
 	pro: 'border-amber-300',
 	enterprise: 'border-purple-300',
 };
 
 const planActiveColors: Record<string, string> = {
 	free: 'ring-neutral-300 bg-neutral-50',
-	basic: 'ring-blue-500 bg-blue-50',
+	basic: 'ring-info bg-info-soft',
 	pro: 'ring-amber-500 bg-amber-50',
 	enterprise: 'ring-purple-500 bg-purple-50',
 };
@@ -199,7 +199,7 @@ export default function SubscribePage() {
 							} hover:shadow-lg`}
 						>
 							{isCurrent && (
-								<span className="absolute -top-2.5 right-3 px-3 py-0.5 rounded-full bg-green-500 text-white text-xs font-bold">
+								<span className="absolute -top-2.5 right-3 px-3 py-0.5 rounded-full bg-success text-white text-xs font-bold">
 									{t('billing.subscribe.currentBadge')}
 								</span>
 							)}
@@ -217,7 +217,7 @@ export default function SubscribePage() {
 									{billingCycle === 'yearly' && (
 										<div>
 											<span className="text-sm text-neutral-500 line-through">¥{originalPrice}</span>
-											<span className="text-xs text-red-500 ml-1">
+											<span className="text-xs text-danger-text ml-1">
 												{t('billing.subscribe.yearlyBadge')}
 											</span>
 										</div>
@@ -228,7 +228,7 @@ export default function SubscribePage() {
 								<ul className="text-left space-y-2 w-full pt-2">
 									{features(plan).map((f, i) => (
 										<li key={i} className="flex items-start gap-2 text-sm text-neutral-700">
-											<Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+											<Check className="w-4 h-4 text-success mt-0.5 shrink-0" />
 											{f}
 										</li>
 									))}
@@ -260,14 +260,14 @@ export default function SubscribePage() {
 			</div>
 
 			{subscribeStatus === 'success' && (
-				<div className="flex items-center gap-2 p-4 rounded-lg bg-green-50 text-green-700 max-w-md mx-auto">
+				<div className="flex items-center gap-2 p-4 rounded-lg bg-success-soft text-success-text max-w-md mx-auto">
 					<CheckCircle className="w-5 h-5" />
 					<span className="font-medium">{resultMsg}</span>
 				</div>
 			)}
 
 			{subscribeStatus === 'error' && (
-				<div className="flex items-center gap-2 p-4 rounded-lg bg-red-50 text-red-700 max-w-md mx-auto">
+				<div className="flex items-center gap-2 p-4 rounded-lg bg-danger-soft text-danger-text max-w-md mx-auto">
 					<XCircle className="w-5 h-5" />
 					<span className="font-medium">{resultMsg}</span>
 					<button

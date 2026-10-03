@@ -12,8 +12,8 @@ import { SkeletonRow } from '@/components/ui/Skeleton';
 import { Mail, Smartphone, Bell, History, Filter } from 'lucide-react';
 
 const channelMeta: Record<string, { icon: typeof Mail; labelKey: string; color: string }> = {
-	sms: { icon: Smartphone, labelKey: 'communication.channel.sms', color: 'text-green-700' },
-	email: { icon: Mail, labelKey: 'communication.channel.email', color: 'text-blue-700' },
+	sms: { icon: Smartphone, labelKey: 'communication.channel.sms', color: 'text-success' },
+	email: { icon: Mail, labelKey: 'communication.channel.email', color: 'text-info' },
 	push: { icon: Bell, labelKey: 'communication.channel.push', color: 'text-purple-700' },
 };
 
@@ -114,7 +114,7 @@ export default function CommunicationHistoryPage() {
 				<>
 					<StatusBadge variant={STATUS_VARIANTS[v ?? ''] ?? 'neutral'}>{statusLabel(v)}</StatusBadge>
 					{log.error && (
-						<span className="ml-2 text-xs text-red-400" title={log.error}>
+						<span className="ml-2 text-xs text-danger-text" title={log.error}>
 							{t('communication.errorHint', 'Details')}
 						</span>
 					)}

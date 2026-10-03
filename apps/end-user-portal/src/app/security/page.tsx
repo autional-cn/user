@@ -118,14 +118,14 @@ export default function SecurityPage() {
 
 	function getBindProviderMeta(providerId: string) {
 		const map: Record<string, { icon: string; iconStyle: string }> = {
-			google: { icon: 'G', iconStyle: 'bg-red-50 text-red-700 text-xl' },
+			google: { icon: 'G', iconStyle: 'bg-danger-soft text-danger text-xl' },
 			github: { icon: '⌂', iconStyle: 'bg-neutral-800 text-white text-xl' },
-			wechat: { icon: '💬', iconStyle: 'bg-emerald-50 text-emerald-700 text-lg' },
-			weibo: { icon: '🔴', iconStyle: 'bg-rose-50 text-rose-700 text-lg' },
+			wechat: { icon: '💬', iconStyle: 'bg-success-soft text-success text-lg' },
+			weibo: { icon: '🔴', iconStyle: 'bg-danger-soft text-danger text-lg' },
 			apple: { icon: '🍎', iconStyle: 'bg-neutral-100 text-neutral-800 text-lg' },
-			facebook: { icon: '📘', iconStyle: 'bg-blue-50 text-blue-700 text-lg' },
-			microsoft: { icon: '🪟', iconStyle: 'bg-blue-50 text-blue-700 text-lg' },
-			linkedin: { icon: '💼', iconStyle: 'bg-blue-50 text-blue-700 text-lg' },
+			facebook: { icon: '📘', iconStyle: 'bg-info-soft text-info text-lg' },
+			microsoft: { icon: '🪟', iconStyle: 'bg-info-soft text-info text-lg' },
+			linkedin: { icon: '💼', iconStyle: 'bg-info-soft text-info text-lg' },
 		};
 		return map[providerId] || { icon: '🔗', iconStyle: 'bg-neutral-100 text-neutral-600 text-lg' };
 	}
@@ -160,11 +160,11 @@ export default function SecurityPage() {
 		const labels = ['', 'weak', 'fair', 'good', 'strong', 'very-strong'];
 		const colors = [
 			'',
-			'bg-red-500',
-			'bg-orange-500',
-			'bg-yellow-500',
-			'bg-green-500',
-			'bg-emerald-500',
+			'bg-danger',
+			'bg-warning',
+			'bg-warning',
+			'bg-success',
+			'bg-success',
 		];
 		const idx = Math.min(score, 5);
 		return { score: idx, label: t(`security.passwordStrength.${labels[idx]}`), color: colors[idx] };
@@ -369,14 +369,14 @@ export default function SecurityPage() {
 	const getProviderMeta = (providerId?: string): { name: string; icon: string; color: string } => {
 		const map: Record<string, { name: string; icon: string; color: string }> = {
 			github: { name: 'GitHub', icon: '🐙', color: 'bg-neutral-100 text-neutral-800' },
-			google: { name: 'Google', icon: '🔵', color: 'bg-blue-50 text-blue-700' },
-			wechat: { name: 'WeChat', icon: '💬', color: 'bg-emerald-50 text-emerald-700' },
-			weibo: { name: 'Weibo', icon: '🔴', color: 'bg-rose-50 text-rose-700' },
+			google: { name: 'Google', icon: '🔵', color: 'bg-info-soft text-info' },
+			wechat: { name: 'WeChat', icon: '💬', color: 'bg-success-soft text-success' },
+			weibo: { name: 'Weibo', icon: '🔴', color: 'bg-danger-soft text-danger' },
 			apple: { name: 'Apple', icon: '🍎', color: 'bg-neutral-100 text-neutral-800' },
-			facebook: { name: 'Facebook', icon: '📘', color: 'bg-blue-50 text-blue-700' },
+			facebook: { name: 'Facebook', icon: '📘', color: 'bg-info-soft text-info' },
 			twitter: { name: 'X (Twitter)', icon: '🐦', color: 'bg-neutral-100 text-neutral-800' },
-			microsoft: { name: 'Microsoft', icon: '🪟', color: 'bg-blue-50 text-blue-700' },
-			linkedin: { name: 'LinkedIn', icon: '💼', color: 'bg-blue-50 text-blue-700' },
+			microsoft: { name: 'Microsoft', icon: '🪟', color: 'bg-info-soft text-info' },
+			linkedin: { name: 'LinkedIn', icon: '💼', color: 'bg-info-soft text-info' },
 		};
 		return (
 			map[providerId || ''] || {
@@ -412,9 +412,9 @@ export default function SecurityPage() {
 		loading?: boolean;
 	}) => {
 		const statusColors = {
-			enabled: 'bg-emerald-50 text-emerald-700',
+			enabled: 'bg-success-soft text-success',
 			disabled: 'bg-neutral-100 text-neutral-600',
-			neutral: 'bg-blue-50 text-blue-700',
+			neutral: 'bg-info-soft text-info',
 		};
 
 		return (
@@ -570,13 +570,13 @@ export default function SecurityPage() {
 						)}
 						{pwd && (
 							<div className="mt-2 space-y-1 text-xs text-neutral-600">
-								<p className={pwd.length >= 8 ? 'text-green-600' : ''}>
+								<p className={pwd.length >= 8 ? 'text-success-text' : ''}>
 									- {t('security.passwordMinLength')}
 								</p>
-								<p className={/[A-Z]/.test(pwd) ? 'text-green-600' : ''}>
+								<p className={/[A-Z]/.test(pwd) ? 'text-success-text' : ''}>
 									- {t('security.passwordUppercase')}
 								</p>
-								<p className={/\d/.test(pwd) ? 'text-green-600' : ''}>
+								<p className={/\d/.test(pwd) ? 'text-success-text' : ''}>
 									- {t('security.passwordDigit')}
 								</p>
 							</div>
@@ -897,7 +897,7 @@ export default function SecurityPage() {
 					</>
 				}
 			>
-				<div className="rounded-md bg-red-50 p-4 text-sm text-red-700 mb-4">
+				<div className="rounded-md bg-danger-soft p-4 text-sm text-danger-text mb-4">
 					<p className="font-semibold">
 						{t('security.deleteWarningTitle', '警告：此操作不可逆')}
 					</p>
@@ -912,7 +912,7 @@ export default function SecurityPage() {
 				</div>
 
 				{deleteError && (
-					<div className="rounded-md bg-red-50 p-3 text-sm text-danger mb-4">{deleteError}</div>
+					<div className="rounded-md bg-danger-soft p-3 text-sm text-danger mb-4">{deleteError}</div>
 				)}
 
 				<p className="text-sm text-neutral-600 mb-3">

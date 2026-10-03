@@ -48,10 +48,10 @@ function getDeviceLabel(session: SessionInfo, t: (k: string) => string): string 
 }
 
 function getTrustColor(score: number): string {
-	if (score >= 80) return 'text-emerald-600 bg-emerald-50';
+	if (score >= 80) return 'text-success bg-success-soft';
 	if (score >= 50) return 'text-amber-600 bg-amber-50';
-	if (score >= 30) return 'text-orange-600 bg-orange-50';
-	return 'text-red-600 bg-red-50';
+	if (score >= 30) return 'text-warning bg-warning-soft';
+	return 'text-danger bg-danger-soft';
 }
 
 function getTrustIcon(score: number) {
@@ -136,7 +136,7 @@ export default function SessionsPage() {
 						onClick={() => setHighRiskOnly((v) => !v)}
 						className={`flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
 							highRiskOnly
-								? 'border-red-200 bg-red-50 text-red-700'
+								? 'border-danger-soft bg-danger-soft text-danger'
 								: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
 						}`}
 					>
@@ -158,7 +158,7 @@ export default function SessionsPage() {
 			</div>
 
 			{highRiskOnly && (
-				<div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+				<div className="rounded-md border border-danger-soft bg-danger-soft p-3 text-sm text-danger-text">
 					{t('sessions.highRiskFilterActive', '已启用高风险过滤：仅显示信任分数低于 50 的会话')}
 				</div>
 			)}

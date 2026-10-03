@@ -139,11 +139,11 @@ export default function ConsentsPage() {
 	const classificationColor = (cls: string) => {
 		switch (cls) {
 			case 'sensitive':
-				return 'bg-rose-50 text-rose-700 border-rose-200';
+				return 'bg-danger-soft text-danger-text border-danger-soft';
 			case 'internal':
 				return 'bg-amber-50 text-amber-700 border-amber-200';
 			case 'public':
-				return 'bg-emerald-50 text-emerald-700 border-emerald-200';
+				return 'bg-success-soft text-success-text border-success-soft';
 			default:
 				return 'bg-neutral-50 text-neutral-700 border-neutral-200';
 		}
@@ -185,12 +185,12 @@ export default function ConsentsPage() {
 									<div className="flex items-center gap-2">
 										<h4 className="text-sm font-medium text-neutral-900">{field.displayName}</h4>
 										{field.consented ? (
-											<span className="inline-flex items-center gap-0.5 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
+											<span className="inline-flex items-center gap-0.5 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-text">
 												<Check size={10} />
 												{t('consents.granted')}
 											</span>
 										) : (
-											<span className="inline-flex items-center gap-0.5 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700">
+											<span className="inline-flex items-center gap-0.5 rounded-full bg-danger-soft px-2 py-0.5 text-xs font-medium text-danger-text">
 												<X size={10} />
 												{t('consents.revoked')}
 											</span>
@@ -220,7 +220,7 @@ export default function ConsentsPage() {
 								{field.consented && (
 									<button
 										onClick={() => setRevokingField(field.fieldKey)}
-										className="ml-4 flex items-center gap-1 rounded-md border border-rose-200 bg-white px-2.5 py-1 text-xs font-medium text-rose-600 hover:bg-rose-50 transition-colors"
+										className="ml-4 flex items-center gap-1 rounded-md border border-danger-soft bg-white px-2.5 py-1 text-xs font-medium text-danger-text hover:bg-danger-soft transition-colors"
 									>
 										<Trash2 size={12} />
 										{t('consents.revoke')}
@@ -310,7 +310,7 @@ export default function ConsentsPage() {
 						<button
 							onClick={() => revokeMutation.mutate(revokingField!)}
 							disabled={revokeMutation.isPending}
-							className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 transition-colors disabled:opacity-60"
+							className="rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger transition-colors disabled:opacity-60"
 						>
 							{revokeMutation.isPending ? t('consents.revoking') : t('consents.confirmRevoke')}
 						</button>

@@ -63,15 +63,15 @@ export default function CompliancePage() {
 	const scoreGrade =
 		score != null
 			? score >= 95
-				? { label: 'A+', color: 'text-green-600' }
+				? { label: 'A+', color: 'text-success-text', bar: 'bg-success' }
 				: score >= 90
-					? { label: 'A', color: 'text-green-500' }
+					? { label: 'A', color: 'text-success-text', bar: 'bg-success' }
 					: score >= 80
-						? { label: 'B', color: 'text-blue-500' }
+						? { label: 'B', color: 'text-info-text', bar: 'bg-info' }
 						: score >= 70
-							? { label: 'C', color: 'text-yellow-500' }
-							: { label: 'D', color: 'text-red-500' }
-			: { label: '—', color: 'text-muted-foreground' };
+							? { label: 'C', color: 'text-warning-text', bar: 'bg-warning' }
+							: { label: 'D', color: 'text-danger-text', bar: 'bg-danger' }
+			: { label: '—', color: 'text-muted-foreground', bar: 'bg-muted' };
 
 	const frameworks = profile?.enabledFrameworks || [];
 	const standards = profile?.selectedStandards || [];
@@ -109,7 +109,7 @@ export default function CompliancePage() {
 						<div
 							className={cn(
 								'h-full rounded-full transition-all',
-								scoreGrade.color.replace('text-', 'bg-'),
+								scoreGrade.bar,
 							)}
 							style={{ width: `${Math.min(score || 0, 100)}%` }}
 						/>

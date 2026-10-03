@@ -372,7 +372,7 @@ export default function StoragePage() {
 									{entry._type === 'folder' ? (
 										<FolderOpen size={40} className="text-amber-500" />
 									) : (
-										<File size={40} className="text-blue-500" />
+										<File size={40} className="text-info" />
 									)}
 								</div>
 								{/* Name */}
@@ -444,7 +444,7 @@ export default function StoragePage() {
 												deleteEntryMut.mutate(entry);
 												setContextMenu(null);
 											}}
-											className="w-full text-left px-3 py-1.5 text-sm hover:bg-red-50 text-red-600 flex items-center gap-2"
+											className="w-full text-left px-3 py-1.5 text-sm hover:bg-danger-soft text-danger flex items-center gap-2"
 										>
 											<Trash2 size={14} /> {t('common.delete')}
 										</button>

@@ -62,12 +62,12 @@ export default function DevicePairingPage() {
 			</div>
 
 			{success ? (
-				<div className="rounded-lg border border-emerald-200 bg-emerald-50 p-8 text-center shadow-sm">
-					<CheckCircle2 size={48} className="mx-auto text-emerald-500" />
-					<h3 className="mt-4 text-lg font-semibold text-emerald-800">
+				<div className="rounded-lg border border-success-soft bg-success-soft p-8 text-center shadow-sm">
+					<CheckCircle2 size={48} className="mx-auto text-success" />
+					<h3 className="mt-4 text-lg font-semibold text-success-text">
 						{t('devices.pair.successTitle')}
 					</h3>
-					<p className="mt-2 text-sm text-emerald-600">{t('devices.pair.successMessage')}</p>
+					<p className="mt-2 text-sm text-success-text">{t('devices.pair.successMessage')}</p>
 				</div>
 			) : pairMutation.isError ? (
 				<ErrorState message={t('devices.pair.errorRetry')} className="min-h-[40vh]" />

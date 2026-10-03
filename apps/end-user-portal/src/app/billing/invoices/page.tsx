@@ -13,7 +13,7 @@ import { useInvoices, useInvoice } from '@/hooks/queries';
 import type { BillingRecord, InvoiceLineItem } from '@/hooks/queries';
 
 // 状态 → 设计系统徽标档位。这里**只做映射，不做样式**。
-// 此前每个状态各写一套裸色阶（bg-green-100 text-green-700 / bg-amber-100 …）：
+// 此前每个状态各写一套裸色阶（bg-success-soft text-success-text / bg-amber-100 …）：
 // 那是又一处「同一个概念在四个 portal 各有各的写法」，而且裸色阶里没有一套做过对比度验证。
 // StatusBadge 的 -soft / -text 是**成对**的，每一对的对比度都验过（success 5.51 / warning 4.85 /
 // danger 4.65 / info 6.70）。所以映射表留在业务侧（哪个状态算成功是业务语义），配色归设计系统。
@@ -215,7 +215,7 @@ export default function InvoicesPage() {
 							<Field label={t('billing.invoices.dueDate')}>{fmtDate(invoiceDetail.dueDate)}</Field>
 							{invoiceDetail.paidAt && (
 								<Field label={t('billing.invoices.paidAt')}>
-									<span className="text-green-600">{fmtDate(invoiceDetail.paidAt)}</span>
+									<span className="text-success-text">{fmtDate(invoiceDetail.paidAt)}</span>
 								</Field>
 							)}
 						</div>

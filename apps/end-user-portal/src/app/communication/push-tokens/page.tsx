@@ -21,9 +21,9 @@ const platformMeta: Record<string, { icon: typeof Smartphone; labelKey: string; 
 	android: {
 		icon: Smartphone,
 		labelKey: 'communication.platform.android',
-		color: 'text-green-700',
+		color: 'text-success',
 	},
-	web: { icon: Globe, labelKey: 'communication.platform.web', color: 'text-blue-700' },
+	web: { icon: Globe, labelKey: 'communication.platform.web', color: 'text-info' },
 	desktop: { icon: Monitor, labelKey: 'communication.platform.desktop', color: 'text-purple-700' },
 };
 
@@ -212,7 +212,7 @@ export default function PushTokensPage() {
 								<button
 									onClick={() => handleDelete(token.id)}
 									disabled={deleteMutation.isPending}
-									className="rounded-md p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-40"
+									className="rounded-md p-1.5 text-neutral-500 hover:bg-danger-soft hover:text-danger-text transition-colors disabled:opacity-40"
 									title={t('communication.pushTokens.delete', 'Delete')}
 								>
 									<Trash2 size={16} />
@@ -222,7 +222,7 @@ export default function PushTokensPage() {
 							<div className="mt-3 pt-3 border-t border-neutral-100 space-y-1">
 								<div className="flex items-center gap-2">
 									<span
-										className={`inline-block h-2 w-2 rounded-full ${token.isActive ? 'bg-green-500' : 'bg-neutral-300'}`}
+										className={`inline-block h-2 w-2 rounded-full ${token.isActive ? 'bg-success' : 'bg-neutral-300'}`}
 									/>
 									<span className="text-xs text-neutral-600">
 										{token.isActive

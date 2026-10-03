@@ -143,7 +143,7 @@ export default function WalletPage() {
 			render: (v: string | undefined, tx: WalletTransactionItem) => {
 				const incoming = isIncoming(tx.type);
 				return (
-					<span className={'font-mono ' + (incoming ? 'text-green-600' : 'text-red-600')}>
+					<span className={'font-mono ' + (incoming ? 'text-success-text' : 'text-danger-text')}>
 						{(incoming ? '+' : '-') + '¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
 					</span>
 				);
@@ -185,7 +185,7 @@ export default function WalletPage() {
 			key: 'amount',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className={'font-mono ' + (Number(v ?? 0) >= 0 ? 'text-green-600' : 'text-red-600')}>
+				<span className={'font-mono ' + (Number(v ?? 0) >= 0 ? 'text-success-text' : 'text-danger-text')}>
 					{'¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
 				</span>
 			),
@@ -229,12 +229,12 @@ export default function WalletPage() {
 
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 				<Card
-					icon={<Wallet className="w-5 h-5 text-green-500" />}
+					icon={<Wallet className="w-5 h-5 text-success" />}
 					label={t('wallet.availableBalance')}
 					value={`${currency === 'CNY' ? '¥' : ''}${Number(available).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
 				/>
 				<Card
-					icon={<Snowflake className="w-5 h-5 text-blue-500" />}
+					icon={<Snowflake className="w-5 h-5 text-info" />}
 					label={t('wallet.frozenBalance')}
 					value={`${currency === 'CNY' ? '¥' : ''}${Number(frozen).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
 				/>
@@ -255,17 +255,17 @@ export default function WalletPage() {
 					<StatBox
 						label={t('wallet.transactionCount')}
 						value={stats.transactionCount?.toLocaleString()}
-						icon={<ArrowRightLeft className="w-4 h-4 text-blue-500" />}
+						icon={<ArrowRightLeft className="w-4 h-4 text-info" />}
 					/>
 					<StatBox
 						label={t('wallet.totalDeposits')}
 						value={`¥${Number(stats.totalDeposits ?? 0).toLocaleString()}`}
-						icon={<TrendingUp className="w-4 h-4 text-green-500" />}
+						icon={<TrendingUp className="w-4 h-4 text-success" />}
 					/>
 					<StatBox
 						label={t('wallet.totalWithdrawals')}
 						value={`¥${Number(stats.totalWithdrawals ?? 0).toLocaleString()}`}
-						icon={<TrendingDown className="w-4 h-4 text-red-500" />}
+						icon={<TrendingDown className="w-4 h-4 text-danger" />}
 					/>
 					<StatBox
 						label={t('wallet.avgTransaction')}
@@ -326,12 +326,12 @@ export default function WalletPage() {
 						</button>
 					</div>
 					{redeemQ.isSuccess && (
-						<div className="mb-3 p-3 bg-green-50 border border-green-200 rounded-md text-sm text-green-700">
+						<div className="mb-3 p-3 bg-success-soft border border-success-soft rounded-md text-sm text-success-text">
 							{t('wallet.redeemSuccess')}
 						</div>
 					)}
 					{redeemQ.isError && (
-						<div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-md text-sm text-red-700">
+						<div className="mb-3 p-3 bg-danger-soft border border-danger-soft rounded-md text-sm text-danger-text">
 							{t('wallet.redeemError')}
 						</div>
 					)}
@@ -369,11 +369,11 @@ export default function WalletPage() {
 										className={cn(
 											'text-xs px-2 py-0.5 rounded',
 											c.status === 'unused'
-												? 'bg-green-50 text-green-600'
+												? 'bg-success-soft text-success'
 												: c.status === 'used'
 													? 'bg-neutral-200 text-neutral-600'
 													: c.status === 'expired'
-														? 'bg-red-50 text-red-500'
+														? 'bg-danger-soft text-danger'
 														: 'bg-neutral-200 text-neutral-600',
 										)}
 									>
@@ -459,7 +459,7 @@ const txLabels: Record<string, string> = {
 };
 
 // 交易类型 → 设计系统徽标档位。**只做映射，不做样式**。
-// 这里此前是 10 套裸色阶（text-green-600 bg-green-50 …，含 cyan / purple / orange 三个
+// 这里此前是 10 套裸色阶（text-success bg-success-soft …，含 cyan / purple / orange 三个
 // 不在设计系统色阶里的色）—— 同一件事在四个 portal 各有各的写法，且没有任何一套做过对比度验证。
 const txTypeVariants: Record<string, StatusVariant> = {
 	deposit: 'success',

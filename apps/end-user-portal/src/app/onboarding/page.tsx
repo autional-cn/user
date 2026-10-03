@@ -200,7 +200,7 @@ export default function OnboardingPage() {
 						<span
 							key={step.key}
 							title={t(step.labelKey)}
-							className={`inline-block h-2 w-2 rounded-full ${mergedCompleted[step.key] ? 'bg-emerald-500' : 'bg-neutral-300'}`}
+							className={`inline-block h-2 w-2 rounded-full ${mergedCompleted[step.key] ? 'bg-success' : 'bg-neutral-300'}`}
 						/>
 					))}
 				</div>
@@ -218,7 +218,7 @@ export default function OnboardingPage() {
 							className="flex items-center gap-4 p-4 hover:bg-neutral-50 transition-colors group"
 						>
 							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-100 group-hover:bg-primary-50 transition-colors">
-								<Icon size={20} className={done ? 'text-emerald-600' : 'text-neutral-500'} />
+								<Icon size={20} className={done ? 'text-success-text' : 'text-neutral-500'} />
 							</div>
 							<div className="flex-1 min-w-0">
 								<p
@@ -229,7 +229,7 @@ export default function OnboardingPage() {
 							</div>
 							<div className="flex items-center gap-2">
 								{done ? (
-									<CheckCircle2 size={20} className="text-emerald-500" />
+									<CheckCircle2 size={20} className="text-success" />
 								) : (
 									<Circle size={20} className="text-neutral-300" />
 								)}

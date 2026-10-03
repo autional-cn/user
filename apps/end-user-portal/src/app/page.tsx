@@ -38,14 +38,14 @@ export default function DashboardPage() {
 			label: t('nav.profile'),
 			desc: t('dashboard.quickLinkProfile'),
 			icon: UserCircle,
-			color: 'bg-blue-50 text-blue-700',
+			color: 'bg-info-soft text-info-text',
 		},
 		{
 			to: buildNavHref(ROUTES.security, tenantSlug),
 			label: t('nav.security'),
 			desc: t('dashboard.quickLinkSecurity'),
 			icon: ShieldCheck,
-			color: 'bg-emerald-50 text-emerald-700',
+			color: 'bg-success-soft text-success-text',
 		},
 		{
 			to: buildNavHref(ROUTES.sessions, tenantSlug),
@@ -96,7 +96,7 @@ export default function DashboardPage() {
 				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
 					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
 						<div className="flex items-center gap-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-50 text-blue-700">
+							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-info-soft text-info-text">
 								<Wallet size={20} />
 							</div>
 							<div>
@@ -132,12 +132,12 @@ export default function DashboardPage() {
 					</div>
 					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
 						<div className="flex items-center gap-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-emerald-50 text-emerald-700">
+							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-success-soft text-success-text">
 								<ShieldCheck size={20} />
 							</div>
 							<div>
 								<p className="text-sm text-neutral-600">{t('dashboard.stats.securityStatus')}</p>
-								<p className="text-lg font-semibold text-emerald-700">
+								<p className="text-lg font-semibold text-success-text">
 									{t('dashboard.securityGood')}
 								</p>
 							</div>
@@ -145,7 +145,7 @@ export default function DashboardPage() {
 					</div>
 					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
 						<div className="flex items-center gap-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-rose-50 text-rose-700">
+							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-danger-soft text-danger-text">
 								<Bell size={20} />
 							</div>
 							<div>

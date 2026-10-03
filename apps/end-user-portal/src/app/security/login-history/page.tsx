@@ -271,7 +271,7 @@ export default function LoginHistoryPage() {
 				columns={columns}
 				dataSource={items}
 				scroll={{ x: 'max-content' }}
-				rowClassName={(r) => (r.status === 'failed' ? 'bg-rose-50/30' : '')}
+				rowClassName={(r) => (r.status === 'failed' ? 'bg-danger-soft' : '')}
 				locale={{
 					emptyText: (
 						<div className="flex flex-col items-center justify-center py-12 text-center">

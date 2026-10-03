@@ -107,11 +107,11 @@ export function VerificationStatus() {
 					<div
 						className={`flex h-10 w-10 items-center justify-center rounded-md ${
 							info.status === 'verified'
-								? 'bg-emerald-50 text-emerald-700'
+								? 'bg-success-soft text-success-text'
 								: info.status === 'verified_minor'
-									? 'bg-blue-50 text-blue-700'
+									? 'bg-info-soft text-info-text'
 									: info.status === 'rejected'
-										? 'bg-rose-50 text-rose-700'
+										? 'bg-danger-soft text-danger-text'
 										: info.status === 'expired'
 											? 'bg-amber-50 text-amber-700'
 											: 'bg-neutral-100 text-neutral-600'
@@ -153,7 +153,7 @@ export function VerificationStatus() {
 			)}
 
 			{info.status === 'verified_minor' && (
-				<div className="mt-4 rounded-md bg-blue-50 p-3 text-sm text-blue-700">
+				<div className="mt-4 rounded-md bg-info-soft p-3 text-sm text-info-text">
 					<AlertTriangle size={16} className="inline mr-1" />
 					<span>
 						{t('verification.ageGroup')}: {info.ageGroup || '--'}
@@ -162,14 +162,14 @@ export function VerificationStatus() {
 			)}
 
 			{info.status === 'rejected' && (
-				<div className="mt-4 rounded-md bg-rose-50 p-3">
-					<p className="text-sm font-medium text-rose-700">{t('verification.rejected')}</p>
+				<div className="mt-4 rounded-md bg-danger-soft p-3">
+					<p className="text-sm font-medium text-danger-text">{t('verification.rejected')}</p>
 					{info.reason && (
-						<p className="mt-1 text-xs text-rose-600">
+						<p className="mt-1 text-xs text-danger-text">
 							{t('verification.reason')}: {info.reason}
 						</p>
 					)}
-					<p className="mt-1 text-xs text-rose-500">
+					<p className="mt-1 text-xs text-danger-text">
 						{t('verification.retryCount')}: {info.retryCount} / {info.maxRetries}
 					</p>
 				</div>

@@ -23,7 +23,7 @@ const mockEvents = [
 		type: 'online',
 		label: 'devices.activity.events.online',
 		icon: Wifi,
-		iconColor: 'text-emerald-500',
+		iconColor: 'text-success',
 		time: '2026-06-09T10:30:00Z',
 	},
 	{
@@ -55,7 +55,7 @@ const mockEvents = [
 		type: 'policy_change',
 		label: 'devices.activity.events.policyChange',
 		icon: Shield,
-		iconColor: 'text-indigo-500',
+		iconColor: 'text-info',
 		time: '2026-06-06T09:00:00Z',
 	},
 ];

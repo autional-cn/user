@@ -43,14 +43,14 @@ export default function NotificationsPage() {
 		{
 			system: {
 				icon: Info,
-				color: 'text-blue-700',
-				bg: 'bg-blue-50',
+				color: 'text-info',
+				bg: 'bg-info-soft',
 				label: t('notifications.type.system'),
 			},
 			security: {
 				icon: ShieldCheck,
-				color: 'text-emerald-700',
-				bg: 'bg-emerald-50',
+				color: 'text-success',
+				bg: 'bg-success-soft',
 				label: t('notifications.type.security'),
 			},
 			billing: {
@@ -61,8 +61,8 @@ export default function NotificationsPage() {
 			},
 			activity: {
 				icon: AlertTriangle,
-				color: 'text-rose-700',
-				bg: 'bg-rose-50',
+				color: 'text-danger',
+				bg: 'bg-danger-soft',
 				label: t('notifications.type.activity'),
 			},
 			account: {

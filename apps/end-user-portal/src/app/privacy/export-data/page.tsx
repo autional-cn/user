@@ -88,19 +88,19 @@ export default function ExportDataPage() {
 					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.desc')}</p>
 					<ul className="mt-4 space-y-2 text-left text-sm text-neutral-600">
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('privacy.exportData.include1')}
 						</li>
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('privacy.exportData.include2')}
 						</li>
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('privacy.exportData.include3')}
 						</li>
 						<li className="flex items-start gap-2">
-							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
+							<CheckCircle2 size={16} className="mt-0.5 text-success shrink-0" />
 							{t('privacy.exportData.include4')}
 						</li>
 					</ul>
@@ -126,14 +126,14 @@ export default function ExportDataPage() {
 			)}
 
 			{step === 'error' && (
-				<div className="rounded-lg border border-red-200 bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-600">
+				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
+					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<AlertTriangle size={32} />
 					</div>
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('privacy.exportData.errorTitle')}
 					</h3>
-					<p className="mt-2 text-sm text-red-600">{errorMsg}</p>
+					<p className="mt-2 text-sm text-danger-text">{errorMsg}</p>
 					<div className="mt-6 flex justify-center gap-3">
 						<Button onClick={() => setStep('idle')} variant="outline">
 							{t('common.cancel')}
@@ -146,8 +146,8 @@ export default function ExportDataPage() {
 			)}
 
 			{step === 'success' && (
-				<div className="rounded-lg border border-emerald-200 bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
+					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
 						<CheckCircle2 size={32} />
 					</div>
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">

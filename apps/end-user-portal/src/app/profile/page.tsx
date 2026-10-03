@@ -226,9 +226,9 @@ export default function ProfilePage() {
 			{/* Privacy Impact Link */}
 			<Link
 				to={buildNavHref(ROUTES.privacyImpact, tenantSlug)}
-				className="flex items-center gap-4 rounded-lg border border-blue-100 bg-blue-50/50 p-4 hover:bg-blue-50 hover:border-blue-200 transition-all"
+				className="flex items-center gap-4 rounded-lg border border-info-soft bg-info-soft p-4 hover:border-info transition-all"
 			>
-				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-blue-100 text-blue-700">
+				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-info-soft text-info-text">
 					<Eye size={20} />
 				</div>
 				<div className="flex-1">
@@ -241,9 +241,9 @@ export default function ProfilePage() {
 			{/* Consent Management Link */}
 			<Link
 				to={buildNavHref(ROUTES.consents, tenantSlug)}
-				className="flex items-center gap-4 rounded-lg border border-emerald-100 bg-emerald-50/50 p-4 hover:bg-emerald-50 hover:border-emerald-200 transition-all"
+				className="flex items-center gap-4 rounded-lg border border-success-soft bg-success-soft p-4 hover:border-success transition-all"
 			>
-				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-emerald-100 text-emerald-700">
+				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-success-soft text-success-text">
 					<FileCheck size={20} />
 				</div>
 				<div className="flex-1">

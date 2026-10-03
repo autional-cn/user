@@ -165,7 +165,7 @@ export default function BillingPage() {
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div className="bg-white rounded-lg border p-5">
 					<div className="flex items-center gap-3 mb-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-md bg-blue-50 text-blue-700">
+						<div className="flex h-10 w-10 items-center justify-center rounded-md bg-info-soft text-info-text">
 							<CreditCard size={20} />
 						</div>
 						<div>
@@ -178,7 +178,7 @@ export default function BillingPage() {
 							<span className="text-neutral-500">{t('billing.status')}</span>
 							<p className="font-medium">
 								<span
-									className={`inline-block px-2 py-0.5 rounded text-xs ${planStatus === 'active' ? 'bg-green-50 text-green-600' : planStatus === 'trial' ? 'bg-blue-50 text-blue-600' : planStatus === 'cancelled' ? 'bg-red-50 text-red-600' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
+									className={`inline-block px-2 py-0.5 rounded text-xs ${planStatus === 'active' ? 'bg-success-soft text-success' : planStatus === 'trial' ? 'bg-info-soft text-info' : planStatus === 'cancelled' ? 'bg-danger-soft text-danger' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
 								>
 									{t(
 										planStatus === 'active'
@@ -216,7 +216,7 @@ export default function BillingPage() {
 						</div>
 						<div>
 							<span className="text-neutral-500">{t('billing.autoRenew')}</span>
-							<p className={`font-medium ${autoRenew ? 'text-green-600' : 'text-neutral-600'}`}>
+							<p className={`font-medium ${autoRenew ? 'text-success-text' : 'text-neutral-600'}`}>
 								{autoRenew ? t('billing.autoRenewEnabled') : t('billing.autoRenewDisabled')}
 							</p>
 						</div>
@@ -270,7 +270,7 @@ export default function BillingPage() {
 				<h2 className="text-lg font-semibold mb-3">{t('billing.usageOverview')}</h2>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 					<UsageCard
-						icon={<Activity className="w-5 h-5 text-blue-500" />}
+						icon={<Activity className="w-5 h-5 text-info" />}
 						label={t('billing.apiCalls')}
 						value={usage?.apiCallsToday?.toLocaleString() ?? '0'}
 						max={maxApiCalls}
@@ -285,7 +285,7 @@ export default function BillingPage() {
 						unit="GB"
 					/>
 					<UsageCard
-						icon={<Users className="w-5 h-5 text-green-500" />}
+						icon={<Users className="w-5 h-5 text-success" />}
 						label={t('billing.usageUsers')}
 						value={`${usage?.users ?? 0}`}
 						max={maxUsers}
@@ -340,7 +340,7 @@ function UsageCard({
 			<div className="text-xl font-bold mb-2">{value}</div>
 			<div className="w-full bg-neutral-200 rounded-full h-2 mb-1">
 				<div
-					className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-red-500' : percent > 60 ? 'bg-amber-500' : 'bg-green-500'}`}
+					className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-danger' : percent > 60 ? 'bg-amber-500' : 'bg-success'}`}
 					style={{ width: `${Math.max(percent, 2)}%` }}
 				/>
 			</div>

@@ -95,13 +95,13 @@ export default function DeleteAccountPage() {
 				</div>
 			</div>
 
-			<div className="rounded-lg border border-red-200 bg-white p-6 shadow-sm">
+			<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm">
 				<div className="flex items-start gap-4">
-					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-50 text-red-600">
+					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<ShieldOff size={24} />
 					</div>
 					<div className="flex-1">
-						<h3 className="text-lg font-semibold text-red-700">
+						<h3 className="text-lg font-semibold text-danger-text">
 							{t('security.deleteAccount.warningTitle')}
 						</h3>
 						<p className="mt-1 text-sm text-neutral-600">
@@ -110,12 +110,12 @@ export default function DeleteAccountPage() {
 					</div>
 				</div>
 
-				<div className="mt-4 rounded-md bg-red-50 p-4">
+				<div className="mt-4 rounded-md bg-danger-soft p-4">
 					<div className="flex items-start gap-2">
-						<AlertTriangle size={16} className="mt-0.5 text-red-600 shrink-0" />
-						<div className="text-sm text-red-700">
+						<AlertTriangle size={16} className="mt-0.5 text-danger shrink-0" />
+						<div className="text-sm text-danger-text">
 							<p className="font-semibold">{t('security.deleteAccount.irreversible')}</p>
-							<ul className="mt-2 list-inside list-disc space-y-1 text-red-600">
+							<ul className="mt-2 list-inside list-disc space-y-1 text-danger-text">
 								<li>{t('security.deleteAccount.consequence1')}</li>
 								<li>{t('security.deleteAccount.consequence2')}</li>
 								<li>{t('security.deleteAccount.consequence3')}</li>
@@ -126,7 +126,7 @@ export default function DeleteAccountPage() {
 				</div>
 
 				{apiError && (
-					<div className="mt-4 rounded-md bg-red-50 p-3 text-sm text-red-600">{apiError}</div>
+					<div className="mt-4 rounded-md bg-danger-soft p-3 text-sm text-danger-text">{apiError}</div>
 				)}
 
 				<form onSubmit={handleSubmit(onSubmit)}>

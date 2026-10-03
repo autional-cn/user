@@ -94,12 +94,12 @@ export default function LinkedAccountsPage() {
 			</div>
 
 			{/* Info banner */}
-			<div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+			<div className="rounded-lg border border-info-soft bg-info-soft p-4">
 				<div className="flex items-start gap-3">
-					<Info size={20} className="text-blue-600 shrink-0 mt-0.5" />
+					<Info size={20} className="text-info shrink-0 mt-0.5" />
 					<div>
-						<p className="text-sm font-medium text-blue-800">{t('linkedAccounts.infoTitle')}</p>
-						<p className="mt-1 text-sm text-blue-700">{t('linkedAccounts.infoDesc')}</p>
+						<p className="text-sm font-medium text-info-text">{t('linkedAccounts.infoTitle')}</p>
+						<p className="mt-1 text-sm text-info-text">{t('linkedAccounts.infoDesc')}</p>
 					</div>
 				</div>
 			</div>

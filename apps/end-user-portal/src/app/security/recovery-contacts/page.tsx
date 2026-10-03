@@ -123,10 +123,10 @@ export default function RecoveryContactsPage() {
 				</div>
 			</div>
 
-			<div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+			<div className="rounded-lg border border-info-soft bg-info-soft p-4">
 				<div className="flex items-start gap-3">
-					<Shield size={18} className="mt-0.5 text-blue-600 shrink-0" />
-					<p className="text-sm text-blue-700">{t('security.recoveryContacts.info')}</p>
+					<Shield size={18} className="mt-0.5 text-info shrink-0" />
+					<p className="text-sm text-info-text">{t('security.recoveryContacts.info')}</p>
 				</div>
 			</div>
 
@@ -166,7 +166,7 @@ export default function RecoveryContactsPage() {
 											? t('security.recoveryContacts.email')
 											: t('security.recoveryContacts.phone')}
 										{contact.verified ? (
-											<span className="ml-2 text-emerald-600">
+											<span className="ml-2 text-success-text">
 												{t('security.recoveryContacts.verified')}
 											</span>
 										) : (
@@ -180,7 +180,7 @@ export default function RecoveryContactsPage() {
 							<button
 								onClick={() => handleDelete(contact.id)}
 								disabled={deletingId === contact.id}
-								className="text-neutral-500 hover:text-red-600 transition-colors disabled:opacity-50"
+								className="text-neutral-500 hover:text-danger-text transition-colors disabled:opacity-50"
 							>
 								{deletingId === contact.id ? (
 									<Loader2 size={16} className="animate-spin" />
@@ -270,7 +270,7 @@ export default function RecoveryContactsPage() {
 							/>
 						</div>
 
-						{errors.root && <p className="text-sm text-red-600">{errors.root.message}</p>}
+						{errors.root && <p className="text-sm text-danger-text">{errors.root.message}</p>}
 
 						<div className="flex justify-end gap-3">
 							<Button
