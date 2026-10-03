@@ -33,7 +33,7 @@ export function useWalletBalance(): UseQueryResult<WalletBalance, Error> {
 	});
 }
 
-interface WalletTransactionItem {
+export interface WalletTransactionItem {
 	id?: string;
 	type?: string;
 	amount?: string;

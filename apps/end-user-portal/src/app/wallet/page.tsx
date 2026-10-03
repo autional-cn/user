@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@autional-cn/shared';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
 import { useTranslation } from 'react-i18next';
 import { isNotFoundError } from '@/lib/api-error';
@@ -16,6 +19,7 @@ import {
 	getWalletCoupons,
 	getWalletBalanceHistory,
 } from '@/hooks/queries';
+import type { WalletTransactionItem, BalanceHistoryItem } from '@/hooks/queries';
 import {
 	Wallet,
 	Snowflake,
@@ -120,6 +124,105 @@ export default function WalletPage() {
 		setCouponCode('');
 	};
 
+	// 列定义：只描述「这一页有哪些列」。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
+	// 由设计系统下发的组件级令牌决定 —— 与控制台那 156 处 antd Table 吃的是同一份令牌。
+	const txColumns: DataTableColumns<WalletTransactionItem> = [
+		{
+			title: t('wallet.txType'),
+			dataIndex: 'type',
+			key: 'type',
+			render: (v: string | undefined) => (
+				<StatusBadge variant={txTypeVariant(v)}>{t(txTypeLabelKey(v))}</StatusBadge>
+			),
+		},
+		{
+			title: t('wallet.amount'),
+			dataIndex: 'amount',
+			key: 'amount',
+			align: 'right',
+			render: (v: string | undefined, tx: WalletTransactionItem) => {
+				const incoming = isIncoming(tx.type);
+				return (
+					<span className={'font-mono ' + (incoming ? 'text-green-600' : 'text-red-600')}>
+						{(incoming ? '+' : '-') + '¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+					</span>
+				);
+			},
+		},
+		{
+			title: t('wallet.remark'),
+			dataIndex: 'description',
+			key: 'description',
+			render: (v: string | undefined) => (
+				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
+			),
+		},
+		{
+			title: t('wallet.status'),
+			dataIndex: 'status',
+			key: 'status',
+			align: 'center',
+			render: (v: string | undefined) => (
+				<StatusBadge variant={txStatusVariant(v)}>{t(txStatusLabelKey(v))}</StatusBadge>
+			),
+		},
+		{
+			title: t('wallet.time'),
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="text-gray-400 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+			),
+		},
+	];
+
+	const historyColumns: DataTableColumns<BalanceHistoryItem> = [
+		{ title: t('wallet.txType'), dataIndex: 'type', key: 'type' },
+		{
+			title: t('wallet.amount'),
+			dataIndex: 'amount',
+			key: 'amount',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className={'font-mono ' + (Number(v ?? 0) >= 0 ? 'text-green-600' : 'text-red-600')}>
+					{'¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+				</span>
+			),
+		},
+		{
+			title: t('wallet.balanceBefore'),
+			dataIndex: 'balanceBefore',
+			key: 'balanceBefore',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="font-mono text-gray-500">
+					{'¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+				</span>
+			),
+		},
+		{
+			title: t('wallet.balanceAfter'),
+			dataIndex: 'balanceAfter',
+			key: 'balanceAfter',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="font-mono text-gray-700">
+					{'¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+				</span>
+			),
+		},
+		{
+			title: t('wallet.date'),
+			dataIndex: 'date',
+			key: 'date',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="text-gray-400 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+			),
+		},
+	];
+
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
 			<h1 className="text-2xl font-bold">{t('wallet.title')}</h1>
@@ -173,128 +276,33 @@ export default function WalletPage() {
 
 			<div>
 				<h2 className="text-lg font-semibold mb-3">{t('wallet.transactionHistory')}</h2>
-				<div className="overflow-x-auto rounded-lg border">
-					<table className="w-full text-sm">
-						<thead className="bg-gray-50">
-							<tr>
-								<th className="px-4 py-2 text-left">{t('wallet.txType')}</th>
-								<th className="px-4 py-2 text-right">{t('wallet.amount')}</th>
-								<th className="px-4 py-2 text-left">{t('wallet.remark')}</th>
-								<th className="px-4 py-2 text-center">{t('wallet.status')}</th>
-								<th className="px-4 py-2 text-right">{t('wallet.time')}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{(txs?.items ?? []).map((tx) => (
-								<tr key={tx.id} className="border-t">
-									<td className="px-4 py-2">
-										<span className={txTypeBadge(tx.type)}>{t(txTypeLabelKey(tx.type))}</span>
-									</td>
-									<td
-										className={`px-4 py-2 text-right font-mono ${
-											tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'transfer_in'
-												? 'text-green-600'
-												: 'text-red-600'
-										}`}
-									>
-										{tx.type === 'deposit' || tx.type === 'refund' || tx.type === 'transfer_in'
-											? '+'
-											: '-'}
-										¥
-										{Number(tx.amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-									</td>
-									<td className="px-4 py-2 text-gray-500 max-w-[200px] truncate">
-										{tx.description ?? '-'}
-									</td>
-									<td className="px-4 py-2 text-center">
-										<span className={txStatusBadge(tx.status)}>
-											{t(txStatusLabelKey(tx.status))}
-										</span>
-									</td>
-									<td className="px-4 py-2 text-right text-gray-400 text-xs">
-										{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : '-'}
-									</td>
-								</tr>
-							))}
-							{(!txs?.items || txs.items.length === 0) && (
-								<tr>
-									<td colSpan={5} className="px-4 py-8 text-center text-gray-400">
-										{t('wallet.noTransactions')}
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
-				{txs && (txs.total ?? 0) > 20 && (
-					<div className="flex justify-center gap-2 mt-4">
-						<button
-							disabled={page <= 1}
-							onClick={() => setPage(page - 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('wallet.previousPage')}
-						</button>
-						<span className="px-3 py-1 text-sm text-gray-500">
-							{page} / {Math.ceil((txs.total ?? 0) / 20)}
-						</span>
-						<button
-							disabled={page >= Math.ceil((txs.total ?? 0) / 20)}
-							onClick={() => setPage(page + 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('wallet.nextPage')}
-						</button>
-					</div>
-				)}
+				<DataTable<WalletTransactionItem>
+					rowKey={(r, i) => r.id ?? String(i)}
+					columns={txColumns}
+					dataSource={txs?.items ?? []}
+					scroll={{ x: 'max-content' }}
+					locale={{ emptyText: t('wallet.noTransactions') }}
+					pagination={{
+						current: page,
+						pageSize: 20,
+						total: txs?.total ?? 0,
+						onChange: setPage,
+						// 原来的手写翻页只在超过一页时才出现；保留该行为，否则会出现只有一页的分页条。
+						hideOnSinglePage: true,
+					}}
+				/>
 			</div>
 
 			{history && (history.items ?? []).length > 0 && (
 				<div>
 					<h2 className="text-lg font-semibold mb-3">{t('wallet.balanceHistory')}</h2>
-					<div className="overflow-x-auto rounded-lg border">
-						<table className="w-full text-sm">
-							<thead className="bg-gray-50">
-								<tr>
-									<th className="px-4 py-2 text-left">{t('wallet.txType')}</th>
-									<th className="px-4 py-2 text-right">{t('wallet.amount')}</th>
-									<th className="px-4 py-2 text-right">{t('wallet.balanceBefore')}</th>
-									<th className="px-4 py-2 text-right">{t('wallet.balanceAfter')}</th>
-									<th className="px-4 py-2 text-right">{t('wallet.date')}</th>
-								</tr>
-							</thead>
-							<tbody>
-								{(history.items ?? []).map((h, i) => (
-									<tr key={h.transactionId ?? i} className="border-t">
-										<td className="px-4 py-2">{h.type}</td>
-										<td
-											className={`px-4 py-2 text-right font-mono ${Number(h.amount ?? 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}
-										>
-											¥
-											{Number(h.amount ?? 0).toLocaleString(undefined, {
-												minimumFractionDigits: 2,
-											})}
-										</td>
-										<td className="px-4 py-2 text-right font-mono text-gray-500">
-											¥
-											{Number(h.balanceBefore ?? 0).toLocaleString(undefined, {
-												minimumFractionDigits: 2,
-											})}
-										</td>
-										<td className="px-4 py-2 text-right font-mono text-gray-700">
-											¥
-											{Number(h.balanceAfter ?? 0).toLocaleString(undefined, {
-												minimumFractionDigits: 2,
-											})}
-										</td>
-										<td className="px-4 py-2 text-right text-gray-400 text-xs">
-											{h.date ? new Date(h.date).toLocaleDateString() : '-'}
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
+					<DataTable<BalanceHistoryItem>
+						rowKey={(r, i) => r.transactionId ?? String(i)}
+						columns={historyColumns}
+						dataSource={history.items ?? []}
+						pagination={false}
+						scroll={{ x: 'max-content' }}
+					/>
 				</div>
 			)}
 
@@ -450,17 +458,20 @@ const txLabels: Record<string, string> = {
 	adjustment: 'wallet.txTypes.adjustment',
 };
 
-const txTypeBadges: Record<string, string> = {
-	deposit: 'text-green-600 bg-green-50 px-2 py-0.5 rounded',
-	withdraw: 'text-red-600 bg-red-50 px-2 py-0.5 rounded',
-	transfer: 'text-blue-600 bg-blue-50 px-2 py-0.5 rounded',
-	transfer_in: 'text-green-600 bg-green-50 px-2 py-0.5 rounded',
-	transfer_out: 'text-red-600 bg-red-50 px-2 py-0.5 rounded',
-	refund: 'text-blue-600 bg-blue-50 px-2 py-0.5 rounded',
-	freeze: 'text-amber-600 bg-amber-50 px-2 py-0.5 rounded',
-	unfreeze: 'text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded',
-	payment: 'text-purple-600 bg-purple-50 px-2 py-0.5 rounded',
-	adjustment: 'text-orange-600 bg-orange-50 px-2 py-0.5 rounded',
+// 交易类型 → 设计系统徽标档位。**只做映射，不做样式**。
+// 这里此前是 10 套裸色阶（text-green-600 bg-green-50 …，含 cyan / purple / orange 三个
+// 不在设计系统色阶里的色）—— 同一件事在四个 portal 各有各的写法，且没有任何一套做过对比度验证。
+const txTypeVariants: Record<string, StatusVariant> = {
+	deposit: 'success',
+	transfer_in: 'success',
+	withdraw: 'danger',
+	transfer_out: 'danger',
+	transfer: 'info',
+	refund: 'info',
+	unfreeze: 'info',
+	freeze: 'warning',
+	adjustment: 'warning',
+	payment: 'neutral',
 };
 
 const statusLabels: Record<string, string> = {
@@ -471,23 +482,30 @@ const statusLabels: Record<string, string> = {
 	processing: 'wallet.statusLabels.processing',
 };
 
-const statusBadges: Record<string, string> = {
-	completed: 'bg-green-50 text-green-600 px-2 py-0.5 rounded',
-	pending: 'bg-amber-50 text-amber-600 px-2 py-0.5 rounded',
-	failed: 'bg-red-50 text-red-600 px-2 py-0.5 rounded',
-	cancelled: 'bg-gray-100 text-gray-500 px-2 py-0.5 rounded',
-	processing: 'bg-blue-50 text-blue-600 px-2 py-0.5 rounded',
+const statusVariants: Record<string, StatusVariant> = {
+	completed: 'success',
+	pending: 'warning',
+	failed: 'danger',
+	cancelled: 'neutral',
+	processing: 'info',
 };
 
 function txTypeLabelKey(t: string | undefined) {
 	return txLabels[t ?? ''] ?? t ?? '-';
 }
-function txTypeBadge(t: string | undefined) {
-	return txTypeBadges[t ?? ''] ?? '';
+// 进账的三种类型。原来这个判断在表头和「余额变动」两处各写了一遍字面量，
+// 抽出来是因为列定义也要用它（金额的正负号与颜色）。
+const INCOMING_TYPES = new Set(['deposit', 'refund', 'transfer_in']);
+function isIncoming(t: string | undefined) {
+	return INCOMING_TYPES.has(t ?? '');
+}
+
+function txTypeVariant(t: string | undefined): StatusVariant {
+	return txTypeVariants[t ?? ''] ?? 'neutral';
 }
 function txStatusLabelKey(s: string | undefined) {
 	return statusLabels[s ?? ''] ?? s ?? '-';
 }
-function txStatusBadge(s: string | undefined) {
-	return statusBadges[s ?? ''] ?? '';
+function txStatusVariant(s: string | undefined): StatusVariant {
+	return statusVariants[s ?? ''] ?? 'neutral';
 }
