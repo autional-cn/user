@@ -800,11 +800,13 @@ export default function SecurityPage() {
 				open={bindModalOpen}
 				onClose={() => setBindModalOpen(false)}
 				title={t('security.oauth.bindNew')}
-				// 说明行归表头（Modal 的 description）—— 手写版的这一行本来就在表头里、在分隔线之上；
-				// 搬进正文会让它掉到分隔线下面，观感与原版不一致。
-				description={t('security.oauth.bindPrompt', '选择要绑定的第三方账号')}
 				maxWidth="sm"
 			>
+				{/* 说明行留在**正文**（不搬到 description）：核对过改造前的原文件，这一行本来就在卡片正文里
+				    （表头 div 已经闭合之后），不在分隔线之上。搬进表头会改掉它原来的位置。 */}
+				<p className="text-sm text-neutral-600 mb-4">
+					{t('security.oauth.bindPrompt', '选择要绑定的第三方账号')}
+				</p>
 				<div className="space-y-2">
 					{availableOAuthProviders.map((p) => {
 						const meta = getBindProviderMeta(p.id);
