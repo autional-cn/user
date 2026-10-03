@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth, useTenantSlug } from '@autional-cn/shared';
 import { paymentsByPayments } from '@autional-cn/shared/generated/api';
 import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { FormInput } from '@autional-cn/ui/rhf';
 import { useTranslation } from 'react-i18next';
 import { Wallet, CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import { useWalletBalance, useRechargeWallet } from '@/hooks/queries';
@@ -37,7 +38,7 @@ export default function WalletRechargePage() {
 	];
 
 	const {
-		register,
+		control,
 		handleSubmit,
 		watch,
 		setValue,
@@ -169,22 +170,25 @@ export default function WalletRechargePage() {
 					))}
 					<div className="relative">
 						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
-						<input
+						<FormInput<RechargeFormData>
+							name="customAmount"
+							control={control}
 							type="number"
 							placeholder={t('wallet.recharge.custom')}
-							{...register('customAmount', {
-								onChange: () => setValue('amount', '0'),
-							})}
-							className="w-32 pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-[var(--color-brand)] focus:outline-none"
+							// 原来挂在 register 上的 onChange 是「改了自定义金额就清掉预设选中态」的联动；
+							// 直接当 prop 传会被控件内部的 field 覆盖，只有走 rules 才由 react-hook-form 调用。
+							rules={{ onChange: () => setValue('amount', '0') }}
+							// 只保留 ¥ 前缀绝对定位所需的布局类，边框/焦点环这类外观归设计系统
+							className="w-32 pl-8"
+							// 文案仍按今天那句算：zod 的 message 是 i18n 键，不能直接当用户文案显示
+							error={
+								errors.amount
+									? t(errors.amount.message || 'wallet.recharge.amountRequired')
+									: undefined
+							}
 						/>
 					</div>
 				</div>
-
-				{errors.amount && (
-					<p className="text-sm text-red-500">
-						{t(errors.amount.message || 'wallet.recharge.amountRequired')}
-					</p>
-				)}
 
 				<h2 className="text-lg font-semibold pt-2">{t('wallet.recharge.paymentMethod')}</h2>
 				<div className="flex gap-3">

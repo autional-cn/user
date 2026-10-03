@@ -297,6 +297,7 @@ export default function ConsentsPage() {
 				open={!!revokingField}
 				onClose={() => setRevokingField(null)}
 				title={t('consents.revokeConfirmTitle')}
+				description={t('consents.revokeConfirmDesc', { field: revokingField })}
 				maxWidth="sm"
 				footer={
 					<>
@@ -316,13 +317,7 @@ export default function ConsentsPage() {
 					</>
 				}
 			>
-				{/* 说明行是这一页唯一的正文。它原本在手写版的**表头**里（分隔线之上），本可以走 Modal 的 description，
-				    但「只有表头、没有正文」需要 Modal 的 children 可选 —— 那是 @autional-cn/ui **rc.18** 才有的形状，
-				    而舰队现在装的是 rc.17（发 rc.18 时 registry 正好在闹证书问题，装不上）。
-				    升到 rc.18 后把这一行改成 description 即可。 */}
-				<p className="text-sm text-[var(--color-text-secondary)]">
-					{t('consents.revokeConfirmDesc', { field: revokingField })}
-				</p>
+
 			</Modal>
 		</div>
 	);

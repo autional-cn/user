@@ -15,6 +15,7 @@ import {
 	authMeRecoveryContactsByRecoveryContactsDelete,
 } from '@autional-cn/shared/generated/api';
 import { LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
+import { FormInput } from '@autional-cn/ui/rhf';
 import { addContactSchema, type AddContactFormData } from '@/lib/validators';
 
 interface RecoveryContact {
@@ -40,7 +41,7 @@ export default function RecoveryContactsPage() {
 	const [deletingId, setDeletingId] = useState<string | null>(null);
 
 	const {
-		register,
+		control,
 		handleSubmit,
 		setValue,
 		watch,
@@ -253,18 +254,20 @@ export default function RecoveryContactsPage() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
-								{addType === 'email'
-									? t('security.recoveryContacts.emailAddress')
-									: t('security.recoveryContacts.phoneNumber')}
-							</label>
-							<input
+							<FormInput<AddContactFormData>
+								name="value"
+								control={control}
 								type={addType === 'email' ? 'email' : 'tel'}
-								{...register('value')}
+								label={
+									addType === 'email'
+										? t('security.recoveryContacts.emailAddress')
+										: t('security.recoveryContacts.phoneNumber')
+								}
 								placeholder={addType === 'email' ? 'name@example.com' : '+8613800138000'}
-								className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+								// 今天这一行渲染的就是 zod 的原始 message（required / invalidEmail / invalidPhone），
+								// 照抄同一条以免换掉用户看到的字；它没走 t() 是既有问题，不在本次收敛范围内。
+								error={errors.value ? errors.value.message : undefined}
 							/>
-							{errors.value && <p className="mt-1 text-sm text-red-600">{errors.value.message}</p>}
 						</div>
 
 						{errors.root && <p className="text-sm text-red-600">{errors.root.message}</p>}

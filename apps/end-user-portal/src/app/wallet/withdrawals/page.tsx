@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@autional-cn/shared';
-import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { LoadingScreen, ErrorState, EmptyState, StatusBadge, Input } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
+import { FormField, FormTextarea, useBoundField, useFormFieldA11y } from '@autional-cn/ui/rhf';
 import { useTranslation } from 'react-i18next';
 import { Wallet, ArrowDownCircle, CheckCircle, XCircle, Loader2, Banknote } from 'lucide-react';
 import { useWalletBalance, useWithdrawWallet, useWalletTransactions } from '@/hooks/queries';
@@ -57,6 +58,7 @@ export default function WithdrawalsPage() {
 
 	const {
 		register,
+		control,
 		handleSubmit,
 		reset,
 		watch,
@@ -66,6 +68,18 @@ export default function WithdrawalsPage() {
 		resolver: zodResolver(withdrawalSchema),
 		defaultValues: { amount: '', method: 'bank_transfer', notes: '' },
 	});
+
+	// 金额框里那个 ¥ 是用户看得见的字符，而 FormInput 把「标签 + 控件 + 错误」包成一个块、
+	// 控件槽只有一个 —— 装饰没地方放，硬塞进去会被标签推高（top-1/2 会变成整个字段块的中线）。
+	// 所以带装饰的字段走 FormField + useBoundField：标签/错误/aria 仍由设计系统下发，
+	// 外观仍取设计系统的 Input。错误文案按字段显式覆盖 —— zod 的 message 是 i18n 键，
+	// 不覆盖就会把它原样显示给用户（那是回归，不是收敛）。
+	const { field: amountField, error: amountError } = useBoundField<WithdrawalFormData>(
+		'amount',
+		control,
+		undefined,
+		errors.amount ? t(errors.amount.message || 'wallet.withdrawals.amountRequired') : undefined,
+	);
 
 	const watchedAmount = watch('amount');
 
@@ -191,25 +205,27 @@ export default function WithdrawalsPage() {
 			>
 				<h2 className="text-lg font-semibold">{t('wallet.withdrawals.applyWithdrawal')}</h2>
 
-				<div>
-					<label className="block text-sm font-medium text-gray-700 mb-1">
-						{t('wallet.withdrawals.amount')}
-					</label>
-					<div className="relative">
-						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
-						<input
-							type="number"
-							placeholder={t('wallet.withdrawals.amountPlaceholder')}
-							{...register('amount')}
-							className="w-full pl-8 pr-3 py-3 rounded-lg border border-gray-200 text-lg font-semibold focus:border-[var(--color-brand)] focus:outline-none"
-						/>
-					</div>
-					{errors.amount && (
-						<p className="text-sm text-red-500 mt-1">
-							{t(errors.amount.message || 'wallet.withdrawals.amountRequired')}
-						</p>
-					)}
-				</div>
+				{/* 金额框上的 ¥ 与大号加粗一并留着：它们不是设计系统要收走的边框/焦点环，pl-8 是给 ¥ 让位。
+				    装饰必须贴在**输入框**上，所以这个字段用 FieldControlSlot 把装饰和控件放进同一个定位块，
+				    标签与错误仍归 FormField 管（读屏器接线因此不丢）。 */}
+				<FormField label={t('wallet.withdrawals.amount')} error={amountError}>
+					<FieldControlSlot
+						render={(a11y) => (
+							<div className="relative">
+								<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
+								<Input
+									{...amountField}
+									id={a11y.id}
+									aria-invalid={a11y.invalid || undefined}
+									aria-describedby={a11y.describedBy}
+									type="number"
+									placeholder={t('wallet.withdrawals.amountPlaceholder')}
+									className="pl-8 text-lg font-semibold"
+								/>
+							</div>
+						)}
+					/>
+				</FormField>
 
 				<div>
 					<label className="block text-sm font-medium text-gray-700 mb-1">
@@ -235,17 +251,17 @@ export default function WithdrawalsPage() {
 					</div>
 				</div>
 
-				<div>
-					<label className="block text-sm font-medium text-gray-700 mb-1">
-						{t('wallet.withdrawals.remark')}
-					</label>
-					<textarea
-						placeholder={t('wallet.withdrawals.remarkPlaceholder')}
-						{...register('notes')}
-						rows={3}
-						className="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:border-[var(--color-brand)] focus:outline-none resize-none"
-					/>
-				</div>
+				{/* 备注在 schema 里没有校验规则（z.string().optional()），今天也没有错误行 —— 不给 error，
+				    行为与原样一致，不会凭空多出一行报错。resize-none 保留：设计系统的 textarea 不管 resize，
+				    去掉它用户就能拖拽缩放，那是可见的行为变化，不在这次收敛范围内。 */}
+				<FormTextarea<WithdrawalFormData>
+					name="notes"
+					control={control}
+					label={t('wallet.withdrawals.remark')}
+					placeholder={t('wallet.withdrawals.remarkPlaceholder')}
+					rows={3}
+					className="resize-none"
+				/>
 
 				<button
 					type="submit"
@@ -359,4 +375,18 @@ function withdrawalStatusLabelKey(s: string | undefined): string {
 function methodLabelKey(t: string | undefined): string {
 	if (!t) return '-';
 	return methodLabels[t] ?? t;
+}
+
+// 带装饰的控件（金额框里的 ¥、密码框里的显示/隐藏按钮）需要「装饰与控件同处一个定位块」，
+// 而 /rhf 的绑定控件把 标签 + 控件 + 错误 包成一个块、控件槽只有一个 —— 装饰塞进去会被标签推高。
+// 这里补的正是那个槽：id / aria-invalid / aria-describedby 仍由 FormField 下发（与 /rhf 内部同一套做法），
+// 页面只决定谁包住谁。纯装饰字段请直接用 FormInput / FormTextarea，不要走这里。
+function FieldControlSlot({
+	render,
+}: {
+	render: (a11y: { id: string; invalid: boolean; describedBy?: string }) => ReactNode;
+}) {
+	const a11y = useFormFieldA11y();
+	// FormField 一定会提供上下文；兜底只为类型收敛，不改变行为。
+	return <>{render(a11y ?? { id: '', invalid: false, describedBy: undefined })}</>;
 }

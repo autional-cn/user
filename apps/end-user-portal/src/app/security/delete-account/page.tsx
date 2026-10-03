@@ -21,6 +21,7 @@ import {
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
 import { Button } from '@autional-cn/ui';
+import { FormInput } from '@autional-cn/ui/rhf';
 import { deleteSchema, type DeleteFormData } from '@/lib/validators';
 
 export default function DeleteAccountPage() {
@@ -32,7 +33,7 @@ export default function DeleteAccountPage() {
 	const [apiError, setApiError] = useState<string | null>(null);
 
 	const {
-		register,
+		control,
 		handleSubmit,
 		formState: { errors, isValid, isSubmitting },
 	} = useForm<DeleteFormData>({
@@ -130,38 +131,28 @@ export default function DeleteAccountPage() {
 
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className="mt-6 border-t border-neutral-100 pt-4">
-						<p className="text-sm text-neutral-700 font-medium">
-							{t('security.deleteAccount.passwordLabel')}
-						</p>
-						<input
+						<FormInput<DeleteFormData>
+							name="password"
+							control={control}
 							type="password"
-							{...register('password')}
 							autoComplete="current-password"
+							label={t('security.deleteAccount.passwordLabel')}
 							placeholder={t('security.deleteAccount.passwordPlaceholder', '请输入当前密码')}
-							className="mt-2 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+							// zodResolver 给的 message 是 i18n 键 `mustMatch`，不显式覆盖就会把用户看到的
+							// 报错从这句中文换成那串键 —— 校验仍归表单库，这里只决定显示哪句话。
+							error={errors.password ? t('security.deleteAccount.passwordRequired') : undefined}
 						/>
-						{errors.password && (
-							<p className="mt-1 text-sm text-red-600">
-								{t('security.deleteAccount.passwordRequired')}
-							</p>
-						)}
 					</div>
 
 					<div className="mt-4 border-t border-neutral-100 pt-4">
-						<p className="text-sm text-neutral-700 font-medium">
-							{t('security.deleteAccount.confirmPrompt')}
-						</p>
-						<input
-							type="text"
-							{...register('confirmText')}
+						<FormInput<DeleteFormData>
+							name="confirmText"
+							control={control}
+							label={t('security.deleteAccount.confirmPrompt')}
 							placeholder="DELETE"
-							className="mt-2 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm font-mono tracking-widest focus:border-red-500 focus:outline-none focus:ring-1 focus:ring-red-500"
+							// 报错文案沿用今天那句（与上方标签同一个键），而不是 zod 的 `mustMatch`
+							error={errors.confirmText ? t('security.deleteAccount.confirmPrompt') : undefined}
 						/>
-						{errors.confirmText && (
-							<p className="mt-1 text-sm text-red-600">
-								{t('security.deleteAccount.confirmPrompt')}
-							</p>
-						)}
 					</div>
 
 					<div className="mt-6 flex justify-end gap-3">
