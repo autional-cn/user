@@ -7,7 +7,10 @@ import { Link } from 'react-router';
 import { useAuth, useTenantSlug } from '@autional-cn/shared';
 import { profilesPrivacyImpactByProfiles } from '@autional-cn/shared/generated/api';
 import { LoadingScreen } from '@autional-cn/ui';
-import { ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import {
 	Eye,
 	EyeOff,
@@ -62,6 +65,15 @@ const RISK_BAR_COLORS = {
 	low: 'bg-emerald-500',
 	medium: 'bg-amber-500',
 	high: 'bg-rose-500',
+};
+
+// 风险等级 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
+// 表格里的风险徽标原来是 emerald/amber/rose 三套裸色阶拼出来的圆角 span：配色写在业务侧，
+// 而且 rose-50 / rose-700 这一对并没有做过对比度验证（深色模式下底色的生成规则也不一样）。
+const RISK_STATUS_VARIANTS: Record<string, StatusVariant> = {
+	low: 'success',
+	medium: 'warning',
+	high: 'danger',
 };
 
 const AUDIENCE_ICONS: Record<string, typeof Globe> = {
@@ -165,6 +177,56 @@ export default function PrivacyImpactPage() {
 	const riskScore = impact?.riskScore ?? 0;
 	const riskLevel = impact?.riskLevel ?? 'low';
 
+	// 列定义：只描述**这一页有哪些列**。表头底色 / 悬浮态 / 边框 / 行高，
+	// 由设计系统下发的组件级令牌决定 —— 与其它 portal 的数据表吃的是同一份令牌。
+	const columns: DataTableColumns<FieldExposure> = [
+		{
+			title: t('privacyImpact.field'),
+			dataIndex: 'label',
+			key: 'field',
+			// 高风险字段配闭眼图标：这一列表达的本来就是「这个字段对外暴露到什么程度」，图标随语义保留
+			render: (_: unknown, field: FieldExposure) => (
+				<div className="flex items-center gap-3">
+					{field.riskLevel === 'high' ? (
+						<EyeOff size={16} className="text-rose-400" />
+					) : (
+						<Eye size={16} className="text-neutral-400" />
+					)}
+					<span className="font-medium text-neutral-900">{field.label}</span>
+				</div>
+			),
+		},
+		{
+			title: t('privacyImpact.visibleTo'),
+			dataIndex: 'visibleTo',
+			key: 'visibleTo',
+			render: (v: string, field: FieldExposure) => {
+				const AudienceIcon = AUDIENCE_ICONS[field.audience] || Globe;
+				return (
+					<div className="flex items-center gap-2">
+						<AudienceIcon size={14} className="text-neutral-400" />
+						<span className="text-neutral-600">{v}</span>
+					</div>
+				);
+			},
+		},
+		{
+			title: t('privacyImpact.riskLevel'),
+			dataIndex: 'riskLevel',
+			key: 'riskLevel',
+			render: (_: unknown, field: FieldExposure) => {
+				// 图标取自原来的 RISK_COLORS（低=对勾 / 中高=警告三角），配色改由 StatusBadge 下发
+				const Icon = RISK_COLORS[field.riskLevel].icon;
+				return (
+					<StatusBadge variant={RISK_STATUS_VARIANTS[field.riskLevel] || 'neutral'}>
+						<Icon size={12} />
+						{getRiskLabel(field.riskLevel)}
+					</StatusBadge>
+				);
+			},
+		},
+	];
+
 	return (
 		<div className="space-y-6">
 			<div>
@@ -217,61 +279,15 @@ export default function PrivacyImpactPage() {
 					</h3>
 					<p className="mt-1 text-sm text-neutral-500">{t('privacyImpact.fieldExposureDesc')}</p>
 				</div>
-				<div className="overflow-x-auto">
-					<table className="w-full text-sm">
-						<thead className="border-b border-neutral-100 bg-neutral-50/50">
-							<tr>
-								<th className="px-6 py-3 text-left font-medium text-neutral-600">
-									{t('privacyImpact.field')}
-								</th>
-								<th className="px-6 py-3 text-left font-medium text-neutral-600">
-									{t('privacyImpact.visibleTo')}
-								</th>
-								<th className="px-6 py-3 text-left font-medium text-neutral-600">
-									{t('privacyImpact.riskLevel')}
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{fieldExposures.map((field) => {
-								const colors = RISK_COLORS[field.riskLevel];
-								const Icon = colors.icon;
-								const AudIcon = AUDIENCE_ICONS[field.audience] || Globe;
-								return (
-									<tr
-										key={field.field}
-										className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
-									>
-										<td className="px-6 py-3">
-											<div className="flex items-center gap-3">
-												{field.riskLevel === 'high' ? (
-													<EyeOff size={16} className="text-rose-400" />
-												) : (
-													<Eye size={16} className="text-neutral-400" />
-												)}
-												<span className="font-medium text-neutral-900">{field.label}</span>
-											</div>
-										</td>
-										<td className="px-6 py-3">
-											<div className="flex items-center gap-2">
-												<AudIcon size={14} className="text-neutral-400" />
-												<span className="text-neutral-600">{field.visibleTo}</span>
-											</div>
-										</td>
-										<td className="px-6 py-3">
-											<span
-												className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${colors.bg} ${colors.text} ${colors.border} border`}
-											>
-												<Icon size={12} />
-												{getRiskLabel(field.riskLevel)}
-											</span>
-										</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</table>
-				</div>
+
+				{/* 外面那层 overflow-x-auto 由 DataTable 自带容器接管；卡片和标题是表外内容，保留 */}
+				<DataTable<FieldExposure>
+					rowKey={(field) => field.field}
+					columns={columns}
+					dataSource={fieldExposures}
+					scroll={{ x: 'max-content' }}
+					pagination={false}
+				/>
 			</div>
 
 			{/* Recommendations */}

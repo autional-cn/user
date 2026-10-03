@@ -4,23 +4,29 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError } from '@autional-cn/shared';
 import { useAuditLogs } from '@/hooks/queries';
-import type { AuditLogItem, PageInfo } from '@/hooks/queries';
+import type { AuditLogItem } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
+import { StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import {
 	History,
 	Download,
 	CheckCircle2,
 	XCircle,
-	ChevronLeft,
-	ChevronRight,
 	Clock,
-	Globe,
 	Monitor,
 	MapPin,
-	Search,
 } from 'lucide-react';
+
+// 状态 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
+const STATUS_VARIANTS: Record<string, StatusVariant> = {
+	success: 'success',
+	failed: 'danger',
+};
 
 export default function LoginHistoryPage() {
 	const { t } = useTranslation();
@@ -49,7 +55,6 @@ export default function LoginHistoryPage() {
 
 	const allItems: AuditLogItem[] = data?.items || [];
 	const total: number = data?.total || 0;
-	const pagination: PageInfo | undefined = data?.pagination;
 
 	const items = useMemo(() => {
 		if (statusFilter === 'all') return allItems;
@@ -125,6 +130,82 @@ export default function LoginHistoryPage() {
 	if (isLoading) return <LoadingScreen message={t('loginHistory.loading')} />;
 	if (error) return <ErrorState message={t('loginHistory.error')} className="min-h-[40vh]" />;
 
+	// 列定义：只描述**这一页有哪些列**；表头底色 / 悬浮态 / 边框 / 行高 / 分页外观
+	// 由设计系统下发的组件级令牌决定 —— 四个门户吃的是同一份令牌。
+	const columns: DataTableColumns<AuditLogItem> = [
+		{
+			title: (
+				<span className="flex items-center gap-1">
+					<Clock size={14} />
+					{t('loginHistory.time')}
+				</span>
+			),
+			key: 'time',
+			render: (_: unknown, item: AuditLogItem) => (
+				<span className="whitespace-nowrap">{formatTime(item.timestamp || item.createdAt)}</span>
+			),
+		},
+		{
+			title: t('loginHistory.ip'),
+			dataIndex: 'ip',
+			key: 'ip',
+			render: (v: string | undefined) => <span className="font-mono text-xs">{v || '-'}</span>,
+		},
+		{
+			title: (
+				<span className="flex items-center gap-1">
+					<Monitor size={14} />
+					{t('loginHistory.device')}
+				</span>
+			),
+			key: 'device',
+			render: (_: unknown, item: AuditLogItem) => {
+				const ua = parseUserAgent(item.userAgent);
+				return (
+					<span className="inline-block max-w-[200px] truncate">
+						{`${ua.browser} ${ua.os}`.trim() || t('loginHistory.unknownDevice')}
+					</span>
+				);
+			},
+		},
+		{
+			title: (
+				<span className="flex items-center gap-1">
+					<MapPin size={14} />
+					{t('loginHistory.location')}
+				</span>
+			),
+			dataIndex: 'location',
+			key: 'location',
+			render: (v: string | undefined) => v || t('loginHistory.unknownLocation'),
+		},
+		{
+			title: t('loginHistory.status'),
+			dataIndex: 'status',
+			key: 'status',
+			render: (v: string | undefined) => {
+				// 原表的判定是「非 failed 一律算成功」，判定与徽标文案都要原样保留。
+				const isSuccess = v !== 'failed';
+				return (
+					<StatusBadge variant={STATUS_VARIANTS[isSuccess ? 'success' : 'failed']}>
+						{isSuccess ? <CheckCircle2 size={12} /> : <XCircle size={12} />}
+						{isSuccess ? t('loginHistory.statusSuccess') : t('loginHistory.statusFailed')}
+					</StatusBadge>
+				);
+			},
+		},
+		{
+			title: t('loginHistory.reason'),
+			dataIndex: 'reason',
+			key: 'reason',
+			render: (v: string | undefined, item: AuditLogItem) => (
+				<span className="text-xs">
+					{item.status !== 'failed' ? '-' : v || t('loginHistory.unknownReason')}
+				</span>
+			),
+		},
+	];
+
 	return (
 		<div className="space-y-6">
 			<div className="flex items-center justify-between">
@@ -197,121 +278,34 @@ export default function LoginHistoryPage() {
 				</div>
 			</div>
 
-			{/* Table */}
-			<div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
-				<div className="overflow-x-auto">
-					<table className="w-full text-sm">
-						<thead className="border-b border-neutral-200 bg-neutral-50">
-							<tr>
-								<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-									<span className="flex items-center gap-1">
-										<Clock size={14} />
-										{t('loginHistory.time')}
-									</span>
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-									{t('loginHistory.ip')}
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-									<span className="flex items-center gap-1">
-										<Monitor size={14} />
-										{t('loginHistory.device')}
-									</span>
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-									<span className="flex items-center gap-1">
-										<MapPin size={14} />
-										{t('loginHistory.location')}
-									</span>
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-									{t('loginHistory.status')}
-								</th>
-								<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-									{t('loginHistory.reason')}
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{items.map((item, idx) => {
-								const ua = parseUserAgent(item.userAgent);
-								const isSuccess = item.status !== 'failed';
-								return (
-									<tr
-										key={item.id || idx}
-										className={`border-b border-neutral-100 hover:bg-neutral-50 transition-colors ${!isSuccess ? 'bg-rose-50/30' : ''}`}
-									>
-										<td className="px-4 py-3 text-neutral-700 whitespace-nowrap">
-											{formatTime(item.timestamp || item.createdAt)}
-										</td>
-										<td className="px-4 py-3 font-mono text-xs text-neutral-600 whitespace-nowrap">
-											{item.ip || '-'}
-										</td>
-										<td className="px-4 py-3 text-neutral-600 max-w-[200px] truncate">
-											{`${ua.browser} ${ua.os}`.trim() || t('loginHistory.unknownDevice')}
-										</td>
-										<td className="px-4 py-3 text-neutral-600">
-											{item.location || t('loginHistory.unknownLocation')}
-										</td>
-										<td className="px-4 py-3 whitespace-nowrap">
-											{isSuccess ? (
-												<span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
-													<CheckCircle2 size={12} />
-													{t('loginHistory.statusSuccess')}
-												</span>
-											) : (
-												<span className="inline-flex items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 text-xs font-medium text-rose-700">
-													<XCircle size={12} />
-													{t('loginHistory.statusFailed')}
-												</span>
-											)}
-										</td>
-										<td className="px-4 py-3 text-neutral-500 text-xs">
-											{!isSuccess ? item.reason || t('loginHistory.unknownReason') : '-'}
-										</td>
-									</tr>
-								);
-							})}
-						</tbody>
-					</table>
-				</div>
-
-				{items.length === 0 && (
-					<div className="flex flex-col items-center justify-center py-12 text-center">
-						<History size={40} className="text-neutral-300" />
-						<p className="mt-4 text-sm text-neutral-500">{t('loginHistory.empty')}</p>
-					</div>
-				)}
-			</div>
-
-			{/* Pagination */}
-			{pagination && pagination.totalPages > 1 && (
-				<div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3">
-					<span className="text-sm text-neutral-500">
-						{t('loginHistory.pageInfo', {
-							page: pagination.page,
-							totalPages: pagination.totalPages,
-						})}
-					</span>
-					<div className="flex items-center gap-2">
-						<button
-							onClick={() => setPage((p) => Math.max(1, p - 1))}
-							disabled={!pagination.hasPrev}
-							className="flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed"
-						>
-							<ChevronLeft size={14} /> {t('loginHistory.prev')}
-						</button>
-						<button
-							onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-							disabled={!pagination.hasNext}
-							className="flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed"
-						>
-							{t('loginHistory.next')}
-							<ChevronRight size={14} />
-						</button>
-					</div>
-				</div>
-			)}
+			{/* 列定义只描述「这一页有哪些列」；表头 / 悬浮态 / 边框 / 行高 / 分页外观
+			    由设计系统下发的组件级令牌决定，与其它三个门户同源。 */}
+			{/* 原来「登录失败」整行铺一层浅色底 —— 那是这一页唯一的危险信号，rowClassName 保留该行为。
+			    原来「无数据」也不是表体里的占位 <tr>，而是表格外的一整块（图标 + 文案）；
+			    整块放进 emptyText 才能一条不丢地搬过来。 */}
+			<DataTable<AuditLogItem>
+				rowKey={(r, i) => r.id || String(i)}
+				columns={columns}
+				dataSource={items}
+				scroll={{ x: 'max-content' }}
+				rowClassName={(r) => (r.status === 'failed' ? 'bg-rose-50/30' : '')}
+				locale={{
+					emptyText: (
+						<div className="flex flex-col items-center justify-center py-12 text-center">
+							<History size={40} className="text-neutral-300" />
+							<p className="mt-4 text-sm text-neutral-500">{t('loginHistory.empty')}</p>
+						</div>
+					),
+				}}
+				pagination={{
+					current: page,
+					pageSize,
+					total,
+					onChange: setPage,
+					// 原来的手写翻页只在超过一页时才出现；hideOnSinglePage 保留这个行为。
+					hideOnSinglePage: true,
+				}}
+			/>
 		</div>
 	);
 }

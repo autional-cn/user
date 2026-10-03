@@ -54,7 +54,7 @@ export function useBillingSubscription(tenantId: string, enabled?: boolean) {
 	});
 }
 
-interface BillingRecordItem {
+export interface BillingRecordItem {
 	recordId?: string;
 	invoiceNumber?: string;
 	amount?: number;

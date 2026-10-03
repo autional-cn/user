@@ -4,14 +4,27 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@autional-cn/shared';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { useTranslation } from 'react-i18next';
 import { Wallet, ArrowDownCircle, CheckCircle, XCircle, Loader2, Banknote } from 'lucide-react';
 import { useWalletBalance, useWithdrawWallet, useWalletTransactions } from '@/hooks/queries';
+import type { WalletTransactionItem } from '@/hooks/queries';
 import { withdrawalSchema, type WithdrawalFormData } from '@/lib/validators';
 import { isNotFoundError } from '@/lib/api-error';
 
 const WITHDRAWAL_STATUSES = ['all', 'pending', 'approved', 'rejected', 'completed'] as const;
+
+// 状态 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
+// 档位照搬原表的语义色：pending→warning、approved→info、rejected→danger、completed→success。
+const WITHDRAWAL_STATUS_VARIANTS: Record<string, StatusVariant> = {
+	pending: 'warning',
+	approved: 'info',
+	rejected: 'danger',
+	completed: 'success',
+};
 
 export default function WithdrawalsPage() {
 	const { t } = useTranslation();
@@ -106,6 +119,57 @@ export default function WithdrawalsPage() {
 		}
 		return false;
 	});
+
+	// 列定义：只描述**这一页有哪些列**；表头 / 悬浮态 / 边框 / 行高 / 分页外观
+	// 由设计系统下发的组件级令牌决定 —— 四个门户吃的是同一份令牌。
+	const columns: DataTableColumns<WalletTransactionItem> = [
+		{
+			title: t('wallet.withdrawals.date'),
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			render: (v: string | undefined) => (
+				<span className="text-gray-500">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+			),
+		},
+		{
+			title: t('wallet.amount'),
+			dataIndex: 'amount',
+			key: 'amount',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="font-mono text-red-600">
+					-¥{Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+				</span>
+			),
+		},
+		{
+			title: t('wallet.withdrawals.status'),
+			dataIndex: 'status',
+			key: 'status',
+			align: 'center',
+			render: (v: string | undefined) => (
+				<StatusBadge variant={WITHDRAWAL_STATUS_VARIANTS[v || ''] || 'neutral'}>
+					{t(withdrawalStatusLabelKey(v))}
+				</StatusBadge>
+			),
+		},
+		{
+			title: t('wallet.withdrawals.method'),
+			dataIndex: 'type',
+			key: 'type',
+			render: (v: string | undefined) => (
+				<span className="text-gray-500">{t(methodLabelKey(v))}</span>
+			),
+		},
+		{
+			title: t('wallet.remark'),
+			dataIndex: 'description',
+			key: 'description',
+			render: (v: string | undefined) => (
+				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
+			),
+		},
+	];
 
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -251,70 +315,23 @@ export default function WithdrawalsPage() {
 					</select>
 				</div>
 
-				<div className="overflow-x-auto rounded-lg border">
-					<table className="w-full text-sm">
-						<thead className="bg-gray-50">
-							<tr>
-								<th className="px-4 py-2 text-left">{t('wallet.withdrawals.date')}</th>
-								<th className="px-4 py-2 text-right">{t('wallet.amount')}</th>
-								<th className="px-4 py-2 text-center">{t('wallet.withdrawals.status')}</th>
-								<th className="px-4 py-2 text-left">{t('wallet.withdrawals.method')}</th>
-								<th className="px-4 py-2 text-left">{t('wallet.remark')}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{withdrawalTxs.map((tx) => (
-								<tr key={tx.id} className="border-t">
-									<td className="px-4 py-2 text-gray-500">
-										{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : '-'}
-									</td>
-									<td className="px-4 py-2 text-right font-mono text-red-600">
-										-¥
-										{Number(tx.amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-									</td>
-									<td className="px-4 py-2 text-center">
-										<span className={withdrawalStatusBadge(tx.status)}>
-											{t(withdrawalStatusLabelKey(tx.status))}
-										</span>
-									</td>
-									<td className="px-4 py-2 text-gray-500">{t(methodLabelKey(tx.type))}</td>
-									<td className="px-4 py-2 text-gray-500 max-w-[200px] truncate">
-										{tx.description ?? '-'}
-									</td>
-								</tr>
-							))}
-							{withdrawalTxs.length === 0 && (
-								<tr>
-									<td colSpan={5} className="px-4 py-8 text-center text-gray-400">
-										{t('wallet.withdrawals.noRecords')}
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
+				{/* 原表体里那行「没有记录」的占位 <tr> 换成 locale.emptyText；原来手写的上一页/下一页
+				    只在超过一页时出现，用 hideOnSinglePage 保留该行为。 */}
+				<DataTable<WalletTransactionItem>
+					rowKey={(r, i) => r.id ?? String(i)}
+					columns={columns}
+					dataSource={withdrawalTxs}
+					scroll={{ x: 'max-content' }}
+					locale={{ emptyText: t('wallet.withdrawals.noRecords') }}
+					pagination={{
+						current: page,
+						pageSize: 20,
+						total: txs?.total ?? 0,
+						onChange: setPage,
+						hideOnSinglePage: true,
+					}}
+				/>
 
-				{txs && (txs.total ?? 0) > 20 && (
-					<div className="flex justify-center gap-2 mt-4">
-						<button
-							disabled={page <= 1}
-							onClick={() => setPage(page - 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('wallet.previousPage')}
-						</button>
-						<span className="px-3 py-1 text-sm text-gray-500">
-							{page} / {Math.ceil((txs.total ?? 0) / 20)}
-						</span>
-						<button
-							disabled={page >= Math.ceil((txs.total ?? 0) / 20)}
-							onClick={() => setPage(page + 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('wallet.nextPage')}
-						</button>
-					</div>
-				)}
 			</div>
 		</div>
 	);
@@ -327,13 +344,6 @@ const withdrawalStatusLabels: Record<string, string> = {
 	completed: 'wallet.withdrawals.statusLabels.completed',
 };
 
-const withdrawalStatusBadges: Record<string, string> = {
-	pending: 'bg-amber-50 text-amber-600 px-2 py-0.5 rounded',
-	approved: 'bg-blue-50 text-blue-600 px-2 py-0.5 rounded',
-	rejected: 'bg-red-50 text-red-600 px-2 py-0.5 rounded',
-	completed: 'bg-green-50 text-green-600 px-2 py-0.5 rounded',
-};
-
 const methodLabels: Record<string, string> = {
 	bank_transfer: 'wallet.withdrawals.methodLabels.bankTransfer',
 	wallet: 'wallet.withdrawals.methodLabels.balanceWithdraw',
@@ -344,11 +354,6 @@ const methodLabels: Record<string, string> = {
 function withdrawalStatusLabelKey(s: string | undefined): string {
 	if (!s) return '-';
 	return withdrawalStatusLabels[s] ?? s;
-}
-
-function withdrawalStatusBadge(s: string | undefined): string {
-	if (!s) return '';
-	return withdrawalStatusBadges[s] ?? 'bg-gray-100 text-gray-500 px-2 py-0.5 rounded';
 }
 
 function methodLabelKey(t: string | undefined): string {

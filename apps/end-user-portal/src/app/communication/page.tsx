@@ -3,9 +3,13 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommunicationLogs } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
-import { ErrorState } from '@autional-cn/ui';
+import { ErrorState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
+import type { CommunicationLogItem } from '@/hooks/queries';
 import { SkeletonRow } from '@/components/ui/Skeleton';
-import { Mail, Smartphone, Bell, ChevronLeft, ChevronRight, History, Filter } from 'lucide-react';
+import { Mail, Smartphone, Bell, History, Filter } from 'lucide-react';
 
 const channelMeta: Record<string, { icon: typeof Mail; labelKey: string; color: string }> = {
 	sms: { icon: Smartphone, labelKey: 'communication.channel.sms', color: 'text-green-700' },
@@ -14,6 +18,16 @@ const channelMeta: Record<string, { icon: typeof Mail; labelKey: string; color: 
 };
 
 const channelOptions = ['', 'sms', 'email', 'push'];
+
+// 状态 → 设计系统徽标档位。**只做映射，不做样式**。
+// 原来这里是裸色阶拼的文字色（delivered 用 emerald、sent 用 blue、failed 用 red），
+// pending 干脆没有颜色、落到默认灰 —— 现在四档语义一次讲清，配色归设计系统。
+const STATUS_VARIANTS: Record<string, StatusVariant> = {
+	delivered: 'success',
+	sent: 'info',
+	pending: 'warning',
+	failed: 'danger',
+};
 
 export default function CommunicationHistoryPage() {
 	const { t } = useTranslation();
@@ -29,7 +43,6 @@ export default function CommunicationHistoryPage() {
 
 	const list = (data as any)?.items || [];
 	const total = (data as any)?.total || 0;
-	const pagination = (data as any)?.pagination;
 
 	const maskRecipient = (r?: string) => {
 		if (!r) return '--';
@@ -56,19 +69,6 @@ export default function CommunicationHistoryPage() {
 		}
 	};
 
-	const statusColor = (s?: string) => {
-		switch (s) {
-			case 'delivered':
-				return 'text-emerald-600';
-			case 'sent':
-				return 'text-blue-600';
-			case 'failed':
-				return 'text-red-600';
-			default:
-				return 'text-neutral-500';
-		}
-	};
-
 	if (isLoading)
 		return (
 			<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -79,6 +79,57 @@ export default function CommunicationHistoryPage() {
 			</div>
 		);
 	if (error) return <ErrorState message={t('communication.error')} className="min-h-[40vh]" />;
+
+	// 列定义：只描述「这一页有哪些列」。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
+	// 由设计系统下发的组件级令牌决定 —— 与控制台那 156 处 antd Table 吃的是同一份令牌。
+	const columns: DataTableColumns<CommunicationLogItem> = [
+		{
+			title: t('communication.table.channel', 'Channel'),
+			dataIndex: 'channel',
+			key: 'channel',
+			render: (v: string | undefined) => {
+				const meta = channelMeta[v ?? ''] || channelMeta.email;
+				const Icon = meta.icon;
+				return (
+					<span className="inline-flex items-center gap-2">
+						<Icon size={16} className={meta.color} />
+						<span className="font-medium text-neutral-800">{t(meta.labelKey)}</span>
+					</span>
+				);
+			},
+		},
+		{
+			title: t('communication.table.recipient', 'Recipient'),
+			dataIndex: 'recipient',
+			key: 'recipient',
+			render: (v: string | undefined) => (
+				<span className="font-mono text-xs text-neutral-700">{maskRecipient(v)}</span>
+			),
+		},
+		{
+			title: t('communication.table.status', 'Status'),
+			dataIndex: 'status',
+			key: 'status',
+			render: (v: string | undefined, log: CommunicationLogItem) => (
+				<>
+					<StatusBadge variant={STATUS_VARIANTS[v ?? ''] ?? 'neutral'}>{statusLabel(v)}</StatusBadge>
+					{log.error && (
+						<span className="ml-2 text-xs text-red-400" title={log.error}>
+							{t('communication.errorHint', 'Details')}
+						</span>
+					)}
+				</>
+			),
+		},
+		{
+			title: t('communication.table.sentAt', 'Sent At'),
+			dataIndex: 'sentAt',
+			key: 'sentAt',
+			render: (_: unknown, log: CommunicationLogItem) => (
+				<span className="text-neutral-500">{formatTime(log.sentAt || log.createdAt)}</span>
+			),
+		},
+	];
 
 	return (
 		<div className="space-y-6">
@@ -124,100 +175,30 @@ export default function CommunicationHistoryPage() {
 				</div>
 			</div>
 
-			<div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
-				<div className="overflow-x-auto">
-					<table className="w-full text-left text-sm">
-						<thead className="border-b border-neutral-200 bg-neutral-50">
-							<tr>
-								<th className="px-4 py-3 font-medium text-neutral-600">
-									{t('communication.table.channel', 'Channel')}
-								</th>
-								<th className="px-4 py-3 font-medium text-neutral-600">
-									{t('communication.table.recipient', 'Recipient')}
-								</th>
-								<th className="px-4 py-3 font-medium text-neutral-600">
-									{t('communication.table.status', 'Status')}
-								</th>
-								<th className="px-4 py-3 font-medium text-neutral-600">
-									{t('communication.table.sentAt', 'Sent At')}
-								</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-neutral-100">
-							{list.map((log: any) => {
-								const meta = channelMeta[log.channel] || channelMeta.email;
-								const Icon = meta.icon;
-								return (
-									<tr key={log.id} className="hover:bg-neutral-50/50 transition-colors">
-										<td className="px-4 py-3">
-											<div className="flex items-center gap-2">
-												<Icon size={16} className={meta.color} />
-												<span className="font-medium text-neutral-800">{t(meta.labelKey)}</span>
-											</div>
-										</td>
-										<td className="px-4 py-3 text-neutral-700 font-mono text-xs">
-											{maskRecipient(log.recipient)}
-										</td>
-										<td className="px-4 py-3">
-											<span className={`text-sm font-medium ${statusColor(log.status)}`}>
-												{statusLabel(log.status)}
-											</span>
-											{log.error && (
-												<span className="ml-2 text-xs text-red-400" title={log.error}>
-													{t('communication.errorHint', 'Details')}
-												</span>
-											)}
-										</td>
-										<td className="px-4 py-3 text-neutral-500">
-											{formatTime(log.sentAt || log.createdAt)}
-										</td>
-									</tr>
-								);
-							})}
-							{list.length === 0 && (
-								<tr>
-									<td colSpan={4} className="px-4 py-16 text-center">
-										<div className="flex flex-col items-center gap-2">
-											<History size={36} className="text-neutral-300" />
-											<p className="text-sm text-neutral-500">
-												{t('communication.empty', 'No logs yet')}
-											</p>
-										</div>
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
-			</div>
-
-			{pagination && pagination.totalPages > 1 && (
-				<div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3">
-					<span className="text-sm text-neutral-500">
-						{t('communication.pageInfo', {
-							page: pagination.page,
-							totalPages: pagination.totalPages,
-						})}
-					</span>
-					<div className="flex items-center gap-2">
-						<button
-							onClick={() => setPage((p) => Math.max(1, p - 1))}
-							disabled={!pagination.hasPrev}
-							className="flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed"
-						>
-							<ChevronLeft size={14} /> {t('notifications.prev')}
-						</button>
-						<button
-							onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
-							disabled={!pagination.hasNext}
-							className="flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-40 disabled:cursor-not-allowed"
-						>
-							{t('notifications.next')}
-							<ChevronRight size={14} />
-						</button>
-					</div>
-				</div>
-			)}
+			<DataTable<CommunicationLogItem>
+				rowKey={(r, i) => r.id ?? String(i)}
+				columns={columns}
+				dataSource={list}
+				scroll={{ x: 'max-content' }}
+				locale={{
+					emptyText: (
+						<div className="flex flex-col items-center gap-2">
+							<History size={36} className="text-neutral-300" />
+							<span className="text-sm text-neutral-500">
+								{t('communication.empty', 'No logs yet')}
+							</span>
+						</div>
+					),
+				}}
+				pagination={{
+					current: page,
+					pageSize,
+					total,
+					onChange: setPage,
+					// 原来的手写翻页只在 totalPages > 1 时出现；hideOnSinglePage 保留「不足一页不显示分页条」。
+					hideOnSinglePage: true,
+				}}
+			/>
 		</div>
 	);
 }

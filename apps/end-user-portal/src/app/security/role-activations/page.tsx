@@ -12,6 +12,10 @@ import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
+import { StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import {
 	ShieldCheck,
 	Clock,
@@ -22,6 +26,15 @@ import {
 	X,
 	Loader2,
 } from 'lucide-react';
+
+// 状态 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
+// 档位照搬原表的语义色：emerald→success、amber→warning、neutral→neutral、rose→danger。
+const STATUS_VARIANTS: Record<string, StatusVariant> = {
+	active: 'success',
+	pending: 'warning',
+	expired: 'neutral',
+	revoked: 'danger',
+};
 
 interface RoleActivation {
 	id: string;
@@ -141,41 +154,20 @@ export default function RoleActivationsPage() {
 	];
 
 	const getStatusBadge = (status: string) => {
-		const map: Record<string, { color: string; icon: typeof Clock; label: string }> = {
-			active: {
-				color: 'bg-emerald-50 text-emerald-700',
-				icon: CheckCircle2,
-				label: t('roleActivations.statusActive'),
-			},
-			pending: {
-				color: 'bg-amber-50 text-amber-700',
-				icon: Clock,
-				label: t('roleActivations.statusPending'),
-			},
-			expired: {
-				color: 'bg-neutral-100 text-neutral-500',
-				icon: XCircle,
-				label: t('roleActivations.statusExpired'),
-			},
-			revoked: {
-				color: 'bg-rose-50 text-rose-700',
-				icon: XCircle,
-				label: t('roleActivations.statusRevoked'),
-			},
+		const map: Record<string, { icon: typeof Clock; label: string }> = {
+			active: { icon: CheckCircle2, label: t('roleActivations.statusActive') },
+			pending: { icon: Clock, label: t('roleActivations.statusPending') },
+			expired: { icon: XCircle, label: t('roleActivations.statusExpired') },
+			revoked: { icon: XCircle, label: t('roleActivations.statusRevoked') },
 		};
-		const meta = map[status] || {
-			color: 'bg-neutral-100 text-neutral-500',
-			icon: AlertCircle,
-			label: status,
-		};
+		// 未知状态原来也落到「中性灰 + 显示原始 status」，这个兜底行为保持不变。
+		const meta = map[status] || { icon: AlertCircle, label: status };
 		const Icon = meta.icon;
 		return (
-			<span
-				className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${meta.color}`}
-			>
+			<StatusBadge variant={STATUS_VARIANTS[status] || 'neutral'}>
 				<Icon size={12} />
 				{meta.label}
-			</span>
+			</StatusBadge>
 		);
 	};
 
@@ -197,6 +189,69 @@ export default function RoleActivationsPage() {
 
 	if (isLoading) return <LoadingScreen message={t('roleActivations.loading')} />;
 	if (error) return <ErrorState message={t('roleActivations.error')} className="min-h-[40vh]" />;
+
+	// 列定义：只描述**这一页有哪些列**；表头底色 / 悬浮态 / 边框 / 行高由设计系统的组件级令牌下发。
+	const columns: DataTableColumns<RoleActivation> = [
+		{
+			title: t('roleActivations.role'),
+			dataIndex: 'roleId',
+			key: 'roleId',
+			render: (v: string) => <span className="font-medium">{getRoleName(v)}</span>,
+		},
+		{
+			title: t('roleActivations.status'),
+			dataIndex: 'status',
+			key: 'status',
+			render: (v: string) => getStatusBadge(v),
+		},
+		{
+			title: t('roleActivations.justificationCol'),
+			dataIndex: 'justification',
+			key: 'justification',
+			render: (v: string) => (
+				<span className="inline-block max-w-[200px] truncate" title={v}>
+					{v}
+				</span>
+			),
+		},
+		{
+			title: t('roleActivations.expireAt'),
+			dataIndex: 'expireAt',
+			key: 'expireAt',
+			render: (v: string, item: RoleActivation) => (
+				<span className="whitespace-nowrap">
+					{formatTime(v)}
+					{item.status === 'active' && isExpired(v) && (
+						<span className="ml-2 text-xs text-rose-500">{t('roleActivations.expired')}</span>
+					)}
+				</span>
+			),
+		},
+		{
+			title: t('roleActivations.createdAt'),
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			render: (v: string) => <span className="text-xs">{formatTime(v)}</span>,
+		},
+		{
+			title: t('roleActivations.actions'),
+			key: 'actions',
+			align: 'right',
+			render: (_: unknown, item: RoleActivation) =>
+				(item.status === 'active' || item.status === 'pending') && (
+					<button
+						onClick={() => {
+							if (confirm(t('roleActivations.cancelConfirm')))
+								cancelMutation.mutate(item.id);
+						}}
+						disabled={cancelMutation.isPending}
+						className="text-sm text-danger hover:underline disabled:opacity-50"
+					>
+						{t('roleActivations.cancel')}
+					</button>
+				),
+		},
+	];
 
 	return (
 		<div className="space-y-6">
@@ -317,92 +372,31 @@ export default function RoleActivationsPage() {
 			</div>
 
 			{/* Activations List */}
-			<div className="overflow-hidden rounded-lg border border-neutral-200 bg-white shadow-sm">
-				{activations && activations.length > 0 ? (
-					<div className="overflow-x-auto">
-						<table className="w-full text-sm">
-							<thead className="border-b border-neutral-200 bg-neutral-50">
-								<tr>
-									<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-										{t('roleActivations.role')}
-									</th>
-									<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-										{t('roleActivations.status')}
-									</th>
-									<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-										{t('roleActivations.justificationCol')}
-									</th>
-									<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-										{t('roleActivations.expireAt')}
-									</th>
-									<th className="whitespace-nowrap px-4 py-3 text-left font-medium text-neutral-600">
-										{t('roleActivations.createdAt')}
-									</th>
-									<th className="whitespace-nowrap px-4 py-3 text-right font-medium text-neutral-600">
-										{t('roleActivations.actions')}
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{activations.map((item) => (
-									<tr
-										key={item.id}
-										className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
-									>
-										<td className="px-4 py-3 text-neutral-900 font-medium">
-											{getRoleName(item.roleId)}
-										</td>
-										<td className="px-4 py-3">{getStatusBadge(item.status)}</td>
-										<td
-											className="px-4 py-3 text-neutral-600 max-w-[200px] truncate"
-											title={item.justification}
-										>
-											{item.justification}
-										</td>
-										<td className="px-4 py-3 text-neutral-600 whitespace-nowrap">
-											{formatTime(item.expireAt)}
-											{item.status === 'active' && isExpired(item.expireAt) && (
-												<span className="ml-2 text-xs text-rose-500">
-													{t('roleActivations.expired')}
-												</span>
-											)}
-										</td>
-										<td className="px-4 py-3 text-neutral-500 text-xs">
-											{formatTime(item.createdAt)}
-										</td>
-										<td className="px-4 py-3 text-right">
-											{(item.status === 'active' || item.status === 'pending') && (
-												<button
-													onClick={() => {
-														if (confirm(t('roleActivations.cancelConfirm')))
-															cancelMutation.mutate(item.id);
-													}}
-													disabled={cancelMutation.isPending}
-													className="text-sm text-danger hover:underline disabled:opacity-50"
-												>
-													{t('roleActivations.cancel')}
-												</button>
-											)}
-										</td>
-									</tr>
-								))}
-							</tbody>
-						</table>
-					</div>
-				) : (
-					<div className="flex flex-col items-center justify-center py-12 text-center">
-						<ShieldCheck size={40} className="text-neutral-300" />
-						<p className="mt-4 text-sm text-neutral-500">{t('roleActivations.empty')}</p>
-						<button
-							onClick={() => setShowForm(true)}
-							className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary-700 hover:text-primary-800"
-						>
-							<Plus size={14} />
-							{t('roleActivations.requestFirst')}
-						</button>
-					</div>
-				)}
-			</div>
+			{/* 列定义只描述「这一页有哪些列」；表头 / 悬浮态 / 边框 / 行高由设计系统的组件级令牌下发。 */}
+			{/* 原来空列表时不是表体里的占位 <tr>，而是表格外的一整块（图标 + 文案 + 「发起申请」按钮），
+			    而且激活列表本身没有翻页；这两点分别是 emptyText 与 pagination={false}。 */}
+			<DataTable<RoleActivation>
+				rowKey={(r) => r.id}
+				columns={columns}
+				dataSource={activations || []}
+				scroll={{ x: 'max-content' }}
+				pagination={false}
+				locale={{
+					emptyText: (
+						<div className="flex flex-col items-center justify-center py-12 text-center">
+							<ShieldCheck size={40} className="text-neutral-300" />
+							<p className="mt-4 text-sm text-neutral-500">{t('roleActivations.empty')}</p>
+							<button
+								onClick={() => setShowForm(true)}
+								className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary-700 hover:text-primary-800"
+							>
+								<Plus size={14} />
+								{t('roleActivations.requestFirst')}
+							</button>
+						</div>
+					),
+				}}
+			/>
 		</div>
 	);
 }

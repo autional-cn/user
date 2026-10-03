@@ -25,7 +25,7 @@ export function usePointAccount(): UseQueryResult<PointAccount, Error> {
 	});
 }
 
-interface PointTransactionResponse {
+export interface PointTransactionResponse {
 	id?: string;
 	type?: string;
 	amount?: number;

@@ -10,6 +10,8 @@ import {
 	usePointValue,
 	usePointRiskScore,
 } from '@/hooks/queries';
+// 行的形状只有一份（由 hooks 导出），见 billing 页同处注释。
+import type { PointTransactionResponse } from '@/hooks/queries';
 import {
 	Coins,
 	TrendingUp,
@@ -19,9 +21,26 @@ import {
 	DollarSign,
 	Shield,
 } from 'lucide-react';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
 import { isNotFoundError } from '@/lib/api-error';
+
+// 交易类型 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
+// 原来这里是一张 typeBadges 表，8 种类型各配一对裸色阶（text-green-600 bg-green-50 …）：
+// 配色散在业务侧，而且没有一对做过对比度验证；cyan/orange 这两档在设计系统里根本没有对应色。
+const STATUS_VARIANTS: Record<string, StatusVariant> = {
+	earn: 'success',
+	spend: 'danger',
+	refund: 'info',
+	adjust: 'neutral',
+	freeze: 'warning',
+	unfreeze: 'info',
+	expire: 'neutral',
+	confirm_deduction: 'warning',
+};
 
 export default function PointsPage() {
 	const { t } = useTranslation();
@@ -81,6 +100,49 @@ export default function PointsPage() {
 
 	const balance = account?.balance ?? 0;
 	const frozen = account?.frozenBalance ?? 0;
+
+	// 列定义：只描述**这一页有哪些列**。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
+	// 由设计系统下发的组件级令牌决定 —— 与四个 portal 里其它数据表吃的是同一份令牌。
+	const columns: DataTableColumns<PointTransactionResponse> = [
+		{
+			title: t('points.table.type'),
+			dataIndex: 'type',
+			key: 'type',
+			render: (v: string | undefined) => (
+				<StatusBadge variant={STATUS_VARIANTS[v || ''] || 'neutral'}>{getTypeLabel(v || '')}</StatusBadge>
+			),
+		},
+		{
+			title: t('points.table.amount'),
+			dataIndex: 'amount',
+			key: 'amount',
+			align: 'right',
+			// 正负号与配色都原样保留：+N 绿、-N 红
+			render: (v: number | undefined) => (
+				<span className={'font-mono ' + ((v ?? 0) > 0 ? 'text-green-600' : 'text-red-600')}>
+					{(v ?? 0) > 0 ? '+' : ''}
+					{v?.toLocaleString() ?? 0}
+				</span>
+			),
+		},
+		{
+			title: t('points.table.source'),
+			dataIndex: 'source',
+			key: 'source',
+			render: (v: string | undefined) => <span className="text-gray-500">{v ?? '-'}</span>,
+		},
+		{
+			title: t('points.table.time'),
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="text-gray-400 text-xs">
+					{v ? new Date(v).toLocaleDateString() : '-'}
+				</span>
+			),
+		},
+	];
 
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -170,68 +232,31 @@ export default function PointsPage() {
 
 			<div>
 				<h2 className="text-lg font-semibold mb-3">{t('points.transactionHistory')}</h2>
-				<div className="overflow-x-auto rounded-lg border">
-					<table className="w-full text-sm">
-						<thead className="bg-gray-50">
-							<tr>
-								<th className="px-4 py-2 text-left">{t('points.table.type')}</th>
-								<th className="px-4 py-2 text-right">{t('points.table.amount')}</th>
-								<th className="px-4 py-2 text-left">{t('points.table.source')}</th>
-								<th className="px-4 py-2 text-right">{t('points.table.time')}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{(txs?.items ?? []).map((tx) => (
-								<tr key={tx.id} className="border-t">
-									<td className="px-4 py-2">
-										<span className={typeBadge(tx.type ?? '')}>{getTypeLabel(tx.type ?? '')}</span>
-									</td>
-									<td
-										className={`px-4 py-2 text-right font-mono ${(tx.amount ?? 0) > 0 ? 'text-green-600' : 'text-red-600'}`}
-									>
-										{(tx.amount ?? 0) > 0 ? '+' : ''}
-										{tx.amount?.toLocaleString() ?? 0}
-									</td>
-									<td className="px-4 py-2 text-gray-500">{tx.source ?? '-'}</td>
-									<td className="px-4 py-2 text-right text-gray-400 text-xs">
-										{tx.createdAt ? new Date(tx.createdAt).toLocaleDateString() : '-'}
-									</td>
-								</tr>
-							))}
-							{(!txs?.items || txs.items.length === 0) && (
-								<tr>
-									<td colSpan={4}>
-										<EmptyState
-											title={t('points.empty', '暂无积分数据')}
-											description={t('points.emptyDesc', '您的积分记录将显示在这里')}
-										/>
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
-				{txs && (txs.total ?? 0) > 20 && (
-					<div className="flex justify-center gap-2 mt-4">
-						<button
-							disabled={page <= 1}
-							onClick={() => setPage(page - 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('common.previous')}
-						</button>
-						<span className="px-3 py-1 text-sm text-gray-500">
-							{page} / {Math.ceil((txs.total ?? 0) / 20)}
-						</span>
-						<button
-							disabled={page >= Math.ceil((txs.total ?? 0) / 20)}
-							onClick={() => setPage(page + 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('common.next')}
-						</button>
-					</div>
-				)}
+				{/* 外面那层 overflow-x-auto rounded-lg border 由 DataTable 自带容器接管，不再手拼。
+					rowKey 兜下标：id 缺失时统一兜成 '-' 会让多行同 key（React 会告警）。 */}
+				<DataTable<PointTransactionResponse>
+					rowKey={(r, i) => r.id ?? String(i)}
+					columns={columns}
+					dataSource={txs?.items ?? []}
+					scroll={{ x: 'max-content' }}
+					locale={{
+						// 原来表体里那行 colSpan 占位的 EmptyState 整体搬进 locale，文案与描述原样保留
+						emptyText: (
+							<EmptyState
+								title={t('points.empty', '暂无积分数据')}
+								description={t('points.emptyDesc', '您的积分记录将显示在这里')}
+							/>
+						),
+					}}
+					pagination={{
+						current: page,
+						pageSize: 20,
+						total: txs?.total ?? 0,
+						onChange: setPage,
+						// 原手写翻页只在 total > 20 时出现；hideOnSinglePage 保留「不足一页不显示分页条」这一行为
+						hideOnSinglePage: true,
+					}}
+				/>
 			</div>
 		</div>
 	);
@@ -290,17 +315,3 @@ const TX_TYPE_KEYS: Record<string, string> = {
 	confirm_deduction: 'points.txType.confirm_deduction',
 };
 
-const typeBadges: Record<string, string> = {
-	earn: 'text-green-600 bg-green-50 px-2 py-0.5 rounded',
-	spend: 'text-red-600 bg-red-50 px-2 py-0.5 rounded',
-	refund: 'text-blue-600 bg-blue-50 px-2 py-0.5 rounded',
-	adjust: 'text-purple-600 bg-purple-50 px-2 py-0.5 rounded',
-	freeze: 'text-amber-600 bg-amber-50 px-2 py-0.5 rounded',
-	unfreeze: 'text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded',
-	expire: 'text-gray-600 bg-gray-100 px-2 py-0.5 rounded',
-	confirm_deduction: 'text-orange-600 bg-orange-50 px-2 py-0.5 rounded',
-};
-
-function typeBadge(t: string) {
-	return typeBadges[t] ?? '';
-}

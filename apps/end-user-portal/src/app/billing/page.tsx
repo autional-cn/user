@@ -1,7 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
 import { useTranslation } from 'react-i18next';
 import { isNotFoundError } from '@/lib/api-error';
@@ -11,6 +14,9 @@ import {
 	useBillingUsage,
 	useBillingStatistics,
 } from '@/hooks/queries';
+// 行的形状**只有一份**：由 hooks 导出。此前本页自己声明过一个等价接口，那是第二份定义，
+// 后端的字段一改就会有一边跟不上（而类型检查不会报——两边各自成立）。
+import type { BillingRecordItem } from '@/hooks/queries';
 import { useTenant } from '@/hooks/use-tenant';
 import {
 	CreditCard,
@@ -18,10 +24,9 @@ import {
 	HardDrive,
 	Users,
 	Activity,
-	FileText,
-	RefreshCw,
 	Calendar,
 } from 'lucide-react';
+
 
 export default function BillingPage() {
 	const { t } = useTranslation();
@@ -93,6 +98,64 @@ export default function BillingPage() {
 	const storagePercent =
 		usage?.storageGb != null ? Math.min((usage.storageGb / maxStorage) * 100, 100) : 0;
 	const usersPercent = usage?.users != null ? Math.min((usage.users / maxUsers) * 100, 100) : 0;
+
+	// 列定义：只描述「这一页有哪些列」。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
+	// 由设计系统下发的组件级令牌决定 —— 与控制台那 156 处 antd Table 吃的是同一份令牌。
+	const columns: DataTableColumns<BillingRecordItem> = [
+		{
+			title: t('billing.invoiceNumber'),
+			dataIndex: 'invoiceNumber',
+			key: 'invoiceNumber',
+			render: (v: string | undefined) => <span className="font-mono text-xs">{v ?? '-'}</span>,
+		},
+		{
+			title: t('billing.recordType'),
+			dataIndex: 'type',
+			key: 'type',
+			render: (v: string) => (
+				<StatusBadge variant={recordTypeVariant(v)}>{t(recordTypeLabelKey(v))}</StatusBadge>
+			),
+		},
+		{
+			title: t('billing.amount'),
+			dataIndex: 'amount',
+			key: 'amount',
+			align: 'right',
+			render: (v: number | undefined) => (
+				<span className="font-mono">
+					¥{(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+				</span>
+			),
+		},
+		{
+			title: t('billing.recordStatus'),
+			dataIndex: 'status',
+			key: 'status',
+			align: 'center',
+			render: (v: string | undefined) => (
+				<StatusBadge variant={recordStatusVariant(v)}>{t(recordStatusLabelKey(v))}</StatusBadge>
+			),
+		},
+		{
+			title: t('billing.description'),
+			dataIndex: 'description',
+			key: 'description',
+			render: (v: string | undefined) => (
+				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
+			),
+		},
+		{
+			title: t('billing.date'),
+			dataIndex: 'createdAt',
+			key: 'createdAt',
+			align: 'right',
+			render: (v: string | undefined) => (
+				<span className="text-gray-400 text-xs">
+					{v ? new Date(v).toLocaleDateString() : '-'}
+				</span>
+			),
+		},
+	];
 
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
@@ -232,72 +295,21 @@ export default function BillingPage() {
 
 			<div>
 				<h2 className="text-lg font-semibold mb-3">{t('billing.billingRecords')}</h2>
-				<div className="overflow-x-auto rounded-lg border">
-					<table className="w-full text-sm">
-						<thead className="bg-gray-50">
-							<tr>
-								<th className="px-4 py-2 text-left">{t('billing.invoiceNumber')}</th>
-								<th className="px-4 py-2 text-left">{t('billing.recordType')}</th>
-								<th className="px-4 py-2 text-right">{t('billing.amount')}</th>
-								<th className="px-4 py-2 text-center">{t('billing.recordStatus')}</th>
-								<th className="px-4 py-2 text-left">{t('billing.description')}</th>
-								<th className="px-4 py-2 text-right">{t('billing.date')}</th>
-							</tr>
-						</thead>
-						<tbody>
-							{(records?.items ?? []).map((r) => (
-								<tr key={r.recordId} className="border-t">
-									<td className="px-4 py-2 font-mono text-xs">{r.invoiceNumber ?? '-'}</td>
-									<td className="px-4 py-2">
-										<span className={recordTypeBadge(r.type)}>{t(recordTypeLabelKey(r.type))}</span>
-									</td>
-									<td className="px-4 py-2 text-right font-mono">
-										¥{(r.amount ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-									</td>
-									<td className="px-4 py-2 text-center">
-										<span className={recordStatusBadge(r.status)}>
-											{t(recordStatusLabelKey(r.status))}
-										</span>
-									</td>
-									<td className="px-4 py-2 text-gray-500 max-w-[200px] truncate">
-										{r.description ?? '-'}
-									</td>
-									<td className="px-4 py-2 text-right text-gray-400 text-xs">
-										{r.createdAt ? new Date(r.createdAt).toLocaleDateString() : '-'}
-									</td>
-								</tr>
-							))}
-							{(!records?.items || records.items.length === 0) && (
-								<tr>
-									<td colSpan={6} className="px-4 py-8 text-center text-gray-400">
-										{t('billing.noRecords')}
-									</td>
-								</tr>
-							)}
-						</tbody>
-					</table>
-				</div>
-				{records && (records.total ?? 0) > 20 && (
-					<div className="flex justify-center gap-2 mt-4">
-						<button
-							disabled={page <= 1}
-							onClick={() => setPage(page - 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('common.previous')}
-						</button>
-						<span className="px-3 py-1 text-sm text-gray-500">
-							{page} / {Math.ceil((records.total ?? 0) / 20)}
-						</span>
-						<button
-							disabled={page >= Math.ceil((records.total ?? 0) / 20)}
-							onClick={() => setPage(page + 1)}
-							className="px-3 py-1 rounded border text-sm disabled:opacity-30"
-						>
-							{t('common.next')}
-						</button>
-					</div>
-				)}
+				<DataTable<BillingRecordItem>
+					rowKey={(r, i) => r.recordId ?? String(i)}
+					columns={columns}
+					dataSource={records?.items ?? []}
+					scroll={{ x: 'max-content' }}
+					locale={{ emptyText: t('billing.noRecords') }}
+					pagination={{
+						current: page,
+						pageSize: 20,
+						total: records?.total ?? 0,
+						onChange: setPage,
+						// 原来的手写翻页只在 total > 20 时出现；hideOnSinglePage 保留「不足一页不显示分页条」。
+						hideOnSinglePage: true,
+					}}
+				/>
 			</div>
 		</div>
 	);
@@ -348,13 +360,18 @@ const recordTypeLabels: Record<string, string> = {
 	adjustment: 'billing.recordTypes.adjustment',
 };
 
-const recordTypeBadges: Record<string, string> = {
-	subscription: 'text-blue-600 bg-blue-50 px-2 py-0.5 rounded',
-	invoice: 'text-purple-600 bg-purple-50 px-2 py-0.5 rounded',
-	payment: 'text-green-600 bg-green-50 px-2 py-0.5 rounded',
-	refund: 'text-orange-600 bg-orange-50 px-2 py-0.5 rounded',
-	credit: 'text-cyan-600 bg-cyan-50 px-2 py-0.5 rounded',
-	adjustment: 'text-gray-600 bg-gray-100 px-2 py-0.5 rounded',
+// 记录类型 → 设计系统徽标档位。**只做映射，不做样式**。
+// 原表这里是 6 套裸色阶，其中 purple / cyan / orange 根本不在设计系统的色阶里 ——
+// 同一件事在四个 portal 各有各的写法，也没有任何一套做过对比度验证。
+// 类型是「分类」不是状态，所以按原色阶的语义族归档：绿→success、蓝/青→info、紫/灰→neutral；
+// refund 取 info，是为了跟本页 recordStatus 的 refunded、以及发票页的 refunded 落在同一档。
+const RECORD_TYPE_VARIANTS: Record<string, StatusVariant> = {
+	subscription: 'info',
+	invoice: 'neutral',
+	payment: 'success',
+	refund: 'info',
+	credit: 'info',
+	adjustment: 'neutral',
 };
 
 const recordStatusLabels: Record<string, string> = {
@@ -365,23 +382,25 @@ const recordStatusLabels: Record<string, string> = {
 	cancelled: 'billing.recordStatusLabels.cancelled',
 };
 
-const recordStatusBadges: Record<string, string> = {
-	paid: 'bg-green-50 text-green-600 px-2 py-0.5 rounded',
-	pending: 'bg-amber-50 text-amber-600 px-2 py-0.5 rounded',
-	failed: 'bg-red-50 text-red-600 px-2 py-0.5 rounded',
-	refunded: 'bg-blue-50 text-blue-600 px-2 py-0.5 rounded',
-	cancelled: 'bg-gray-100 text-gray-500 px-2 py-0.5 rounded',
+// 记录状态 → 设计系统徽标档位。档位与发票页的 STATUS_VARIANTS 逐项对齐，
+// 免得「已退款」在两个页面是两个颜色。
+const RECORD_STATUS_VARIANTS: Record<string, StatusVariant> = {
+	paid: 'success',
+	pending: 'warning',
+	failed: 'danger',
+	refunded: 'info',
+	cancelled: 'neutral',
 };
 
 function recordTypeLabelKey(t: string) {
 	return recordTypeLabels[t] ?? t;
 }
-function recordTypeBadge(t: string) {
-	return recordTypeBadges[t] ?? '';
+function recordTypeVariant(t: string): StatusVariant {
+	return RECORD_TYPE_VARIANTS[t] ?? 'neutral';
 }
 function recordStatusLabelKey(s: string | undefined) {
 	return recordStatusLabels[s ?? ''] ?? s ?? '-';
 }
-function recordStatusBadge(s: string | undefined) {
-	return recordStatusBadges[s ?? ''] ?? '';
+function recordStatusVariant(s: string | undefined): StatusVariant {
+	return RECORD_STATUS_VARIANTS[s ?? ''] ?? 'neutral';
 }

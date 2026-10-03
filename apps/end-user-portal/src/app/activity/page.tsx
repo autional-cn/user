@@ -4,7 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import type { StatusVariant } from '@autional-cn/ui';
+import { DataTable } from '@autional-cn/ui/antd';
+import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { History, Download, CheckCircle2, XCircle, Clock, Monitor, Smartphone } from 'lucide-react';
 
 const ACTION_OPTIONS = [
@@ -19,6 +22,28 @@ const ACTION_OPTIONS = [
 	{ value: 'update', labelKey: 'activity.eventType.update' },
 	{ value: 'delete', labelKey: 'activity.eventType.delete' },
 ];
+
+// 操作类型 → 设计系统徽标档位。**只做映射，不做样式**。
+// 原表里这 10 种操作共用同一个中性灰标签（它们是分类，不是「成功/失败」这类状态），
+// 所以映射整齐地落在 neutral：换 StatusBadge 是把配色交回设计系统，不是顺手按操作分色。
+const ACTION_VARIANTS: Record<string, StatusVariant> = {
+	login: 'neutral',
+	logout: 'neutral',
+	password_change: 'neutral',
+	mfa_enable: 'neutral',
+	mfa_disable: 'neutral',
+	profile_update: 'neutral',
+	create: 'neutral',
+	update: 'neutral',
+	delete: 'neutral',
+};
+
+// 执行结果 → 设计系统徽标档位。原来 success 是 emerald、failed 是 red 两套裸色阶，
+// 现在只保留「哪一档」的语义（成功→success、失败→danger），配色由 StatusBadge 决定。
+const RESULT_VARIANTS: Record<string, StatusVariant> = {
+	success: 'success',
+	failed: 'danger',
+};
 
 export default function ActivityPage() {
 	const { t } = useTranslation();
@@ -81,6 +106,61 @@ export default function ActivityPage() {
 
 	if (isLoading) return <LoadingScreen message={t('common.loadingData')} />;
 	if (error) return <ErrorState message={t('common.error')} onRetry={() => refetch()} />;
+
+	// 列定义：只描述「这一页有哪些列」。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
+	// 由设计系统下发的组件级令牌决定 —— 与控制台那 156 处 antd Table 吃的是同一份令牌。
+	const columns: DataTableColumns<AuditLogItem> = [
+		{
+			title: t('activity.table.time'),
+			dataIndex: 'timestamp',
+			key: 'timestamp',
+			render: (v: string | undefined) => (
+				<span className="text-xs whitespace-nowrap">{v ? formatTime(v) : '—'}</span>
+			),
+		},
+		{
+			title: t('activity.table.action'),
+			dataIndex: 'action',
+			key: 'action',
+			render: (v: string | undefined) => (
+				<StatusBadge variant={ACTION_VARIANTS[v ?? ''] ?? 'neutral'}>{getActionLabel(v)}</StatusBadge>
+			),
+		},
+		{
+			title: t('activity.table.ip'),
+			dataIndex: 'ip',
+			key: 'ip',
+			render: (v: string | undefined) => <span className="text-xs font-mono">{v || '—'}</span>,
+		},
+		{
+			title: t('activity.table.device'),
+			dataIndex: 'userAgent',
+			key: 'userAgent',
+			render: (v: string | undefined) => (
+				<span className="inline-flex items-center gap-1.5 text-xs">
+					{getDeviceIcon(v)}
+					<span>{v ? v.slice(0, 40) : '—'}</span>
+				</span>
+			),
+		},
+		{
+			title: t('activity.table.result'),
+			dataIndex: 'status',
+			key: 'status',
+			render: (v: string | undefined) =>
+				v === 'success' ? (
+					<StatusBadge variant={RESULT_VARIANTS.success}>
+						<CheckCircle2 size={10} /> {t('activity.status.success')}
+					</StatusBadge>
+				) : v === 'failed' ? (
+					<StatusBadge variant={RESULT_VARIANTS.failed}>
+						<XCircle size={10} /> {t('activity.status.failed')}
+					</StatusBadge>
+				) : (
+					<span className="text-xs text-neutral-400">—</span>
+				),
+		},
+	];
 
 	return (
 		<div className="space-y-6">
@@ -150,73 +230,20 @@ export default function ActivityPage() {
 					}
 				/>
 			) : (
-				<div className="rounded-lg border border-neutral-200 bg-white overflow-hidden">
-					<table className="w-full text-left text-sm">
-						<thead className="border-b border-neutral-200 bg-neutral-50 text-neutral-500">
-							<tr>
-								<th className="px-4 py-3 font-medium w-40">{t('activity.table.time')}</th>
-								<th className="px-4 py-3 font-medium w-28">{t('activity.table.action')}</th>
-								<th className="px-4 py-3 font-medium">{t('activity.table.ip')}</th>
-								<th className="px-4 py-3 font-medium">{t('activity.table.device')}</th>
-								<th className="px-4 py-3 font-medium w-24">{t('activity.table.result')}</th>
-							</tr>
-						</thead>
-						<tbody className="divide-y divide-neutral-100 text-neutral-700">
-							{items.map((log, i) => (
-								<tr key={log.id || i} className="hover:bg-neutral-50">
-									<td className="px-4 py-3 text-xs whitespace-nowrap">
-										{log.timestamp ? formatTime(log.timestamp) : '—'}
-									</td>
-									<td className="px-4 py-3">
-										<span className="inline-flex items-center rounded bg-neutral-100 px-1.5 py-0.5 text-xs text-neutral-700">
-											{getActionLabel(log.action)}
-										</span>
-									</td>
-									<td className="px-4 py-3 text-xs font-mono">{log.ip || '—'}</td>
-									<td className="px-4 py-3 text-xs flex items-center gap-1.5">
-										{getDeviceIcon(log.userAgent)}
-										<span>{log.userAgent ? log.userAgent.slice(0, 40) : '—'}</span>
-									</td>
-									<td className="px-4 py-3">
-										{log.status === 'success' ? (
-											<span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700">
-												<CheckCircle2 size={10} /> {t('activity.status.success')}
-											</span>
-										) : log.status === 'failed' ? (
-											<span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-700">
-												<XCircle size={10} /> {t('activity.status.failed')}
-											</span>
-										) : (
-											<span className="text-xs text-neutral-400">—</span>
-										)}
-									</td>
-								</tr>
-							))}
-						</tbody>
-					</table>
-				</div>
-			)}
-
-			{total > pageSize && (
-				<div className="flex items-center justify-center gap-4">
-					<button
-						onClick={() => setPage(Math.max(1, page - 1))}
-						disabled={page <= 1}
-						className="px-3 py-1.5 text-sm border rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-neutral-50"
-					>
-						{t('common.previous')}
-					</button>
-					<span className="text-sm text-neutral-500">
-						{page} / {Math.ceil(total / pageSize)}
-					</span>
-					<button
-						onClick={() => setPage(page + 1)}
-						disabled={page * pageSize >= total}
-						className="px-3 py-1.5 text-sm border rounded-md disabled:opacity-40 disabled:cursor-not-allowed hover:bg-neutral-50"
-					>
-						{t('common.next')}
-					</button>
-				</div>
+				<DataTable<AuditLogItem>
+					rowKey={(r, i) => r.id ?? String(i)}
+					columns={columns}
+					dataSource={items}
+					scroll={{ x: 'max-content' }}
+					pagination={{
+						current: page,
+						pageSize,
+						total,
+						onChange: setPage,
+						// 原来的手写翻页只在 total > pageSize 时才出现；hideOnSinglePage 保留「不足一页不显示分页条」。
+						hideOnSinglePage: true,
+					}}
+				/>
 			)}
 		</div>
 	);
