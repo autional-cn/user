@@ -20,6 +20,7 @@ import { useUnreadNotifications } from '@/hooks/queries';
 import { useNotificationStream } from '@/hooks/use-notification-stream';
 import { useEffect, useRef } from 'react';
 import {
+	AppShell,
 	showToast,
 	LanguageSwitcher,
 	ThemeToggle,
@@ -39,7 +40,6 @@ import {
 	Link2,
 	Eye,
 	Menu,
-	X,
 	ChevronDown,
 	Building2,
 	Smartphone,
@@ -198,38 +198,15 @@ export default function AppLayout() {
 			</div>
 		);
 	}
-
 	return (
-		<div className="flex h-screen bg-neutral-50 dark:bg-neutral-900">
-			{/* Mobile overlay */}
-			{sidebarOpen && (
-				<div
-					className="fixed inset-0 z-40 bg-black/30 lg:hidden"
-					onClick={() => setSidebarOpen(false)}
-				/>
-			)}
-
-			{/* Sidebar */}
-			<aside
-				className={`fixed inset-y-0 left-0 z-50 w-64 transform border-r border-neutral-200 bg-white transition-transform duration-200 dark:border-neutral-700 dark:bg-neutral-800 lg:static lg:translate-x-0 ${
-					sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-				}`}
-			>
-				<div className="flex h-16 items-center justify-between px-6 border-b border-neutral-200 dark:border-neutral-700">
-					<span className="text-lg font-bold text-primary-700 dark:text-primary-400">
-						{t('dashboard.title')}
-					</span>
-					<button
-						className="lg:hidden text-neutral-500 hover:text-neutral-800"
-						onClick={() => setSidebarOpen(false)}
-						aria-label={t('nav.closeMenu')}
-					>
-						<X size={20} />
-					</button>
-				</div>
-
-				{/* Tenant Switcher */}
-				{tenants.length > 1 && currentTenant && (
+		<AppShell
+			brand={
+				<span className="truncate text-lg font-bold text-primary-700 dark:text-primary-400">
+					{t('dashboard.title')}
+				</span>
+			}
+			sidebarExtra={
+				tenants.length > 1 && currentTenant ? (
 					<div className="border-b border-neutral-200 p-3 dark:border-neutral-700">
 						<div className="relative">
 							<Building2
@@ -253,9 +230,10 @@ export default function AppLayout() {
 							/>
 						</div>
 					</div>
-				)}
-
-				<nav className="flex flex-col gap-4 p-4 overflow-y-auto">
+				) : null
+			}
+			nav={
+				<div className="flex flex-col gap-4 p-4">
 					{navSections.map((section) => (
 						<div key={section.header}>
 							<h3 className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
@@ -284,82 +262,78 @@ export default function AppLayout() {
 							</div>
 						</div>
 					))}
-				</nav>
-			</aside>
+				</div>
+			}
+			headerLeft={
+				<>
+					<button
+						className="lg:hidden text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+						onClick={() => setSidebarOpen(true)}
+						aria-label={t('nav.openMenu')}
+					>
+						<Menu size={20} />
+					</button>
+					<h1 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
+						{t('dashboard.title')}
+					</h1>
+				</>
+			}
+			headerRight={
+				<>
+					<PortalSwitcher portals={portals} currentPortal="user" />
 
-			{/* Main content */}
-			<div className="flex flex-1 flex-col min-w-0">
-				{/* Top bar */}
-				<header className="sticky top-0 z-10 flex h-[var(--layout-header-height)] items-center justify-between gap-4 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] px-4 lg:px-8">
-					<div className="flex items-center gap-4">
-						<button
-							className="lg:hidden text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
-							onClick={() => setSidebarOpen(true)}
-							aria-label={t('nav.openMenu')}
-						>
-							<Menu size={20} />
-						</button>
-						<h1 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
-							{t('dashboard.title')}
-						</h1>
-					</div>
+					<button
+						onClick={() => navigate(navHref(ROUTES.notifications))}
+						className="relative rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+						title={t('nav.notifications')}
+						aria-label={t('nav.notifications')}
+					>
+						<Bell size={18} />
+						{unreadCount > 0 && (
+							<span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white leading-none">
+								{unreadCount > 99 ? '99+' : unreadCount}
+							</span>
+						)}
+					</button>
 
-					<div className="flex items-center gap-3">
-						<PortalSwitcher portals={portals} currentPortal="user" />
+					<button
+						onClick={() => navigate(navHref(ROUTES.announcements))}
+						className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
+						title={t('nav.announcements')}
+						aria-label={t('nav.announcements')}
+					>
+						<Megaphone size={18} />
+					</button>
 
-						<button
-							onClick={() => navigate(navHref(ROUTES.notifications))}
-							className="relative rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
-							title={t('nav.notifications')}
-							aria-label={t('nav.notifications')}
-						>
-							<Bell size={18} />
-							{unreadCount > 0 && (
-								<span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white leading-none">
-									{unreadCount > 99 ? '99+' : unreadCount}
-								</span>
-							)}
-						</button>
+					{/* Language switcher */}
+					<LanguageSwitcher className="rounded-md px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors dark:text-neutral-400 dark:hover:text-neutral-200" />
 
-						<button
-							onClick={() => navigate(navHref(ROUTES.announcements))}
-							className="rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
-							title={t('nav.announcements')}
-							aria-label={t('nav.announcements')}
-						>
-							<Megaphone size={18} />
-						</button>
+					{/* Theme toggle */}
+					<ThemeToggle
+						className="text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
+						iconSize={18}
+					/>
 
-						{/* Language switcher */}
-						<LanguageSwitcher className="rounded-md px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors dark:text-neutral-400 dark:hover:text-neutral-200" />
-
-						{/* Theme toggle */}
-						<ThemeToggle
-							className="text-neutral-500 hover:bg-neutral-100 hover:text-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
-							iconSize={18}
-						/>
-
-						<UserMenu
-							user={user}
-							items={[
-								{
-									key: 'profile',
-									type: 'profile',
-									label: t('nav.profile'),
-									onClick: () => navigate(navHref(ROUTES.profile)),
-								},
-								{ key: 'logout', type: 'logout', onClick: handleLogout },
-							]}
-						/>
-					</div>
-				</header>
-
-				{/* Page content */}
-				<main className="flex-1 overflow-auto p-4 lg:p-8">
-					<Breadcrumb />
-					<Outlet />
-				</main>
-			</div>
-		</div>
+					<UserMenu
+						user={user}
+						items={[
+							{
+								key: 'profile',
+								type: 'profile',
+								label: t('nav.profile'),
+								onClick: () => navigate(navHref(ROUTES.profile)),
+							},
+							{ key: 'logout', type: 'logout', onClick: handleLogout },
+						]}
+					/>
+				</>
+			}
+			mobileOpen={sidebarOpen}
+			onMobileClose={() => setSidebarOpen(false)}
+			closeLabel={t('nav.closeMenu')}
+		>
+			<Breadcrumb />
+			<Outlet />
+		</AppShell>
 	);
 }

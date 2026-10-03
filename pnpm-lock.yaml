@@ -55,8 +55,8 @@ importers:
         specifier: 0.1.0-rc.5
         version: 0.1.0-rc.5
       '@autional-cn/ui':
-        specifier: 0.1.0-rc.26
-        version: 0.1.0-rc.26(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        specifier: 0.1.0-rc.27
+        version: 0.1.0-rc.27(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@hookform/resolvers':
         specifier: 3.10.0
         version: 3.10.0(react-hook-form@7.78.0(react@19.2.5))
@@ -258,8 +258,8 @@ packages:
   '@autional-cn/tsconfig@0.1.0-rc':
     resolution: {integrity: sha512-XY7N2lbMlR1D+OlkxDAw9Pz9CleV4UZ14RfWkkhGTZbbHvxT/d69H8GXWhyc9/634RoEUyVajYmjT75cZbKF4A==}
 
-  '@autional-cn/ui@0.1.0-rc.26':
-    resolution: {integrity: sha512-EqvwjDQSPEashXnWzV+uK66JcHcf+mmVBukK8eA+F/h/UbBKWjSdNzyuM8k1HGc6y5wP8O/YW86hv5LcNfcO7g==}
+  '@autional-cn/ui@0.1.0-rc.27':
+    resolution: {integrity: sha512-GQbV6MNssw3zFP4QKEsFJxxvthSXv2FBeakFPohgjwFSO4D8K+VGvJ3Hh9TnO7ggE1nZncdFQg7lInSGXh5kig==}
     peerDependencies:
       '@autional-cn/tokens': '>=0.1.0-rc'
       antd: '>=6.0.0'
@@ -4416,7 +4416,7 @@ snapshots:
 
   '@autional-cn/tsconfig@0.1.0-rc': {}
 
-  '@autional-cn/ui@0.1.0-rc.26(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@autional-cn/ui@0.1.0-rc.27(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@autional-cn/tokens': 0.1.0-rc.5
       i18next: 26.0.10(typescript@5.8.3)
