@@ -11,8 +11,9 @@ import {
 	useBranding,
 	BrandingInitializer,
 } from '@autional-cn/shared';
-import { LoadingScreen } from '@autional-cn/ui';
-import { ErrorBoundary } from './components/ErrorBoundary';
+import { ErrorBoundary, LoadingScreen } from '@autional-cn/ui';
+// 以前这里绕了一层本地包装（用 i18n 覆盖三段文案）。现在直接挂设计系统的 ErrorBoundary：
+// 它自带的字典按 <html lang> 选语言，而 src/i18n 已经会同步那个属性 —— 文案因此有四站同一份来源。
 import AppLayout from './components/layout/AppLayout';
 import { buildNavHref } from './lib/nav';
 import { ROUTES } from './lib/routes';
@@ -77,7 +78,7 @@ export default function App() {
 	useBranding();
 
 	return (
-		<ErrorBoundary>
+		<ErrorBoundary devMode={import.meta.env.DEV}>
 			<BrandingInitializer />
 			<Suspense fallback={<LoadingScreen message="加载中…" />}>
 				<Routes>
