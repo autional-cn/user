@@ -131,7 +131,7 @@ export default function WithdrawalsPage() {
 			dataIndex: 'createdAt',
 			key: 'createdAt',
 			render: (v: string | undefined) => (
-				<span className="text-gray-500">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+				<span className="text-neutral-600">{v ? new Date(v).toLocaleDateString() : '-'}</span>
 			),
 		},
 		{
@@ -161,7 +161,7 @@ export default function WithdrawalsPage() {
 			dataIndex: 'type',
 			key: 'type',
 			render: (v: string | undefined) => (
-				<span className="text-gray-500">{t(methodLabelKey(v))}</span>
+				<span className="text-neutral-600">{t(methodLabelKey(v))}</span>
 			),
 		},
 		{
@@ -169,7 +169,7 @@ export default function WithdrawalsPage() {
 			dataIndex: 'description',
 			key: 'description',
 			render: (v: string | undefined) => (
-				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
+				<span className="text-neutral-600 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
 			),
 		},
 	];
@@ -183,7 +183,7 @@ export default function WithdrawalsPage() {
 					<Wallet className="w-6 h-6 text-green-600" />
 				</div>
 				<div>
-					<div className="text-sm text-gray-500">{t('wallet.withdrawals.availableBalance')}</div>
+					<div className="text-sm text-neutral-600">{t('wallet.withdrawals.availableBalance')}</div>
 					<div className="text-2xl font-bold text-green-600">¥{currentBalance.toFixed(2)}</div>
 				</div>
 			</div>
@@ -208,7 +208,7 @@ export default function WithdrawalsPage() {
 				/>
 
 				<div>
-					<label className="block text-sm font-medium text-gray-700 mb-1">
+					<label className="block text-sm font-medium text-neutral-800 mb-1">
 						{t('wallet.withdrawals.method')}
 					</label>
 					<input type="hidden" {...register('method')} />
@@ -221,7 +221,7 @@ export default function WithdrawalsPage() {
 								className={`flex items-center gap-2 px-5 py-3 rounded-lg border transition-colors ${
 									watch('method') === ch.code
 										? 'border-[var(--color-brand)] bg-primary-50 text-[var(--color-brand)]'
-										: 'border-gray-200 hover:border-[var(--color-brand)]'
+										: 'border-neutral-300 hover:border-[var(--color-brand)]'
 								}`}
 							>
 								{ch.icon}
@@ -301,7 +301,7 @@ export default function WithdrawalsPage() {
 							setStatusFilter(e.target.value);
 							setPage(1);
 						}}
-						className="px-3 py-1.5 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
+						className="px-3 py-1.5 rounded-lg border border-neutral-300 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
 					>
 						{WITHDRAWAL_STATUSES.map((s) => (
 							<option key={s} value={s}>

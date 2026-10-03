@@ -113,7 +113,7 @@ export default function InvoicesPage() {
 			title: t('billing.invoices.date'),
 			dataIndex: 'createdAt',
 			key: 'createdAt',
-			render: (v: string | undefined) => <span className="text-gray-500 text-xs">{fmtDate(v)}</span>,
+			render: (v: string | undefined) => <span className="text-neutral-600 text-xs">{fmtDate(v)}</span>,
 		},
 		{
 			title: t('billing.invoices.actions'),
@@ -266,7 +266,7 @@ export default function InvoicesPage() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
 	return (
 		<div>
-			<div className="text-gray-500 text-xs">{label}</div>
+			<div className="text-neutral-600 text-xs">{label}</div>
 			{children}
 		</div>
 	);

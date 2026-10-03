@@ -28,21 +28,21 @@ const CYCLE_DISCOUNT: Record<string, number> = {
 };
 
 const planIcons: Record<string, React.ReactNode> = {
-	free: <Zap className="w-8 h-8 text-gray-400" />,
+	free: <Zap className="w-8 h-8 text-neutral-500" />,
 	basic: <Zap className="w-8 h-8 text-blue-500" />,
 	pro: <Crown className="w-8 h-8 text-amber-500" />,
 	enterprise: <Building2 className="w-8 h-8 text-purple-500" />,
 };
 
 const planColors: Record<string, string> = {
-	free: 'border-gray-300',
+	free: 'border-neutral-300',
 	basic: 'border-blue-300',
 	pro: 'border-amber-300',
 	enterprise: 'border-purple-300',
 };
 
 const planActiveColors: Record<string, string> = {
-	free: 'ring-gray-300 bg-gray-50',
+	free: 'ring-neutral-300 bg-neutral-50',
 	basic: 'ring-blue-500 bg-blue-50',
 	pro: 'ring-amber-500 bg-amber-50',
 	enterprise: 'ring-purple-500 bg-purple-50',
@@ -143,7 +143,7 @@ export default function SubscribePage() {
 		<div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
 			<div className="text-center space-y-2">
 				<h1 className="text-3xl font-bold">{t('billing.subscribe.title')}</h1>
-				<p className="text-gray-500">{t('billing.subscribe.subtitle')}</p>
+				<p className="text-neutral-600">{t('billing.subscribe.subtitle')}</p>
 			</div>
 
 			{currentSub?.plan && (
@@ -164,7 +164,7 @@ export default function SubscribePage() {
 					className={`px-4 py-2 rounded-l-lg border font-medium transition-colors ${
 						billingCycle === 'monthly'
 							? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
-							: 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+							: 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50'
 					}`}
 				>
 					{t('billing.subscribe.monthly')}
@@ -174,7 +174,7 @@ export default function SubscribePage() {
 					className={`px-4 py-2 rounded-r-lg border font-medium transition-colors ${
 						billingCycle === 'yearly'
 							? 'bg-[var(--color-brand)] text-white border-[var(--color-brand)]'
-							: 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+							: 'bg-white text-neutral-700 border-neutral-300 hover:bg-neutral-50'
 					}`}
 				>
 					{t('billing.subscribe.yearly', { discount: '8' })}
@@ -195,7 +195,7 @@ export default function SubscribePage() {
 							className={`relative bg-white rounded-xl border-2 p-6 cursor-pointer transition-all ${
 								isSelected
 									? `ring-2 ${planActiveColors[plan.plan] || 'ring-[var(--color-brand)] bg-primary-50'}`
-									: planColors[plan.plan] || 'border-gray-200'
+									: planColors[plan.plan] || 'border-neutral-300'
 							} hover:shadow-lg`}
 						>
 							{isCurrent && (
@@ -205,29 +205,29 @@ export default function SubscribePage() {
 							)}
 
 							<div className="flex flex-col items-center text-center space-y-3">
-								<div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-									{planIcons[plan.plan] || <Zap className="w-8 h-8 text-gray-400" />}
+								<div className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-200">
+									{planIcons[plan.plan] || <Zap className="w-8 h-8 text-neutral-500" />}
 								</div>
 								<div>
 									<h3 className="text-lg font-bold">{plan.name || plan.plan}</h3>
-									<p className="text-sm text-gray-500 mt-1">{plan.description}</p>
+									<p className="text-sm text-neutral-600 mt-1">{plan.description}</p>
 								</div>
 								<div className="text-center">
 									<span className="text-3xl font-bold">¥{price}</span>
 									{billingCycle === 'yearly' && (
 										<div>
-											<span className="text-sm text-gray-400 line-through">¥{originalPrice}</span>
+											<span className="text-sm text-neutral-500 line-through">¥{originalPrice}</span>
 											<span className="text-xs text-red-500 ml-1">
 												{t('billing.subscribe.yearlyBadge')}
 											</span>
 										</div>
 									)}
-									<span className="text-sm text-gray-400"> /{getCycleLabel(billingCycle)}</span>
+									<span className="text-sm text-neutral-500"> /{getCycleLabel(billingCycle)}</span>
 								</div>
 
 								<ul className="text-left space-y-2 w-full pt-2">
 									{features(plan).map((f, i) => (
-										<li key={i} className="flex items-start gap-2 text-sm text-gray-600">
+										<li key={i} className="flex items-start gap-2 text-sm text-neutral-700">
 											<Check className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
 											{f}
 										</li>

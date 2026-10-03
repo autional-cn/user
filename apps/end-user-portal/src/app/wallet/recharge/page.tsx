@@ -139,7 +139,7 @@ export default function WalletRechargePage() {
 					<Wallet className="w-6 h-6 text-green-600" />
 				</div>
 				<div>
-					<div className="text-sm text-gray-500">{t('wallet.recharge.currentBalance')}</div>
+					<div className="text-sm text-neutral-600">{t('wallet.recharge.currentBalance')}</div>
 					<div className="text-2xl font-bold text-green-600">¥{currentBalance.toFixed(2)}</div>
 				</div>
 			</div>
@@ -162,14 +162,14 @@ export default function WalletRechargePage() {
 							className={`px-6 py-3 rounded-lg border text-lg font-semibold transition-colors ${
 								Number(watchedAmount) === a && !watchedCustomAmount
 									? 'border-[var(--color-brand)] bg-primary-50 text-[var(--color-brand)]'
-									: 'border-gray-200 hover:border-[var(--color-brand)]'
+									: 'border-neutral-300 hover:border-[var(--color-brand)]'
 							}`}
 						>
 							¥{a}
 						</button>
 					))}
 					<div className="relative">
-						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
+						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">¥</span>
 						<FormInput<RechargeFormData>
 							name="customAmount"
 							control={control}
@@ -200,7 +200,7 @@ export default function WalletRechargePage() {
 							className={`flex items-center gap-2 px-5 py-3 rounded-lg border transition-colors ${
 								channel === ch.code
 									? 'border-[var(--color-brand)] bg-primary-50 text-[var(--color-brand)]'
-									: 'border-gray-200 hover:border-[var(--color-brand)]'
+									: 'border-neutral-300 hover:border-[var(--color-brand)]'
 							}`}
 						>
 							<span className="text-xl">{ch.icon}</span>

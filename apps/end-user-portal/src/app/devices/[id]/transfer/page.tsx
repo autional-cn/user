@@ -64,7 +64,7 @@ export default function DeviceTransferPage() {
 		<div className="max-w-2xl mx-auto space-y-6">
 			<button
 				onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-				className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+				className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-700 transition-colors"
 			>
 				<ArrowLeft size={14} />
 				{t('devices.transfer.back')}
@@ -72,7 +72,7 @@ export default function DeviceTransferPage() {
 
 			<div>
 				<h2 className="text-xl font-bold text-neutral-900">{t('devices.transfer.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-500">{t('devices.transfer.subtitle')}</p>
+				<p className="mt-1 text-sm text-neutral-600">{t('devices.transfer.subtitle')}</p>
 			</div>
 
 			<div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
@@ -82,12 +82,12 @@ export default function DeviceTransferPage() {
 
 			{deviceId && (
 				<div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4">
-					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-500">
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
 						<Smartphone size={20} />
 					</div>
 					<div>
 						<p className="text-sm font-medium text-neutral-900">{t('devices.transfer.deviceId')}</p>
-						<p className="text-xs text-neutral-500 font-mono">{deviceId}</p>
+						<p className="text-xs text-neutral-600 font-mono">{deviceId}</p>
 					</div>
 				</div>
 			)}
@@ -123,7 +123,7 @@ export default function DeviceTransferPage() {
 							<h3 className="text-base font-semibold text-neutral-900">
 								{t('devices.transfer.formTitle')}
 							</h3>
-							<p className="mt-1 text-sm text-neutral-500">{t('devices.transfer.formDesc')}</p>
+							<p className="mt-1 text-sm text-neutral-600">{t('devices.transfer.formDesc')}</p>
 						</div>
 
 						<div className="space-y-2">

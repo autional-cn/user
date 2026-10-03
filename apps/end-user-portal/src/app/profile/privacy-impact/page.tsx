@@ -190,7 +190,7 @@ export default function PrivacyImpactPage() {
 					{field.riskLevel === 'high' ? (
 						<EyeOff size={16} className="text-rose-400" />
 					) : (
-						<Eye size={16} className="text-neutral-400" />
+						<Eye size={16} className="text-neutral-500" />
 					)}
 					<span className="font-medium text-neutral-900">{field.label}</span>
 				</div>
@@ -204,7 +204,7 @@ export default function PrivacyImpactPage() {
 				const AudienceIcon = AUDIENCE_ICONS[field.audience] || Globe;
 				return (
 					<div className="flex items-center gap-2">
-						<AudienceIcon size={14} className="text-neutral-400" />
+						<AudienceIcon size={14} className="text-neutral-500" />
 						<span className="text-neutral-600">{v}</span>
 					</div>
 				);
@@ -231,14 +231,14 @@ export default function PrivacyImpactPage() {
 		<div className="space-y-6">
 			<div>
 				<h2 className="text-xl font-bold text-neutral-900">{t('privacyImpact.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-500">{t('privacyImpact.subtitle')}</p>
+				<p className="mt-1 text-sm text-neutral-600">{t('privacyImpact.subtitle')}</p>
 			</div>
 
 			{/* Risk Score Card */}
 			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
 				<div className="flex items-start gap-4">
 					<div
-						className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-md ${RISK_COLORS[riskLevel]?.bg || 'bg-neutral-50'} ${RISK_COLORS[riskLevel]?.text || 'text-neutral-500'}`}
+						className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-md ${RISK_COLORS[riskLevel]?.bg || 'bg-neutral-50'} ${RISK_COLORS[riskLevel]?.text || 'text-neutral-600'}`}
 					>
 						<Shield size={24} />
 					</div>
@@ -262,7 +262,7 @@ export default function PrivacyImpactPage() {
 								{getRiskLabel(riskLevel)}
 							</span>
 							{impact?.riskFactors ? (
-								<span className="ml-2 text-neutral-500">
+								<span className="ml-2 text-neutral-600">
 									{t('privacyImpact.riskFactors', { count: impact.riskFactors })}
 								</span>
 							) : null}
@@ -277,7 +277,7 @@ export default function PrivacyImpactPage() {
 					<h3 className="text-lg font-semibold text-neutral-900">
 						{t('privacyImpact.fieldExposure')}
 					</h3>
-					<p className="mt-1 text-sm text-neutral-500">{t('privacyImpact.fieldExposureDesc')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('privacyImpact.fieldExposureDesc')}</p>
 				</div>
 
 				{/* 外面那层 overflow-x-auto 由 DataTable 自带容器接管；卡片和标题是表外内容，保留 */}
@@ -322,7 +322,7 @@ export default function PrivacyImpactPage() {
 							<h3 className="font-semibold text-neutral-900">
 								{t('privacyImpact.manageSettings')}
 							</h3>
-							<p className="text-sm text-neutral-500">{t('privacyImpact.manageSettingsDesc')}</p>
+							<p className="text-sm text-neutral-600">{t('privacyImpact.manageSettingsDesc')}</p>
 						</div>
 					</div>
 					<Link

@@ -26,7 +26,7 @@ import {
 const roleConfig: Record<string, { icon: typeof ShieldCheck; label: string; color: string }> = {
 	parent_admin: { icon: Crown, label: 'Parent Admin', color: 'text-amber-600' },
 	child_limited: { icon: ShieldCheck, label: 'Child (Limited)', color: 'text-primary-600' },
-	guest_viewer: { icon: Eye, label: 'Guest Viewer', color: 'text-neutral-500' },
+	guest_viewer: { icon: Eye, label: 'Guest Viewer', color: 'text-neutral-600' },
 };
 
 const roleOptions = [
@@ -37,7 +37,7 @@ const roleOptions = [
 
 function getRoleConfig(role?: string) {
 	return (
-		roleConfig[role || ''] || { icon: Users, label: role || 'Unknown', color: 'text-neutral-500' }
+		roleConfig[role || ''] || { icon: Users, label: role || 'Unknown', color: 'text-neutral-600' }
 	);
 }
 
@@ -91,7 +91,7 @@ export default function FamilyAccessPage() {
 		return (
 			<div className="flex flex-col items-center justify-center py-20">
 				<Users size={48} className="text-neutral-300" />
-				<p className="mt-4 text-sm text-neutral-500">{t('devices.family.noDevice')}</p>
+				<p className="mt-4 text-sm text-neutral-600">{t('devices.family.noDevice')}</p>
 				<button
 					onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
 					className="mt-4 text-sm text-primary-600 hover:text-primary-700"
@@ -108,7 +108,7 @@ export default function FamilyAccessPage() {
 		<div className="space-y-6">
 			<button
 				onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-				className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+				className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-700 transition-colors"
 			>
 				<ArrowLeft size={14} />
 				{t('devices.family.back')}
@@ -117,7 +117,7 @@ export default function FamilyAccessPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('devices.family.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('devices.family.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('devices.family.subtitle')}</p>
 				</div>
 				{!showForm && (
 					<button
@@ -190,7 +190,7 @@ export default function FamilyAccessPage() {
 					{members.length === 0 ? (
 						<div className="flex flex-col items-center justify-center py-12 text-center">
 							<Users size={40} className="text-neutral-300" />
-							<p className="mt-4 text-sm text-neutral-500">{t('devices.family.empty')}</p>
+							<p className="mt-4 text-sm text-neutral-600">{t('devices.family.empty')}</p>
 						</div>
 					) : (
 						<ul className="divide-y divide-neutral-100">
@@ -200,7 +200,7 @@ export default function FamilyAccessPage() {
 								return (
 									<li key={member.id} className="flex items-center justify-between gap-4 p-4">
 										<div className="flex items-center gap-3">
-											<div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
+											<div className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-100 text-neutral-600">
 												<Users size={16} />
 											</div>
 											<div>

@@ -126,7 +126,7 @@ export default function CommunicationHistoryPage() {
 			dataIndex: 'sentAt',
 			key: 'sentAt',
 			render: (_: unknown, log: CommunicationLogItem) => (
-				<span className="text-neutral-500">{formatTime(log.sentAt || log.createdAt)}</span>
+				<span className="text-neutral-600">{formatTime(log.sentAt || log.createdAt)}</span>
 			),
 		},
 	];
@@ -138,7 +138,7 @@ export default function CommunicationHistoryPage() {
 					<h2 className="text-xl font-bold text-neutral-900">
 						{t('communication.historyTitle', 'Communication History')}
 					</h2>
-					<p className="mt-1 text-sm text-neutral-500">
+					<p className="mt-1 text-sm text-neutral-600">
 						{total > 0
 							? t('communication.totalLogs', { total })
 							: t('communication.noLogs', 'No communication logs found')}
@@ -148,8 +148,8 @@ export default function CommunicationHistoryPage() {
 
 			<div className="flex items-center gap-3">
 				<div className="flex items-center gap-2">
-					<Filter size={16} className="text-neutral-400" />
-					<span className="text-sm text-neutral-500">
+					<Filter size={16} className="text-neutral-500" />
+					<span className="text-sm text-neutral-600">
 						{t('communication.filterByChannel', 'Channel:')}
 					</span>
 				</div>
@@ -184,7 +184,7 @@ export default function CommunicationHistoryPage() {
 					emptyText: (
 						<div className="flex flex-col items-center gap-2">
 							<History size={36} className="text-neutral-300" />
-							<span className="text-sm text-neutral-500">
+							<span className="text-sm text-neutral-600">
 								{t('communication.empty', 'No logs yet')}
 							</span>
 						</div>

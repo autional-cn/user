@@ -276,12 +276,12 @@ export default function StoragePage() {
 			{quotaData && (
 				<div className="bg-white rounded-lg border p-4">
 					<div className="flex items-center justify-between text-sm mb-2">
-						<span className="text-gray-600">{t('storage.quota')}</span>
-						<span className="font-mono text-gray-700">
+						<span className="text-neutral-700">{t('storage.quota')}</span>
+						<span className="font-mono text-neutral-800">
 							{formatBytes(quotaData.usedBytes)} / {formatBytes(quotaData.quotaBytes)}
 						</span>
 					</div>
-					<div className="w-full bg-gray-200 rounded-full h-2">
+					<div className="w-full bg-neutral-300 rounded-full h-2">
 						<div
 							className="bg-[var(--color-brand)] h-2 rounded-full transition-all"
 							style={{ width: `${Math.min(quotaData.usagePercent || 0, 100)}%` }}
@@ -291,13 +291,13 @@ export default function StoragePage() {
 			)}
 
 			{/* Breadcrumb */}
-			<div className="flex items-center gap-1.5 text-sm text-gray-500 flex-wrap">
+			<div className="flex items-center gap-1.5 text-sm text-neutral-600 flex-wrap">
 				{breadcrumbs.map((b, i) => (
 					<span key={b.id} className="flex items-center gap-1.5">
-						{i > 0 && <span className="text-gray-300">/</span>}
+						{i > 0 && <span className="text-neutral-300">/</span>}
 						<button
 							onClick={() => navigateBreadcrumb(i - 1)}
-							className={`hover:text-[var(--color-brand)] hover:underline ${i === breadcrumbs.length - 1 ? 'text-gray-900 font-medium' : ''}`}
+							className={`hover:text-[var(--color-brand)] hover:underline ${i === breadcrumbs.length - 1 ? 'text-neutral-900 font-medium' : ''}`}
 						>
 							{b.name}
 						</button>
@@ -308,7 +308,7 @@ export default function StoragePage() {
 			{/* Toolbar */}
 			<div className="flex items-center gap-2 flex-wrap">
 				<div className="relative flex-1 min-w-[200px] max-w-sm">
-					<Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+					<Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
 					<input
 						type="text"
 						placeholder={t('storage.search')}
@@ -320,7 +320,7 @@ export default function StoragePage() {
 				{folderStack.length > 0 && (
 					<button
 						onClick={navigateUp}
-						className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-gray-50"
+						className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
 						title={t('storage.up')}
 					>
 						<ArrowUp size={16} />
@@ -328,14 +328,14 @@ export default function StoragePage() {
 				)}
 				<button
 					onClick={() => refetch()}
-					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-gray-50"
+					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
 					title={t('storage.refresh')}
 				>
 					<RefreshCw size={16} />
 				</button>
 				<button
 					onClick={() => setShowCreateFolder(true)}
-					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-gray-50"
+					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
 				>
 					<FolderPlus size={16} />
 					<span className="hidden sm:inline">{t('storage.newFolder')}</span>
@@ -380,7 +380,7 @@ export default function StoragePage() {
 									{entry.name}
 								</div>
 								{/* Meta */}
-								<div className="text-xs text-gray-400 text-center space-y-0.5">
+								<div className="text-xs text-neutral-500 text-center space-y-0.5">
 									{entry._type === 'file' && entry.size !== undefined && (
 										<div>{formatBytes(entry.size)}</div>
 									)}
@@ -393,7 +393,7 @@ export default function StoragePage() {
 											e.stopPropagation();
 											setContextMenu(contextMenu?.entry === entry ? null : { entry, x: 0, y: 0 });
 										}}
-										className="p-1 rounded hover:bg-gray-100"
+										className="p-1 rounded hover:bg-neutral-200"
 									>
 										<MoreVertical size={14} />
 									</button>
@@ -408,13 +408,13 @@ export default function StoragePage() {
 											<>
 												<button
 													onClick={() => downloadMut.mutate(entry)}
-													className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 flex items-center gap-2"
+													className="w-full text-left px-3 py-1.5 text-sm hover:bg-neutral-50 flex items-center gap-2"
 												>
 													<Download size={14} /> {t('storage.download')}
 												</button>
 												<button
 													onClick={() => shareMut.mutate(entry.fileId!)}
-													className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 flex items-center gap-2"
+													className="w-full text-left px-3 py-1.5 text-sm hover:bg-neutral-50 flex items-center gap-2"
 												>
 													<Share2 size={14} /> {t('storage.share')}
 												</button>
@@ -423,7 +423,7 @@ export default function StoragePage() {
 										{entry._type === 'folder' && (
 											<button
 												onClick={() => id && navigateTo(id, entry.name || '')}
-												className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 flex items-center gap-2"
+												className="w-full text-left px-3 py-1.5 text-sm hover:bg-neutral-50 flex items-center gap-2"
 											>
 												<FolderOpen size={14} /> {t('storage.open')}
 											</button>
@@ -434,7 +434,7 @@ export default function StoragePage() {
 												setRenameName(entry.name || '');
 												setContextMenu(null);
 											}}
-											className="w-full text-left px-3 py-1.5 text-sm hover:bg-gray-50 flex items-center gap-2"
+											className="w-full text-left px-3 py-1.5 text-sm hover:bg-neutral-50 flex items-center gap-2"
 										>
 											<Copy size={14} /> {t('storage.rename')}
 										</button>

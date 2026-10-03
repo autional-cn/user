@@ -67,13 +67,13 @@ export default function ExportDataPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.profile, tenantSlug)}
-					className="text-neutral-400 hover:text-neutral-600 transition-colors"
+					className="text-neutral-500 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('privacy.exportData.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('privacy.exportData.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('privacy.exportData.subtitle')}</p>
 				</div>
 			</div>
 
@@ -85,7 +85,7 @@ export default function ExportDataPage() {
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('privacy.exportData.ready')}
 					</h3>
-					<p className="mt-2 text-sm text-neutral-500">{t('privacy.exportData.desc')}</p>
+					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.desc')}</p>
 					<ul className="mt-4 space-y-2 text-left text-sm text-neutral-600">
 						<li className="flex items-start gap-2">
 							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
@@ -121,7 +121,7 @@ export default function ExportDataPage() {
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('privacy.exportData.loading')}
 					</h3>
-					<p className="mt-2 text-sm text-neutral-500">{t('privacy.exportData.loadingDesc')}</p>
+					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.loadingDesc')}</p>
 				</div>
 			)}
 
@@ -153,9 +153,9 @@ export default function ExportDataPage() {
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('privacy.exportData.successTitle')}
 					</h3>
-					<p className="mt-2 text-sm text-neutral-500">{t('privacy.exportData.successDesc')}</p>
+					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.successDesc')}</p>
 					{exportId && (
-						<p className="mt-1 text-xs text-neutral-400">
+						<p className="mt-1 text-xs text-neutral-500">
 							{t('privacy.exportData.exportId')}: {exportId}
 						</p>
 					)}
@@ -165,7 +165,7 @@ export default function ExportDataPage() {
 							{t('privacy.exportData.download')}
 						</Button>
 					</div>
-					<p className="mt-2 text-xs text-neutral-400">{t('privacy.exportData.autoDownload')}</p>
+					<p className="mt-2 text-xs text-neutral-500">{t('privacy.exportData.autoDownload')}</p>
 				</div>
 			)}
 		</div>

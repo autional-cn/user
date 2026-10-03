@@ -154,7 +154,7 @@ export default function ConsentsPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('consents.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('consents.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('consents.subtitle')}</p>
 				</div>
 				{availableFields.length > 0 && (
 					<button
@@ -175,7 +175,7 @@ export default function ConsentsPage() {
 				{consents.length === 0 ? (
 					<div className="px-6 py-12 text-center">
 						<Shield size={40} className="mx-auto text-neutral-300 mb-3" />
-						<p className="text-sm text-neutral-500">{t('consents.noConsents')}</p>
+						<p className="text-sm text-neutral-600">{t('consents.noConsents')}</p>
 					</div>
 				) : (
 					<div className="divide-y divide-neutral-100">
@@ -203,7 +203,7 @@ export default function ConsentsPage() {
 											</span>
 										)}
 									</div>
-									<div className="mt-1 flex items-center gap-4 text-xs text-neutral-400">
+									<div className="mt-1 flex items-center gap-4 text-xs text-neutral-500">
 										<span>{field.fieldKey}</span>
 										{field.grantedAt && (
 											<span>
@@ -263,7 +263,7 @@ export default function ConsentsPage() {
 {/* 横向内边距归 Modal 的内容区（px-6 py-4），保留会与表头/表尾错位；这里只留本层自己的滚动与间距 */}
 				<div className="space-y-3 max-h-80 overflow-y-auto">
 					{availableFields.length === 0 ? (
-						<p className="text-center text-sm text-neutral-400 py-4">
+						<p className="text-center text-sm text-neutral-500 py-4">
 							{t('consents.allFieldsConsented')}
 						</p>
 					) : (
@@ -284,7 +284,7 @@ export default function ConsentsPage() {
 								/>
 								<div className="flex-1 min-w-0">
 									<p className="text-sm font-medium text-neutral-900">{field.label}</p>
-									<p className="text-xs text-neutral-500">{field.description}</p>
+									<p className="text-xs text-neutral-600">{field.description}</p>
 								</div>
 							</label>
 						))

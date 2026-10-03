@@ -134,7 +134,7 @@ export default function NotificationPreferencesPage() {
 				<h2 className="text-xl font-bold text-neutral-900">
 					{t('notifications.prefs.title', '通知偏好设置')}
 				</h2>
-				<p className="mt-1 text-sm text-neutral-500">
+				<p className="mt-1 text-sm text-neutral-600">
 					{t('notifications.prefs.description', '管理您希望接收的通知类型和渠道')}
 				</p>
 			</div>
@@ -144,7 +144,7 @@ export default function NotificationPreferencesPage() {
 				<h3 className="text-base font-semibold text-neutral-900">
 					{t('notifications.prefs.typesTitle', '通知类型')}
 				</h3>
-				<p className="mt-1 text-sm text-neutral-500">
+				<p className="mt-1 text-sm text-neutral-600">
 					{t('notifications.prefs.typesDesc', '选择您希望接收的通知类型')}
 				</p>
 				<div className="mt-4 divide-y divide-neutral-100">
@@ -154,10 +154,10 @@ export default function NotificationPreferencesPage() {
 							className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
 						>
 							<div className="flex items-start gap-3">
-								<nt.icon size={18} className="mt-0.5 text-neutral-500" />
+								<nt.icon size={18} className="mt-0.5 text-neutral-600" />
 								<div>
 									<p className="text-sm font-medium text-neutral-800">{t(nt.labelKey)}</p>
-									<p className="text-xs text-neutral-500">{t(nt.descKey)}</p>
+									<p className="text-xs text-neutral-600">{t(nt.descKey)}</p>
 								</div>
 							</div>
 							<button
@@ -185,7 +185,7 @@ export default function NotificationPreferencesPage() {
 				<h3 className="text-base font-semibold text-neutral-900">
 					{t('notifications.prefs.channelsTitle', '通知渠道')}
 				</h3>
-				<p className="mt-1 text-sm text-neutral-500">
+				<p className="mt-1 text-sm text-neutral-600">
 					{t('notifications.prefs.channelsDesc', '选择通知的发送渠道')}
 				</p>
 				<div className="mt-4 divide-y divide-neutral-100">
@@ -195,7 +195,7 @@ export default function NotificationPreferencesPage() {
 							className="flex items-center justify-between py-3 first:pt-0 last:pb-0"
 						>
 							<div className="flex items-center gap-3">
-								<ch.icon size={18} className="text-neutral-500" />
+								<ch.icon size={18} className="text-neutral-600" />
 								<p className="text-sm font-medium text-neutral-800">{t(ch.labelKey)}</p>
 							</div>
 							<button

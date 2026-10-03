@@ -40,7 +40,7 @@ export default function AnnouncementsPage() {
 				<h2 className="text-xl font-bold text-neutral-900">
 					{t('announcements.title', 'Announcements')}
 				</h2>
-				<p className="mt-1 text-sm text-neutral-500">
+				<p className="mt-1 text-sm text-neutral-600">
 					{t('announcements.description', 'Stay updated with the latest news and updates')}
 				</p>
 			</div>
@@ -62,20 +62,20 @@ export default function AnnouncementsPage() {
 								<div className="flex items-center gap-2">
 									<h3 className="text-base font-semibold text-neutral-900">{ann.title}</h3>
 									{ann.views != null && (
-										<span className="flex items-center gap-1 text-xs text-neutral-400">
+										<span className="flex items-center gap-1 text-xs text-neutral-500">
 											<Eye size={12} />
 											{ann.views}
 										</span>
 									)}
 								</div>
 								{expandedId !== ann.id && (
-									<p className="mt-1 text-sm text-neutral-500 line-clamp-2">
+									<p className="mt-1 text-sm text-neutral-600 line-clamp-2">
 										{ann.content?.slice(0, 200) ||
 											t('announcements.noContentPreview', '(no content)')}
 									</p>
 								)}
 								<div className="mt-2 flex items-center justify-between">
-									<span className="text-xs text-neutral-400">
+									<span className="text-xs text-neutral-500">
 										{ann.publishAt
 											? t('announcements.published', { date: formatTime(ann.publishAt) })
 											: formatTime(ann.createdAt)}
@@ -86,16 +86,16 @@ export default function AnnouncementsPage() {
 												e.stopPropagation();
 												handleDismiss(ann.id);
 											}}
-											className="flex items-center gap-1 text-xs text-neutral-400 hover:text-neutral-600 transition-colors"
+											className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-600 transition-colors"
 										>
 											<X size={12} />
 											{t('announcements.dismiss', 'Dismiss')}
 										</button>
-										<span className="text-xs text-neutral-400">
+										<span className="text-xs text-neutral-500">
 											{expandedId === ann.id ? (
-												<ChevronDown size={14} className="text-neutral-400" />
+												<ChevronDown size={14} className="text-neutral-500" />
 											) : (
-												<ChevronRight size={14} className="text-neutral-400" />
+												<ChevronRight size={14} className="text-neutral-500" />
 											)}
 										</span>
 									</div>
@@ -118,7 +118,7 @@ export default function AnnouncementsPage() {
 										</span>
 									))}
 									{ann.expireAt && (
-										<span className="text-xs text-neutral-400">
+										<span className="text-xs text-neutral-500">
 											{t('announcements.expiresAt', 'Expires:')} {formatTime(ann.expireAt)}
 										</span>
 									)}
@@ -137,7 +137,7 @@ export default function AnnouncementsPage() {
 				{visibleList.length === 0 && (
 					<div className="flex flex-col items-center justify-center rounded-lg border border-neutral-200 bg-white py-16 text-center">
 						<Megaphone size={40} className="text-neutral-300" />
-						<p className="mt-4 text-sm text-neutral-500">
+						<p className="mt-4 text-sm text-neutral-600">
 							{t('announcements.empty', 'No announcements')}
 						</p>
 					</div>
@@ -146,7 +146,7 @@ export default function AnnouncementsPage() {
 
 			{pagination && pagination.totalPages > 1 && (
 				<div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3">
-					<span className="text-sm text-neutral-500">
+					<span className="text-sm text-neutral-600">
 						{t('announcements.pageInfo', {
 							page: pagination.page,
 							totalPages: pagination.totalPages,

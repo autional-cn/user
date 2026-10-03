@@ -142,7 +142,7 @@ export default function BillingPage() {
 			dataIndex: 'description',
 			key: 'description',
 			render: (v: string | undefined) => (
-				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
+				<span className="text-neutral-600 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
 			),
 		},
 		{
@@ -151,7 +151,7 @@ export default function BillingPage() {
 			key: 'createdAt',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-gray-400 text-xs">
+				<span className="text-neutral-500 text-xs">
 					{v ? new Date(v).toLocaleDateString() : '-'}
 				</span>
 			),
@@ -169,16 +169,16 @@ export default function BillingPage() {
 							<CreditCard size={20} />
 						</div>
 						<div>
-							<p className="text-sm text-gray-500">{t('billing.currentSubscription')}</p>
+							<p className="text-sm text-neutral-600">{t('billing.currentSubscription')}</p>
 							<p className="text-lg font-semibold capitalize">{planName}</p>
 						</div>
 					</div>
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
-							<span className="text-gray-400">{t('billing.status')}</span>
+							<span className="text-neutral-500">{t('billing.status')}</span>
 							<p className="font-medium">
 								<span
-									className={`inline-block px-2 py-0.5 rounded text-xs ${planStatus === 'active' ? 'bg-green-50 text-green-600' : planStatus === 'trial' ? 'bg-blue-50 text-blue-600' : planStatus === 'cancelled' ? 'bg-red-50 text-red-600' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-500'}`}
+									className={`inline-block px-2 py-0.5 rounded text-xs ${planStatus === 'active' ? 'bg-green-50 text-green-600' : planStatus === 'trial' ? 'bg-blue-50 text-blue-600' : planStatus === 'cancelled' ? 'bg-red-50 text-red-600' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
 								>
 									{t(
 										planStatus === 'active'
@@ -195,7 +195,7 @@ export default function BillingPage() {
 							</p>
 						</div>
 						<div>
-							<span className="text-gray-400">{t('billing.billingCycle')}</span>
+							<span className="text-neutral-500">{t('billing.billingCycle')}</span>
 							<p className="font-medium capitalize">
 								{t(
 									billingCycle === 'monthly'
@@ -207,7 +207,7 @@ export default function BillingPage() {
 							</p>
 						</div>
 						<div>
-							<span className="text-gray-400">{t('billing.amount')}</span>
+							<span className="text-neutral-500">{t('billing.amount')}</span>
 							<p className="font-medium">
 								{currency === 'CNY' ? '¥' : ''}
 								{amount.toLocaleString()}/
@@ -215,13 +215,13 @@ export default function BillingPage() {
 							</p>
 						</div>
 						<div>
-							<span className="text-gray-400">{t('billing.autoRenew')}</span>
-							<p className={`font-medium ${autoRenew ? 'text-green-600' : 'text-gray-500'}`}>
+							<span className="text-neutral-500">{t('billing.autoRenew')}</span>
+							<p className={`font-medium ${autoRenew ? 'text-green-600' : 'text-neutral-600'}`}>
 								{autoRenew ? t('billing.autoRenewEnabled') : t('billing.autoRenewDisabled')}
 							</p>
 						</div>
 					</div>
-					<div className="mt-3 pt-3 border-t text-xs text-gray-400 flex items-center gap-1">
+					<div className="mt-3 pt-3 border-t text-xs text-neutral-500 flex items-center gap-1">
 						<Calendar size={12} />
 						{periodStart} ~ {periodEnd}
 					</div>
@@ -234,7 +234,7 @@ export default function BillingPage() {
 								<BarChart3 size={20} />
 							</div>
 							<div>
-								<p className="text-sm text-gray-500">{t('billing.spendingStats')}</p>
+								<p className="text-sm text-neutral-600">{t('billing.spendingStats')}</p>
 								<p className="text-lg font-semibold">
 									{currency === 'CNY' ? '¥' : ''}
 									{(stats.totalSpend ?? 0).toLocaleString()}
@@ -243,18 +243,18 @@ export default function BillingPage() {
 						</div>
 						<div className="grid grid-cols-2 gap-3 text-sm">
 							<div>
-								<span className="text-gray-400">{t('billing.mrr')}</span>
+								<span className="text-neutral-500">{t('billing.mrr')}</span>
 								<p className="font-medium">
 									{currency === 'CNY' ? '¥' : ''}
 									{(stats.mrr ?? 0).toLocaleString()}
 								</p>
 							</div>
 							<div>
-								<span className="text-gray-400">{t('billing.activeUsers')}</span>
+								<span className="text-neutral-500">{t('billing.activeUsers')}</span>
 								<p className="font-medium">{stats.activeUsers ?? 0}</p>
 							</div>
 							<div>
-								<span className="text-gray-400">{t('billing.retentionRate')}</span>
+								<span className="text-neutral-500">{t('billing.retentionRate')}</span>
 								<p className="font-medium">
 									{stats.retentionRate != null ? `${(stats.retentionRate * 100).toFixed(1)}%` : '-'}
 								</p>
@@ -335,16 +335,16 @@ function UsageCard({
 		<div className="bg-white rounded-lg border p-4">
 			<div className="flex items-center gap-2 mb-3">
 				{icon}
-				<span className="text-sm text-gray-500">{label}</span>
+				<span className="text-sm text-neutral-600">{label}</span>
 			</div>
 			<div className="text-xl font-bold mb-2">{value}</div>
-			<div className="w-full bg-gray-100 rounded-full h-2 mb-1">
+			<div className="w-full bg-neutral-200 rounded-full h-2 mb-1">
 				<div
 					className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-red-500' : percent > 60 ? 'bg-amber-500' : 'bg-green-500'}`}
 					style={{ width: `${Math.max(percent, 2)}%` }}
 				/>
 			</div>
-			<div className="text-xs text-gray-400">
+			<div className="text-xs text-neutral-500">
 				{value} / {max}
 				{unit ? ` ${unit}` : ''} ({percent.toFixed(1)}%)
 			</div>

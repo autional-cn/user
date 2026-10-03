@@ -50,7 +50,7 @@ export default function DevicePairingPage() {
 		<div className="space-y-6">
 			<button
 				onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-				className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+				className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-700 transition-colors"
 			>
 				<ArrowLeft size={14} />
 				{t('devices.pair.back')}
@@ -58,7 +58,7 @@ export default function DevicePairingPage() {
 
 			<div>
 				<h2 className="text-xl font-bold text-neutral-900">{t('devices.pair.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-500">{t('devices.pair.subtitle')}</p>
+				<p className="mt-1 text-sm text-neutral-600">{t('devices.pair.subtitle')}</p>
 			</div>
 
 			{success ? (

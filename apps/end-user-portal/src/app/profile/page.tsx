@@ -133,11 +133,11 @@ export default function ProfilePage() {
 		action?: React.ReactNode;
 	}) => (
 		<div className="flex items-center gap-3 py-3">
-			<div className="flex h-9 w-9 items-center justify-center rounded-md bg-neutral-100 text-neutral-500">
+			<div className="flex h-9 w-9 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
 				<Icon size={18} />
 			</div>
 			<div className="flex-1">
-				<p className="text-xs text-neutral-500">{label}</p>
+				<p className="text-xs text-neutral-600">{label}</p>
 				<p className="text-sm font-medium text-neutral-900">{value || '--'}</p>
 			</div>
 			{action}
@@ -158,7 +158,7 @@ export default function ProfilePage() {
 		<div className="flex items-center justify-between py-4">
 			<div>
 				<p className="text-sm font-medium text-neutral-900">{label}</p>
-				<p className="text-xs text-neutral-500">{description}</p>
+				<p className="text-xs text-neutral-600">{description}</p>
 			</div>
 			<button
 				onClick={onChange}
@@ -233,9 +233,9 @@ export default function ProfilePage() {
 				</div>
 				<div className="flex-1">
 					<h3 className="font-medium text-neutral-900">{t('profile.privacyImpactLink')}</h3>
-					<p className="text-sm text-neutral-500">{t('profile.privacyImpactLinkDesc')}</p>
+					<p className="text-sm text-neutral-600">{t('profile.privacyImpactLinkDesc')}</p>
 				</div>
-				<ChevronRight size={16} className="text-neutral-400" />
+				<ChevronRight size={16} className="text-neutral-500" />
 			</Link>
 
 			{/* Consent Management Link */}
@@ -248,9 +248,9 @@ export default function ProfilePage() {
 				</div>
 				<div className="flex-1">
 					<h3 className="font-medium text-neutral-900">{t('profile.consentsLink')}</h3>
-					<p className="text-sm text-neutral-500">{t('profile.consentsLinkDesc')}</p>
+					<p className="text-sm text-neutral-600">{t('profile.consentsLinkDesc')}</p>
 				</div>
-				<ChevronRight size={16} className="text-neutral-400" />
+				<ChevronRight size={16} className="text-neutral-500" />
 			</Link>
 
 			<div className="flex border-b border-neutral-200">
@@ -259,7 +259,7 @@ export default function ProfilePage() {
 					className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
 						activeTab === 'basic'
 							? 'border-primary-600 text-primary-600'
-							: 'border-transparent text-neutral-500 hover:text-neutral-700'
+							: 'border-transparent text-neutral-600 hover:text-neutral-700'
 					}`}
 				>
 					{t('profile.tabs.basic')}
@@ -269,7 +269,7 @@ export default function ProfilePage() {
 					className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
 						activeTab === 'privacy'
 							? 'border-primary-600 text-primary-600'
-							: 'border-transparent text-neutral-500 hover:text-neutral-700'
+							: 'border-transparent text-neutral-600 hover:text-neutral-700'
 					}`}
 				>
 					{t('profile.tabs.privacy')}
@@ -279,7 +279,7 @@ export default function ProfilePage() {
 					className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
 						activeTab === 'preferences'
 							? 'border-primary-600 text-primary-600'
-							: 'border-transparent text-neutral-500 hover:text-neutral-700'
+							: 'border-transparent text-neutral-600 hover:text-neutral-700'
 					}`}
 				>
 					{t('profile.tabs.preferences')}
@@ -321,7 +321,7 @@ export default function ProfilePage() {
 							<h3 className="text-lg font-semibold text-neutral-900">
 								{profile.username || profile.email}
 							</h3>
-							<p className="text-sm text-neutral-500">{profile.email}</p>
+							<p className="text-sm text-neutral-600">{profile.email}</p>
 						</div>
 					</div>
 
@@ -463,7 +463,7 @@ export default function ProfilePage() {
 								<p className="text-sm font-medium text-neutral-900">
 									{t('profile.preferences.theme')}
 								</p>
-								<p className="text-xs text-neutral-500">
+								<p className="text-xs text-neutral-600">
 									{isDark ? t('profile.preferences.dark') : t('profile.preferences.light')}
 								</p>
 							</div>
@@ -486,7 +486,7 @@ export default function ProfilePage() {
 									{t('profile.preferences.timezone')}
 								</p>
 							</div>
-							<p className="text-sm text-neutral-500">
+							<p className="text-sm text-neutral-600">
 								{Intl.DateTimeFormat().resolvedOptions().timeZone}
 							</p>
 						</div>

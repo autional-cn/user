@@ -95,7 +95,7 @@ export default function PushTokensPage() {
 						<h2 className="text-xl font-bold text-neutral-900">
 							{t('communication.pushTokens.title', 'Push Tokens')}
 						</h2>
-						<p className="mt-1 text-sm text-neutral-500">
+						<p className="mt-1 text-sm text-neutral-600">
 							{t(
 								'communication.pushTokens.description',
 								'Manage your device push notification tokens',
@@ -205,14 +205,14 @@ export default function PushTokensPage() {
 									<div>
 										<p className="text-sm font-semibold text-neutral-900">{t(meta.labelKey)}</p>
 										{token.deviceId && (
-											<p className="text-xs text-neutral-400 mt-0.5">{token.deviceId}</p>
+											<p className="text-xs text-neutral-500 mt-0.5">{token.deviceId}</p>
 										)}
 									</div>
 								</div>
 								<button
 									onClick={() => handleDelete(token.id)}
 									disabled={deleteMutation.isPending}
-									className="rounded-md p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-40"
+									className="rounded-md p-1.5 text-neutral-500 hover:bg-red-50 hover:text-red-600 transition-colors disabled:opacity-40"
 									title={t('communication.pushTokens.delete', 'Delete')}
 								>
 									<Trash2 size={16} />
@@ -224,20 +224,20 @@ export default function PushTokensPage() {
 									<span
 										className={`inline-block h-2 w-2 rounded-full ${token.isActive ? 'bg-green-500' : 'bg-neutral-300'}`}
 									/>
-									<span className="text-xs text-neutral-500">
+									<span className="text-xs text-neutral-600">
 										{token.isActive
 											? t('communication.pushTokens.active', 'Active')
 											: t('communication.pushTokens.inactive', 'Inactive')}
 									</span>
 								</div>
-								<p className="text-xs text-neutral-400 font-mono truncate" title={token.token}>
+								<p className="text-xs text-neutral-500 font-mono truncate" title={token.token}>
 									{token.token
 										? token.token.length > 30
 											? token.token.slice(0, 15) + '...' + token.token.slice(-10)
 											: token.token
 										: '--'}
 								</p>
-								<p className="text-xs text-neutral-400">{formatTime(token.createdAt)}</p>
+								<p className="text-xs text-neutral-500">{formatTime(token.createdAt)}</p>
 							</div>
 						</div>
 					);
@@ -245,7 +245,7 @@ export default function PushTokensPage() {
 				{list.length === 0 && (
 					<div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-neutral-200 bg-white py-16 text-center">
 						<Laptop size={40} className="text-neutral-300" />
-						<p className="mt-4 text-sm text-neutral-500">
+						<p className="mt-4 text-sm text-neutral-600">
 							{t('communication.pushTokens.empty', 'No push tokens registered')}
 						</p>
 						<button

@@ -63,12 +63,12 @@ export function VerificationStatus() {
 		return (
 			<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
 				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-100 text-neutral-500">
+					<div className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
 						<ShieldCheck size={20} />
 					</div>
 					<div className="flex-1">
 						<p className="text-sm font-medium text-neutral-900">{t('verification.unverified')}</p>
-						<p className="text-xs text-neutral-500">{t('verification.unverifiedDesc')}</p>
+						<p className="text-xs text-neutral-600">{t('verification.unverifiedDesc')}</p>
 					</div>
 					<Button variant="primary" size="sm" onClick={() => navigate('/verify-identity')}>
 						{t('verification.startVerify')}
@@ -114,7 +114,7 @@ export function VerificationStatus() {
 										? 'bg-rose-50 text-rose-700'
 										: info.status === 'expired'
 											? 'bg-amber-50 text-amber-700'
-											: 'bg-neutral-100 text-neutral-500'
+											: 'bg-neutral-100 text-neutral-600'
 						}`}
 					>
 						<ShieldCheck size={20} />
@@ -192,7 +192,7 @@ export function VerificationStatus() {
 function DetailRow({ label, value }: { label: string; value: string }) {
 	return (
 		<div className="flex items-center justify-between py-2">
-			<span className="text-xs text-neutral-500">{label}</span>
+			<span className="text-xs text-neutral-600">{label}</span>
 			<span className="text-sm font-medium text-neutral-900">{value}</span>
 		</div>
 	);

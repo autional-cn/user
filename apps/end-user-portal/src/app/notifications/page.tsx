@@ -113,7 +113,7 @@ export default function NotificationsPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('notifications.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">
+					<p className="mt-1 text-sm text-neutral-600">
 						{unreadCount > 0
 							? t('notifications.unreadCount', { count: unreadCount })
 							: t('notifications.noUnread')}
@@ -168,7 +168,7 @@ export default function NotificationsPage() {
 									</div>
 									<p className="mt-1 text-sm text-neutral-600">{n.content}</p>
 									<div className="mt-2 flex items-center justify-between">
-										<span className="text-xs text-neutral-400">{formatTime(n.createdAt)}</span>
+										<span className="text-xs text-neutral-500">{formatTime(n.createdAt)}</span>
 										{!n.read && (
 											<button
 												onClick={() => handleMarkRead(n.id)}
@@ -196,7 +196,7 @@ export default function NotificationsPage() {
 			{/* Pagination */}
 			{pagination && pagination.totalPages > 1 && (
 				<div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3">
-					<span className="text-sm text-neutral-500">
+					<span className="text-sm text-neutral-600">
 						{t('notifications.pageInfo', {
 							page: pagination.page,
 							totalPages: pagination.totalPages,

@@ -157,7 +157,7 @@ export default function ActivityPage() {
 						<XCircle size={10} /> {t('activity.status.failed')}
 					</StatusBadge>
 				) : (
-					<span className="text-xs text-neutral-400">—</span>
+					<span className="text-xs text-neutral-500">—</span>
 				),
 		},
 	];
@@ -186,7 +186,7 @@ export default function ActivityPage() {
 				</select>
 
 				<div className="flex items-center gap-2">
-					<Clock size={14} className="text-neutral-400" />
+					<Clock size={14} className="text-neutral-500" />
 					{/* 原来是两个原生 <input type="date"> 加一个「~」分隔符：自绘、与其余三个门户的日期控件
 					    不同源，而且「空区间」有 startDate / endDate 两个半选状态（只选了一端时查询里会出现一个
 					    孤立的边界）。换成设计系统的区间件之后，值进值出都是字符串、空只有 null 一种。 */}

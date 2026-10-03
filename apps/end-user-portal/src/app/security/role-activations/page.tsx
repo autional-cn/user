@@ -258,7 +258,7 @@ export default function RoleActivationsPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('roleActivations.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('roleActivations.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('roleActivations.subtitle')}</p>
 				</div>
 				<button
 					onClick={() => setShowForm(!showForm)}
@@ -278,7 +278,7 @@ export default function RoleActivationsPage() {
 						</h3>
 						<button
 							onClick={() => setShowForm(false)}
-							className="text-neutral-400 hover:text-neutral-600"
+							className="text-neutral-500 hover:text-neutral-600"
 						>
 							<X size={20} />
 						</button>
@@ -385,7 +385,7 @@ export default function RoleActivationsPage() {
 					emptyText: (
 						<div className="flex flex-col items-center justify-center py-12 text-center">
 							<ShieldCheck size={40} className="text-neutral-300" />
-							<p className="mt-4 text-sm text-neutral-500">{t('roleActivations.empty')}</p>
+							<p className="mt-4 text-sm text-neutral-600">{t('roleActivations.empty')}</p>
 							<button
 								onClick={() => setShowForm(true)}
 								className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary-700 hover:text-primary-800"

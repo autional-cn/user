@@ -86,7 +86,7 @@ export default function PaymentsPage() {
 			dataIndex: 'createdAt',
 			key: 'createdAt',
 			render: (v: string | undefined) => (
-				<span className="text-gray-600">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+				<span className="text-neutral-700">{v ? new Date(v).toLocaleDateString() : '-'}</span>
 			),
 		},
 		{
@@ -103,7 +103,7 @@ export default function PaymentsPage() {
 			dataIndex: 'channelCode',
 			key: 'channelCode',
 			render: (v: string | undefined) => (
-				<span className="text-gray-600">{getChannelLabel(v || '')}</span>
+				<span className="text-neutral-700">{getChannelLabel(v || '')}</span>
 			),
 		},
 		{
@@ -119,7 +119,7 @@ export default function PaymentsPage() {
 			dataIndex: 'itemDescription',
 			key: 'itemDescription',
 			render: (v: string | undefined) => (
-				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v || '-'}</span>
+				<span className="text-neutral-600 inline-block max-w-[200px] truncate">{v || '-'}</span>
 			),
 		},
 		{
@@ -152,7 +152,7 @@ export default function PaymentsPage() {
 				locale={{
 					// 原来表体里那行 colSpan 占位（图标 + 文案）整体搬进 locale，不再手写占位 <tr>
 					emptyText: (
-						<div className="py-4 text-center text-gray-400">
+						<div className="py-4 text-center text-neutral-500">
 							<CreditCard className="w-8 h-8 mx-auto mb-2 opacity-30" />
 							{t('payments.empty')}
 						</div>
@@ -215,9 +215,9 @@ export default function PaymentsPage() {
 
 function ReceiptRow({ label, value, bold }: { label: string; value: string; bold?: boolean }) {
 	return (
-		<div className="flex justify-between py-1.5 border-b border-gray-100">
-			<span className="text-gray-500">{label}</span>
-			<span className={bold ? 'font-bold text-gray-900' : 'text-gray-700'}>{value}</span>
+		<div className="flex justify-between py-1.5 border-b border-neutral-200">
+			<span className="text-neutral-600">{label}</span>
+			<span className={bold ? 'font-bold text-neutral-900' : 'text-neutral-800'}>{value}</span>
 		</div>
 	);
 }

@@ -129,7 +129,7 @@ export default function SessionsPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('sessions.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('sessions.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('sessions.subtitle')}</p>
 				</div>
 				<div className="flex items-center gap-3">
 					<button
@@ -182,7 +182,7 @@ export default function SessionsPage() {
 									className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${
 										session.isCurrentSession
 											? 'bg-primary-100 text-primary-700'
-											: 'bg-neutral-100 text-neutral-500'
+											: 'bg-neutral-100 text-neutral-600'
 									}`}
 								>
 									{session.deviceType?.toLowerCase().includes('phone') ||
@@ -203,7 +203,7 @@ export default function SessionsPage() {
 											</span>
 										)}
 									</div>
-									<div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-500">
+									<div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-600">
 										{ua.browser && (
 											<span className="flex items-center gap-1">
 												<Globe size={14} />
@@ -273,7 +273,7 @@ export default function SessionsPage() {
 					>
 						{t('common.previous', 'Previous')}
 					</button>
-					<span className="text-sm text-neutral-500">{page}</span>
+					<span className="text-sm text-neutral-600">{page}</span>
 					<button
 						onClick={() => setPage((p) => p + 1)}
 						disabled={!hasMore}

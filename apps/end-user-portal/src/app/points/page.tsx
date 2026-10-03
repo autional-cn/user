@@ -129,7 +129,7 @@ export default function PointsPage() {
 			title: t('points.table.source'),
 			dataIndex: 'source',
 			key: 'source',
-			render: (v: string | undefined) => <span className="text-gray-500">{v ?? '-'}</span>,
+			render: (v: string | undefined) => <span className="text-neutral-600">{v ?? '-'}</span>,
 		},
 		{
 			title: t('points.table.time'),
@@ -137,7 +137,7 @@ export default function PointsPage() {
 			key: 'createdAt',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-gray-400 text-xs">
+				<span className="text-neutral-500 text-xs">
 					{v ? new Date(v).toLocaleDateString() : '-'}
 				</span>
 			),
@@ -184,7 +184,7 @@ export default function PointsPage() {
 							? `${expiringData?.totalExpiring?.toLocaleString()}${t('points.pointsUnit')}`
 							: t('points.none')
 					}
-					valueClassName={(expiringData?.totalExpiring ?? 0) > 0 ? 'text-red-500' : 'text-gray-400'}
+					valueClassName={(expiringData?.totalExpiring ?? 0) > 0 ? 'text-red-500' : 'text-neutral-500'}
 				/>
 			</div>
 
@@ -277,7 +277,7 @@ function Card({
 		<div className="bg-white rounded-lg border p-4 flex items-center gap-3">
 			{icon}
 			<div>
-				<div className="text-xs text-gray-500">{label}</div>
+				<div className="text-xs text-neutral-600">{label}</div>
 				<div className={`text-lg font-semibold ${valueClassName ?? ''}`}>{value}</div>
 			</div>
 		</div>
@@ -295,7 +295,7 @@ function StatBox({
 }) {
 	return (
 		<div className="bg-white rounded-lg border p-3 text-center">
-			<div className="text-xs text-gray-500 mb-1 flex items-center justify-center gap-1">
+			<div className="text-xs text-neutral-600 mb-1 flex items-center justify-center gap-1">
 				{icon}
 				{label}
 			</div>

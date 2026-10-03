@@ -100,7 +100,7 @@ export default function DashboardPage() {
 								<Wallet size={20} />
 							</div>
 							<div>
-								<p className="text-sm text-neutral-500">{t('dashboard.stats.walletBalance')}</p>
+								<p className="text-sm text-neutral-600">{t('dashboard.stats.walletBalance')}</p>
 								{/* 2026-08-17 修复：member/guest 等无钱包账户（wallet 404，空态由 isNotFoundError 过滤）
 								    显示 ¥0.00 而非 ¥ --；有账户时格式化 ¥ + 2 位小数 */}
 								<p className="text-lg font-semibold text-neutral-900">
@@ -118,7 +118,7 @@ export default function DashboardPage() {
 								<Coins size={20} />
 							</div>
 							<div>
-								<p className="text-sm text-neutral-500">{t('dashboard.stats.points')}</p>
+								<p className="text-sm text-neutral-600">{t('dashboard.stats.points')}</p>
 								{/* 2026-08-17 修复：member/guest 无积分账户（404，isNotFoundError 判定）显示 0 而非 -- */}
 								<p className="text-lg font-semibold text-neutral-900">
 									{pointQ.isError
@@ -136,7 +136,7 @@ export default function DashboardPage() {
 								<ShieldCheck size={20} />
 							</div>
 							<div>
-								<p className="text-sm text-neutral-500">{t('dashboard.stats.securityStatus')}</p>
+								<p className="text-sm text-neutral-600">{t('dashboard.stats.securityStatus')}</p>
 								<p className="text-lg font-semibold text-emerald-700">
 									{t('dashboard.securityGood')}
 								</p>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
 								<Bell size={20} />
 							</div>
 							<div>
-								<p className="text-sm text-neutral-500">
+								<p className="text-sm text-neutral-600">
 									{t('dashboard.stats.unreadNotifications')}
 								</p>
 								<p className="text-lg font-semibold text-neutral-900">
@@ -180,7 +180,7 @@ export default function DashboardPage() {
 								<h3 className="font-semibold text-neutral-900 group-hover:text-primary-700 transition-colors">
 									{item.label}
 								</h3>
-								<p className="mt-1 text-sm text-neutral-500">{item.desc}</p>
+								<p className="mt-1 text-sm text-neutral-600">{item.desc}</p>
 							</div>
 						</Link>
 					))}

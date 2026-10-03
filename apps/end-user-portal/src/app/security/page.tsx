@@ -127,7 +127,7 @@ export default function SecurityPage() {
 			microsoft: { icon: '🪟', iconStyle: 'bg-blue-50 text-blue-700 text-lg' },
 			linkedin: { icon: '💼', iconStyle: 'bg-blue-50 text-blue-700 text-lg' },
 		};
-		return map[providerId] || { icon: '🔗', iconStyle: 'bg-neutral-100 text-neutral-500 text-lg' };
+		return map[providerId] || { icon: '🔗', iconStyle: 'bg-neutral-100 text-neutral-600 text-lg' };
 	}
 
 	const handleBindProvider = async (provider: string) => {
@@ -382,7 +382,7 @@ export default function SecurityPage() {
 			map[providerId || ''] || {
 				name: providerId || t('common.unknown'),
 				icon: '🔗',
-				color: 'bg-neutral-100 text-neutral-500',
+				color: 'bg-neutral-100 text-neutral-600',
 			}
 		);
 	};
@@ -413,7 +413,7 @@ export default function SecurityPage() {
 	}) => {
 		const statusColors = {
 			enabled: 'bg-emerald-50 text-emerald-700',
-			disabled: 'bg-neutral-100 text-neutral-500',
+			disabled: 'bg-neutral-100 text-neutral-600',
 			neutral: 'bg-blue-50 text-blue-700',
 		};
 
@@ -468,9 +468,9 @@ export default function SecurityPage() {
 					</div>
 					<div className="flex-1">
 						<h3 className="font-medium text-neutral-900">{t('security.roleActivationsLink')}</h3>
-						<p className="text-sm text-neutral-500">{t('security.roleActivationsLinkDesc')}</p>
+						<p className="text-sm text-neutral-600">{t('security.roleActivationsLinkDesc')}</p>
 					</div>
-					<ChevronRight size={16} className="text-neutral-400" />
+					<ChevronRight size={16} className="text-neutral-500" />
 				</Link>
 				<Link
 					to={buildNavHref(ROUTES.linkedAccounts, tenantSlug)}
@@ -481,9 +481,9 @@ export default function SecurityPage() {
 					</div>
 					<div className="flex-1">
 						<h3 className="font-medium text-neutral-900">{t('security.linkedAccountsLink')}</h3>
-						<p className="text-sm text-neutral-500">{t('security.linkedAccountsLinkDesc')}</p>
+						<p className="text-sm text-neutral-600">{t('security.linkedAccountsLinkDesc')}</p>
 					</div>
-					<ChevronRight size={16} className="text-neutral-400" />
+					<ChevronRight size={16} className="text-neutral-500" />
 				</Link>
 			</div>
 
@@ -528,7 +528,7 @@ export default function SecurityPage() {
 								<button
 									type="button"
 									onClick={() => setShowOld(!showOld)}
-									className="text-neutral-400 hover:text-neutral-600"
+									className="text-neutral-500 hover:text-neutral-600"
 								>
 									{showOld ? <EyeOff size={16} /> : <Eye size={16} />}
 								</button>
@@ -549,7 +549,7 @@ export default function SecurityPage() {
 								<button
 									type="button"
 									onClick={() => setShowNew(!showNew)}
-									className="text-neutral-400 hover:text-neutral-600"
+									className="text-neutral-500 hover:text-neutral-600"
 								>
 									{showNew ? <EyeOff size={16} /> : <Eye size={16} />}
 								</button>
@@ -565,11 +565,11 @@ export default function SecurityPage() {
 										/>
 									))}
 								</div>
-								{strength.label && <p className="text-xs text-neutral-500">{strength.label}</p>}
+								{strength.label && <p className="text-xs text-neutral-600">{strength.label}</p>}
 							</div>
 						)}
 						{pwd && (
-							<div className="mt-2 space-y-1 text-xs text-neutral-500">
+							<div className="mt-2 space-y-1 text-xs text-neutral-600">
 								<p className={pwd.length >= 8 ? 'text-green-600' : ''}>
 									- {t('security.passwordMinLength')}
 								</p>
@@ -711,7 +711,7 @@ export default function SecurityPage() {
 						))}
 					</div>
 				) : (
-					<div className="mt-4 text-sm text-neutral-500">{t('security.passkeyEmpty')}</div>
+					<div className="mt-4 text-sm text-neutral-600">{t('security.passkeyEmpty')}</div>
 				)}
 			</div>
 
@@ -720,7 +720,7 @@ export default function SecurityPage() {
 				<div className="flex items-center justify-between mb-4">
 					<div>
 						<h3 className="text-lg font-semibold text-neutral-900">{t('security.oauth.title')}</h3>
-						<p className="text-sm text-neutral-500">{t('security.oauth.desc')}</p>
+						<p className="text-sm text-neutral-600">{t('security.oauth.desc')}</p>
 					</div>
 					<button
 						onClick={() => setBindModalOpen(true)}
@@ -732,12 +732,12 @@ export default function SecurityPage() {
 				</div>
 
 				{oauthLoading ? (
-					<div className="flex items-center justify-center py-8 text-sm text-neutral-500">
+					<div className="flex items-center justify-center py-8 text-sm text-neutral-600">
 						<Loader2 size={20} className="animate-spin mr-2" />
 						{t('security.oauth.loading')}
 					</div>
 				) : oauthError ? (
-					<div className="rounded-md bg-neutral-50 py-8 text-center text-sm text-neutral-500">
+					<div className="rounded-md bg-neutral-50 py-8 text-center text-sm text-neutral-600">
 						{t('security.oauth.loadError')}
 					</div>
 				) : oauthConnections && oauthConnections.length > 0 ? (
@@ -763,7 +763,7 @@ export default function SecurityPage() {
 										</span>
 										<div>
 											<p className="text-sm font-medium text-neutral-900">{meta.name}</p>
-											<div className="flex items-center gap-3 text-xs text-neutral-500">
+											<div className="flex items-center gap-3 text-xs text-neutral-600">
 												{email && <span>{email}</span>}
 												{conn.createdAt && (
 													<span>
@@ -786,7 +786,7 @@ export default function SecurityPage() {
 						})}
 					</div>
 				) : (
-					<div className="rounded-md bg-neutral-50 py-8 text-center text-sm text-neutral-500">
+					<div className="rounded-md bg-neutral-50 py-8 text-center text-sm text-neutral-600">
 						{t('security.oauth.empty')}
 					</div>
 				)}
@@ -821,7 +821,7 @@ export default function SecurityPage() {
 								</span>
 								<div>
 									<p className="text-sm font-medium text-neutral-900">{p.name}</p>
-									<p className="text-xs text-neutral-500">
+									<p className="text-xs text-neutral-600">
 										{t(`security.oauth.${p.id}Desc`, `绑定 ${p.name} 账号`)}
 									</p>
 								</div>
@@ -841,7 +841,7 @@ export default function SecurityPage() {
 						<h3 className="font-semibold text-neutral-900">
 							{t('security.deleteAccountTitle', '删除账户')}
 						</h3>
-						<p className="mt-1 text-sm text-neutral-500">
+						<p className="mt-1 text-sm text-neutral-600">
 							{t(
 								'security.deleteAccountDesc',
 								'此操作将永久删除您的账户及所有相关数据。根据GDPR规定，您的数据将在30天内被永久删除。此操作不可撤销。',
@@ -985,7 +985,7 @@ export default function SecurityPage() {
 									className="h-40 w-40 rounded-md border border-neutral-200"
 								/>
 							) : (
-								<div className="flex h-40 w-40 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-400">
+								<div className="flex h-40 w-40 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-500">
 									{t('security.totpQrFail')}
 								</div>
 							)}
@@ -993,7 +993,7 @@ export default function SecurityPage() {
 								<code className="text-xs text-neutral-700">{totpSetup.secret}</code>
 								<button
 									onClick={copySecret}
-									className="text-neutral-500 hover:text-primary-700"
+									className="text-neutral-600 hover:text-primary-700"
 								>
 									{copied ? <Check size={14} /> : <Copy size={14} />}
 								</button>

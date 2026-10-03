@@ -259,14 +259,14 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 								<button
 									onClick={handleCancelChange}
 									disabled={cancelEmailMut.isPending || cancelPhoneMut.isPending}
-									className="text-sm text-red-600 hover:underline disabled:text-neutral-400"
+									className="text-sm text-red-600 hover:underline disabled:text-neutral-500"
 								>
 									{t('profile.identifierChange.cancelChange')}
 								</button>
 								<button
 									onClick={handleResend}
 									disabled={resendCooldown > 0}
-									className="text-sm text-primary-600 hover:underline disabled:text-neutral-400"
+									className="text-sm text-primary-600 hover:underline disabled:text-neutral-500"
 								>
 									{resendCooldown > 0
 										? t('profile.identifierChange.resendCooldown', { seconds: resendCooldown })
@@ -304,7 +304,7 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 							/>
 							{t('profile.identifierChange.revokeOthers')}
 						</label>
-						<p className="text-xs text-neutral-500">{t('profile.identifierChange.revokeOthersDesc')}</p>
+						<p className="text-xs text-neutral-600">{t('profile.identifierChange.revokeOthersDesc')}</p>
 						<div className="flex justify-end">
 							<button onClick={handleDone} className={btnCls}>
 								{t('profile.identifierChange.done')}

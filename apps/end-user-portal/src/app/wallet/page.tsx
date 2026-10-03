@@ -154,7 +154,7 @@ export default function WalletPage() {
 			dataIndex: 'description',
 			key: 'description',
 			render: (v: string | undefined) => (
-				<span className="text-gray-500 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
+				<span className="text-neutral-600 inline-block max-w-[200px] truncate">{v ?? '-'}</span>
 			),
 		},
 		{
@@ -172,7 +172,7 @@ export default function WalletPage() {
 			key: 'createdAt',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-gray-400 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+				<span className="text-neutral-500 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
 			),
 		},
 	];
@@ -196,7 +196,7 @@ export default function WalletPage() {
 			key: 'balanceBefore',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="font-mono text-gray-500">
+				<span className="font-mono text-neutral-600">
 					{'¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
 				</span>
 			),
@@ -207,7 +207,7 @@ export default function WalletPage() {
 			key: 'balanceAfter',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="font-mono text-gray-700">
+				<span className="font-mono text-neutral-800">
 					{'¥' + Number(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
 				</span>
 			),
@@ -218,7 +218,7 @@ export default function WalletPage() {
 			key: 'date',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-gray-400 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+				<span className="text-neutral-500 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
 			),
 		},
 	];
@@ -344,7 +344,7 @@ export default function WalletPage() {
 								>
 									<div>
 										<div className="font-semibold text-sm">{c.name ?? c.code}</div>
-										<div className="text-xs text-gray-500 mt-1">
+										<div className="text-xs text-neutral-600 mt-1">
 											{t(
 												c.type === 'discount'
 													? 'wallet.couponType.discount'
@@ -360,7 +360,7 @@ export default function WalletPage() {
 												? ` · ${t('wallet.minPurchase', { amount: Number(c.minAmount).toFixed(2) })}`
 												: ''}
 										</div>
-										<div className="text-xs text-gray-400 mt-1">
+										<div className="text-xs text-neutral-500 mt-1">
 											{t('wallet.validUntil')}{' '}
 											{c.validUntil ? new Date(c.validUntil).toLocaleDateString() : '-'}
 										</div>
@@ -371,10 +371,10 @@ export default function WalletPage() {
 											c.status === 'unused'
 												? 'bg-green-50 text-green-600'
 												: c.status === 'used'
-													? 'bg-gray-100 text-gray-500'
+													? 'bg-neutral-200 text-neutral-600'
 													: c.status === 'expired'
 														? 'bg-red-50 text-red-500'
-														: 'bg-gray-100 text-gray-500',
+														: 'bg-neutral-200 text-neutral-600',
 										)}
 									>
 										{t(
@@ -391,7 +391,7 @@ export default function WalletPage() {
 							))}
 						</div>
 					) : (
-						<div className="text-center py-8 text-gray-400 text-sm">{t('wallet.noCoupons')}</div>
+						<div className="text-center py-8 text-neutral-500 text-sm">{t('wallet.noCoupons')}</div>
 					)}
 				</div>
 			)}
@@ -418,7 +418,7 @@ function Card({
 		<div className="bg-white rounded-lg border p-4 flex items-center gap-3">
 			{icon}
 			<div>
-				<div className="text-xs text-gray-500">{label}</div>
+				<div className="text-xs text-neutral-600">{label}</div>
 				<div className={`text-lg font-semibold ${valueClassName ?? ''}`}>{value}</div>
 			</div>
 		</div>
@@ -436,7 +436,7 @@ function StatBox({
 }) {
 	return (
 		<div className="bg-white rounded-lg border p-3 text-center">
-			<div className="text-xs text-gray-500 mb-1 flex items-center justify-center gap-1">
+			<div className="text-xs text-neutral-600 mb-1 flex items-center justify-center gap-1">
 				{icon}
 				{label}
 			</div>

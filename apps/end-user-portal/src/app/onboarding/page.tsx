@@ -175,7 +175,7 @@ export default function OnboardingPage() {
 				<h1 className="text-2xl font-bold text-neutral-900">
 					{t('onboarding.title', '欢迎来到 Autional！')}
 				</h1>
-				<p className="mt-2 text-neutral-500">
+				<p className="mt-2 text-neutral-600">
 					{t('onboarding.subtitle', '完成以下步骤以开始使用')}
 				</p>
 			</div>
@@ -218,7 +218,7 @@ export default function OnboardingPage() {
 							className="flex items-center gap-4 p-4 hover:bg-neutral-50 transition-colors group"
 						>
 							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-100 group-hover:bg-primary-50 transition-colors">
-								<Icon size={20} className={done ? 'text-emerald-600' : 'text-neutral-400'} />
+								<Icon size={20} className={done ? 'text-emerald-600' : 'text-neutral-500'} />
 							</div>
 							<div className="flex-1 min-w-0">
 								<p
@@ -233,7 +233,7 @@ export default function OnboardingPage() {
 								) : (
 									<Circle size={20} className="text-neutral-300" />
 								)}
-								<ChevronRight size={16} className="text-neutral-400" />
+								<ChevronRight size={16} className="text-neutral-500" />
 							</div>
 						</Link>
 					);
@@ -260,7 +260,7 @@ export default function OnboardingPage() {
 			<div className="border-t border-neutral-200 pt-4">
 				<button
 					onClick={handleReset}
-					className="flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-600 transition-colors"
+					className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-600 transition-colors"
 				>
 					<RotateCcw size={14} />
 					{t('onboarding.reset', '重新开始入驻')}
@@ -272,7 +272,7 @@ export default function OnboardingPage() {
 				{!allDone && (
 					<button
 						onClick={handleSkip}
-						className="text-sm font-medium text-neutral-500 hover:text-neutral-700 transition-colors"
+						className="text-sm font-medium text-neutral-600 hover:text-neutral-700 transition-colors"
 					>
 						{t('onboarding.skip', '跳过引导')}
 					</button>

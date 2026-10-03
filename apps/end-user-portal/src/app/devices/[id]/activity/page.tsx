@@ -31,7 +31,7 @@ const mockEvents = [
 		type: 'offline',
 		label: 'devices.activity.events.offline',
 		icon: WifiOff,
-		iconColor: 'text-neutral-400',
+		iconColor: 'text-neutral-500',
 		time: '2026-06-09T08:15:00Z',
 	},
 	{
@@ -89,7 +89,7 @@ export default function DeviceActivityPage() {
 		<div className="max-w-2xl mx-auto space-y-6">
 			<button
 				onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-				className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-700 transition-colors"
+				className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-700 transition-colors"
 			>
 				<ArrowLeft size={14} />
 				{t('devices.activity.back')}
@@ -97,12 +97,12 @@ export default function DeviceActivityPage() {
 
 			<div>
 				<h2 className="text-xl font-bold text-neutral-900">{t('devices.activity.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-500">{t('devices.activity.subtitle')}</p>
+				<p className="mt-1 text-sm text-neutral-600">{t('devices.activity.subtitle')}</p>
 			</div>
 
 			{deviceId && (
 				<div className="rounded-lg border border-neutral-200 bg-white p-4">
-					<p className="text-xs font-medium text-neutral-400 uppercase tracking-wide">
+					<p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
 						{t('devices.activity.deviceId')}
 					</p>
 					<p className="mt-1 text-sm font-mono text-neutral-700">{deviceId}</p>
@@ -112,12 +112,12 @@ export default function DeviceActivityPage() {
 			<SectionCard padding="none">
 				<div className="flex flex-col items-center justify-center py-16 px-6 text-center">
 					<div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100">
-						<History size={32} className="text-neutral-400" />
+						<History size={32} className="text-neutral-500" />
 					</div>
 					<h3 className="mt-5 text-base font-semibold text-neutral-700">
 						{t('devices.activity.emptyTitle')}
 					</h3>
-					<p className="mt-2 max-w-md text-sm text-neutral-500 leading-relaxed">
+					<p className="mt-2 max-w-md text-sm text-neutral-600 leading-relaxed">
 						{t('devices.activity.emptyDesc')}
 					</p>
 					<div className="mt-6 flex flex-wrap items-center justify-center gap-3">

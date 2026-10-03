@@ -210,7 +210,7 @@ export default function LoginHistoryPage() {
 			<div className="flex items-center justify-between">
 				<div>
 					<h2 className="text-xl font-bold text-neutral-900">{t('loginHistory.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('loginHistory.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('loginHistory.subtitle')}</p>
 				</div>
 				<button
 					onClick={handleExportCSV}
@@ -235,7 +235,7 @@ export default function LoginHistoryPage() {
 							className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
 								statusFilter === f
 									? 'bg-white text-neutral-900 shadow-sm'
-									: 'text-neutral-500 hover:text-neutral-700'
+									: 'text-neutral-600 hover:text-neutral-700'
 							}`}
 						>
 							{f === 'all'
@@ -276,7 +276,7 @@ export default function LoginHistoryPage() {
 					emptyText: (
 						<div className="flex flex-col items-center justify-center py-12 text-center">
 							<History size={40} className="text-neutral-300" />
-							<p className="mt-4 text-sm text-neutral-500">{t('loginHistory.empty')}</p>
+							<p className="mt-4 text-sm text-neutral-600">{t('loginHistory.empty')}</p>
 						</div>
 					),
 				}}

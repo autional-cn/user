@@ -138,7 +138,7 @@ export default function PasskeyRegisterPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-400 hover:text-neutral-600 transition-colors"
+					className="text-neutral-500 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
@@ -146,7 +146,7 @@ export default function PasskeyRegisterPage() {
 					<h2 className="text-xl font-bold text-neutral-900">
 						{t('security.passkeys.register.title')}
 					</h2>
-					<p className="mt-1 text-sm text-neutral-500">
+					<p className="mt-1 text-sm text-neutral-600">
 						{t('security.passkeys.register.subtitle')}
 					</p>
 				</div>
@@ -160,7 +160,7 @@ export default function PasskeyRegisterPage() {
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('security.passkeys.register.ready')}
 					</h3>
-					<p className="mt-2 text-sm text-neutral-500">{t('security.passkeys.register.desc')}</p>
+					<p className="mt-2 text-sm text-neutral-600">{t('security.passkeys.register.desc')}</p>
 					<ul className="mt-4 space-y-2 text-left text-sm text-neutral-600">
 						<li className="flex items-start gap-2">
 							<CheckCircle2 size={16} className="mt-0.5 text-emerald-500 shrink-0" />
@@ -189,7 +189,7 @@ export default function PasskeyRegisterPage() {
 					<h3 className="text-lg font-semibold text-neutral-900">
 						{t('security.passkeys.register.passwordTitle')}
 					</h3>
-					<p className="mt-1 text-sm text-neutral-500">
+					<p className="mt-1 text-sm text-neutral-600">
 						{t('security.passkeys.register.passwordDesc')}
 					</p>
 					<form
@@ -247,7 +247,7 @@ export default function PasskeyRegisterPage() {
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('security.passkeys.register.loading')}
 					</h3>
-					<p className="mt-2 text-sm text-neutral-500">
+					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.loadingDesc')}
 					</p>
 				</div>
@@ -281,10 +281,10 @@ export default function PasskeyRegisterPage() {
 					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
 						{t('security.passkeys.register.successTitle')}
 					</h3>
-					<p className="mt-2 text-sm text-neutral-500">
+					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.successDesc')}
 					</p>
-					<p className="mt-2 text-sm text-neutral-400">
+					<p className="mt-2 text-sm text-neutral-500">
 						{t('security.passkeys.register.redirecting')}
 					</p>
 				</div>

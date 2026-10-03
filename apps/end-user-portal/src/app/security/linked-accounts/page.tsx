@@ -90,7 +90,7 @@ export default function LinkedAccountsPage() {
 		<div className="space-y-6">
 			<div>
 				<h2 className="text-xl font-bold text-neutral-900">{t('linkedAccounts.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-500">{t('linkedAccounts.subtitle')}</p>
+				<p className="mt-1 text-sm text-neutral-600">{t('linkedAccounts.subtitle')}</p>
 			</div>
 
 			{/* Info banner */}
@@ -120,10 +120,10 @@ export default function LinkedAccountsPage() {
 												{account.providerName || t('linkedAccounts.unknownProvider')}
 											</p>
 											{account.email && (
-												<span className="text-sm text-neutral-500">{account.email}</span>
+												<span className="text-sm text-neutral-600">{account.email}</span>
 											)}
 										</div>
-										<div className="flex items-center gap-3 mt-0.5 text-xs text-neutral-500">
+										<div className="flex items-center gap-3 mt-0.5 text-xs text-neutral-600">
 											{account.nameId && (
 												<span className="font-mono">
 													{t('linkedAccounts.nameId')}: {account.nameId}
@@ -154,8 +154,8 @@ export default function LinkedAccountsPage() {
 				) : (
 					<div className="flex flex-col items-center justify-center py-12 text-center">
 						<Link2 size={40} className="text-neutral-300" />
-						<p className="mt-4 text-sm text-neutral-500">{t('linkedAccounts.empty')}</p>
-						<p className="mt-1 text-xs text-neutral-400">{t('linkedAccounts.emptyHint')}</p>
+						<p className="mt-4 text-sm text-neutral-600">{t('linkedAccounts.empty')}</p>
+						<p className="mt-1 text-xs text-neutral-500">{t('linkedAccounts.emptyHint')}</p>
 					</div>
 				)}
 			</div>
@@ -168,7 +168,7 @@ export default function LinkedAccountsPage() {
 					</div>
 					<div>
 						<h3 className="font-medium text-neutral-900">{t('linkedAccounts.ssoInfo')}</h3>
-						<p className="text-sm text-neutral-500">{t('linkedAccounts.ssoInfoDesc')}</p>
+						<p className="text-sm text-neutral-600">{t('linkedAccounts.ssoInfoDesc')}</p>
 					</div>
 				</div>
 			</div>

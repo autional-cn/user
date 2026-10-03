@@ -111,7 +111,7 @@ export default function RecoveryContactsPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-400 hover:text-neutral-600 transition-colors"
+					className="text-neutral-500 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
@@ -119,7 +119,7 @@ export default function RecoveryContactsPage() {
 					<h2 className="text-xl font-bold text-neutral-900">
 						{t('security.recoveryContacts.title')}
 					</h2>
-					<p className="mt-1 text-sm text-neutral-500">{t('security.recoveryContacts.subtitle')}</p>
+					<p className="mt-1 text-sm text-neutral-600">{t('security.recoveryContacts.subtitle')}</p>
 				</div>
 			</div>
 
@@ -156,12 +156,12 @@ export default function RecoveryContactsPage() {
 							className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-4 shadow-sm"
 						>
 							<div className="flex items-center gap-3">
-								<div className="flex h-9 w-9 items-center justify-center rounded-md bg-neutral-100 text-neutral-500">
+								<div className="flex h-9 w-9 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
 									{contact.type === 'email' ? <Mail size={18} /> : <Phone size={18} />}
 								</div>
 								<div>
 									<p className="text-sm font-medium text-neutral-900">{contact.value}</p>
-									<p className="text-xs text-neutral-500">
+									<p className="text-xs text-neutral-600">
 										{contact.type === 'email'
 											? t('security.recoveryContacts.email')
 											: t('security.recoveryContacts.phone')}
@@ -180,7 +180,7 @@ export default function RecoveryContactsPage() {
 							<button
 								onClick={() => handleDelete(contact.id)}
 								disabled={deletingId === contact.id}
-								className="text-neutral-400 hover:text-red-600 transition-colors disabled:opacity-50"
+								className="text-neutral-500 hover:text-red-600 transition-colors disabled:opacity-50"
 							>
 								{deletingId === contact.id ? (
 									<Loader2 size={16} className="animate-spin" />
@@ -214,7 +214,7 @@ export default function RecoveryContactsPage() {
 								setFormError('root', { message: '' });
 								reset({ type: 'email', value: '' });
 							}}
-							className="text-neutral-400 hover:text-neutral-600"
+							className="text-neutral-500 hover:text-neutral-600"
 						>
 							<X size={18} />
 						</button>
