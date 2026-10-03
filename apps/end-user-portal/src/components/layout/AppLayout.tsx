@@ -5,7 +5,7 @@ import { Breadcrumb } from './Breadcrumb';
 import { useTenant } from '@/hooks/use-tenant';
 import { ROUTES } from '@/lib/routes';
 import { buildNavHref } from '@/lib/nav';
-import { useTenantSlug, extractItem } from '@autional-cn/shared';
+import { useTenantSlug, extractItem, usePortalCatalog } from '@autional-cn/shared';
 import {
 	useAuth,
 	useLogout,
@@ -18,7 +18,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useUnreadNotifications } from '@/hooks/queries';
 import { useNotificationStream } from '@/hooks/use-notification-stream';
 import { useEffect, useRef } from 'react';
-import { showToast, LanguageSwitcher, ThemeToggle, EmptyState } from '@autional-cn/ui';
+import {
+	showToast,
+	LanguageSwitcher,
+	ThemeToggle,
+	EmptyState,
+	PortalSwitcher,
+	UserMenu,
+} from '@autional-cn/ui';
 import {
 	LayoutDashboard,
 	UserCircle,
@@ -32,8 +39,6 @@ import {
 	Eye,
 	Menu,
 	X,
-	LogOut,
-	User,
 	ChevronDown,
 	Building2,
 	Smartphone,
@@ -55,7 +60,6 @@ import {
 export default function AppLayout() {
 	const { t } = useTranslation();
 	const [sidebarOpen, setSidebarOpen] = useState(false);
-	const [userMenuOpen, setUserMenuOpen] = useState(false);
 	const { user } = useAuth();
 	const { tenants, currentTenant, switchTenant } = useTenant();
 	useBootstrap();
@@ -175,7 +179,7 @@ export default function AppLayout() {
 
 	const handleLogout = useLogout();
 
-	const userInitial = user?.username?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U';
+	const { portals } = usePortalCatalog({ tenantId: currentTenant?.id, slug: tenantSlug });
 
 	if (tenants.length === 0) {
 		return (
@@ -270,16 +274,6 @@ export default function AppLayout() {
 						</div>
 					))}
 				</nav>
-
-				<div className="absolute bottom-0 left-0 right-0 border-t border-neutral-200 p-4 dark:border-neutral-700">
-					<button
-						onClick={handleLogout}
-						className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 transition-colors dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200"
-					>
-						<LogOut size={18} />
-						{t('common.logout')}
-					</button>
-				</div>
 			</aside>
 
 			{/* Main content */}
@@ -300,6 +294,8 @@ export default function AppLayout() {
 					</div>
 
 					<div className="flex items-center gap-3">
+						<PortalSwitcher portals={portals} currentPortal="user" />
+
 						<button
 							onClick={() => navigate(navHref(ROUTES.notifications))}
 							className="relative rounded-md p-2 text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200 transition-colors"
@@ -332,60 +328,18 @@ export default function AppLayout() {
 							iconSize={18}
 						/>
 
-						{/* User menu */}
-						<div className="relative">
-							<button
-								onClick={() => setUserMenuOpen(!userMenuOpen)}
-								className="flex items-center gap-2 rounded-md p-1.5 hover:bg-neutral-100 dark:hover:bg-neutral-700"
-								aria-label={t('common.userMenu')}
-							>
-								<div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-700">
-									{userInitial}
-								</div>
-								<span className="hidden text-sm font-medium text-neutral-700 md:block dark:text-neutral-200">
-									{user?.username || user?.email || 'User'}
-								</span>
-								<ChevronDown size={14} className="text-neutral-400" />
-							</button>
-
-							{userMenuOpen && (
-								<>
-									<div className="fixed inset-0 z-40" onClick={() => setUserMenuOpen(false)} />
-									<div className="absolute right-0 top-full z-50 mt-2 w-56 rounded-lg border border-neutral-200 bg-white py-2 shadow-lg dark:border-neutral-700 dark:bg-neutral-800">
-										<div className="border-b border-neutral-100 px-4 py-3 dark:border-neutral-700">
-											<p className="text-sm font-medium text-neutral-900 dark:text-neutral-200">
-												{user?.username || user?.email}
-											</p>
-											<p className="text-xs text-neutral-500 dark:text-neutral-400">
-												{user?.email}
-											</p>
-										</div>
-										<div className="py-1">
-											<button
-												onClick={() => {
-													setUserMenuOpen(false);
-													navigate(navHref(ROUTES.profile));
-												}}
-												className="flex w-full items-center gap-2 px-4 py-2 text-sm text-neutral-700 hover:bg-neutral-50 dark:text-neutral-200 dark:hover:bg-neutral-700"
-											>
-												<User size={16} />
-												{t('common.settings')}
-											</button>
-											<button
-												onClick={() => {
-													setUserMenuOpen(false);
-													handleLogout();
-												}}
-												className="flex w-full items-center gap-2 px-4 py-2 text-sm text-danger hover:bg-danger/5 dark:hover:bg-danger/10"
-											>
-												<LogOut size={16} />
-												{t('common.logout')}
-											</button>
-										</div>
-									</div>
-								</>
-							)}
-						</div>
+						<UserMenu
+							user={user}
+							items={[
+								{
+									key: 'profile',
+									type: 'profile',
+									label: t('nav.profile'),
+									onClick: () => navigate(navHref(ROUTES.profile)),
+								},
+								{ key: 'logout', type: 'logout', onClick: handleLogout },
+							]}
+						/>
 					</div>
 				</header>
 
