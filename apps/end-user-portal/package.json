@@ -18,7 +18,6 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@ant-design/icons": "6.2.2",
     "@autional-cn/shared": "0.1.0-rc.16",
     "@autional-cn/tailwind-preset": "0.1.0-rc.2",
     "@autional-cn/tokens": "0.1.0-rc.5",

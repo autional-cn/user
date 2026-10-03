@@ -79,7 +79,10 @@ export default defineConfig({
         // 混进入口块会让每次业务改动都要求用户重下整个 antd（admin 此前正是如此：入口块 2.7MB）。
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router'],
-          'vendor-ui': ['antd', '@ant-design/icons', 'lucide-react'],
+          // user 站不直接用 antd 的图标（它用 lucide）—— antd 内部要用的图标会跟着 antd 落在同一个块里，
+          // 所以这里只列本站真的直接依赖的库。列一个不存在的模块会让 Rollup 直接报
+          // 「Could not resolve entry module」，构建当场失败（实测踩过，和 recharts 那次同一个坑）。
+          'vendor-ui': ['antd', 'lucide-react'],
           'vendor-query': ['@tanstack/react-query'],
           'vendor-i18n': ['i18next', 'react-i18next'],
           'shared-api': ['@autional-cn/shared'],
