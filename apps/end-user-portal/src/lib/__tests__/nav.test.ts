@@ -30,15 +30,15 @@ describe('pickActiveNavPath', () => {
 		'/devices',
 		'/devices/pair',
 		'/devices/family',
-		'/notification/api/v1/notifications',
-		'/notification/api/v1/notifications/preferences',
+		'/notifications',
+		'/notifications/preferences',
 	];
 
 	it('picks the deepest child instead of its parent (single highlight)', () => {
 		expect(pickActiveNavPath(navPaths, '/devices/family')).toBe('/devices/family');
 		expect(
-			pickActiveNavPath(navPaths, '/notification/api/v1/notifications/preferences'),
-		).toBe('/notification/api/v1/notifications/preferences');
+			pickActiveNavPath(navPaths, '/notifications/preferences'),
+		).toBe('/notifications/preferences');
 		expect(pickActiveNavPath(navPaths, '/security/login-history')).toBe(
 			'/security/login-history',
 		);

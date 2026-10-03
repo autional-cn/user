@@ -19,19 +19,19 @@ export function Breadcrumb() {
 		: rawPathname;
 
 	const breadcrumbMap: Record<string, string> = {
-		'/': t('nav.overview'),
-		'/profile': t('nav.profile'),
-		'/security': t('nav.security'),
-		'/security/login-history': t('nav.loginHistory'),
-		'/session/api/v1/sessions': t('nav.sessions'),
-		'/notification/api/v1/notifications': t('nav.notifications'),
-		'/notification/api/v1/notifications/preferences': t('nav.notificationPrefs'),
-		'/devices': t('nav.devices'),
-		'/point/api/v1/points': t('nav.points'),
-		'/wallet': t('nav.wallet'),
-		'/billing': t('nav.billing'),
-		'/storage/api/v1/storage': t('nav.storage'),
-		'/onboarding': t('onboarding.title'),
+		[ROUTES.dashboard]: t('nav.overview'),
+		[ROUTES.profile]: t('nav.profile'),
+		[ROUTES.security]: t('nav.security'),
+		[ROUTES.loginHistory]: t('nav.loginHistory'),
+		[ROUTES.sessions]: t('nav.sessions'),
+		[ROUTES.notifications]: t('nav.notifications'),
+		[ROUTES.notificationPrefs]: t('nav.notificationPrefs'),
+		[ROUTES.devices]: t('nav.devices'),
+		[ROUTES.points]: t('nav.points'),
+		[ROUTES.wallet]: t('nav.wallet'),
+		[ROUTES.billing]: t('nav.billing'),
+		[ROUTES.storage]: t('nav.storage'),
+		[ROUTES.onboarding]: t('onboarding.title'),
 	};
 
 	const items = useMemo(() => {

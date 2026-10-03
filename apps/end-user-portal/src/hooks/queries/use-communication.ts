@@ -10,9 +10,6 @@ import {
 	communicationPushTokens,
 	communicationPushTokensPost,
 	communicationPushTokensByPushTokensDelete,
-	communicationSmsPost,
-	communicationEmailPost,
-	communicationPushPost,
 } from '@autional-cn/shared/generated/api';
 import type { CommunicationLogItem, PushTokenItem } from './types';
 import type { PaginatedList } from './types';
@@ -46,40 +43,6 @@ async function postCommunicationPushToken(data: {
 
 async function deleteCommunicationPushToken(id: string): Promise<void> {
 	await communicationPushTokensByPushTokensDelete(id);
-}
-
-async function sendCommunicationSms(data: {
-	phone: string;
-	content?: string;
-	template?: string;
-	variables?: Record<string, string>;
-	userId?: string;
-}): Promise<unknown> {
-	return communicationSmsPost(data);
-}
-
-async function sendCommunicationEmail(data: {
-	to: string[];
-	subject: string;
-	content?: string;
-	cc?: string[];
-	bcc?: string[];
-	isHtml?: boolean;
-	template?: string;
-	variables?: Record<string, string>;
-	userId?: string;
-}): Promise<unknown> {
-	return communicationEmailPost(data);
-}
-
-async function sendCommunicationPush(data: {
-	userId: string;
-	title: string;
-	body: string;
-	platform?: string;
-	data?: Record<string, unknown>;
-}): Promise<unknown> {
-	return communicationPushPost(data);
 }
 
 export function useCommunicationLogs(params?: {
@@ -132,85 +95,5 @@ export function useDeletePushToken(): UseMutationResult<void, Error, string> {
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: commQueryKeys.pushTokens });
 		},
-	});
-}
-
-export function useSendSms(): UseMutationResult<
-	unknown,
-	Error,
-	{
-		phone: string;
-		content?: string;
-		template?: string;
-		variables?: Record<string, string>;
-		userId?: string;
-	}
-> {
-	return useMutation<
-		unknown,
-		Error,
-		{
-			phone: string;
-			content?: string;
-			template?: string;
-			variables?: Record<string, string>;
-			userId?: string;
-		}
-	>({
-		mutationFn: sendCommunicationSms,
-	});
-}
-
-export function useSendEmail(): UseMutationResult<
-	unknown,
-	Error,
-	{
-		to: string[];
-		subject: string;
-		content?: string;
-		cc?: string[];
-		bcc?: string[];
-		isHtml?: boolean;
-		template?: string;
-		variables?: Record<string, string>;
-		userId?: string;
-	}
-> {
-	return useMutation<
-		unknown,
-		Error,
-		{
-			to: string[];
-			subject: string;
-			content?: string;
-			cc?: string[];
-			bcc?: string[];
-			isHtml?: boolean;
-			template?: string;
-			variables?: Record<string, string>;
-			userId?: string;
-		}
-	>({
-		mutationFn: sendCommunicationEmail,
-	});
-}
-
-export function useSendPush(): UseMutationResult<
-	unknown,
-	Error,
-	{ userId: string; title: string; body: string; platform?: string; data?: Record<string, unknown> }
-> {
-	return useMutation<
-		unknown,
-		Error,
-		{
-			userId: string;
-			title: string;
-			body: string;
-			platform?: string;
-			data?: Record<string, unknown>;
-		}
-	>({
-		mutationFn: sendCommunicationPush,
 	});
 }

@@ -52,7 +52,6 @@ import {
 	Users,
 	MessageSquare,
 	Radio,
-	Send,
 	Megaphone,
 	FileCheck,
 } from 'lucide-react';
@@ -171,7 +170,6 @@ export default function AppLayout() {
 			header: t('nav.section.communication'),
 			items: [
 				{ to: ROUTES.communication, label: t('nav.communication'), icon: MessageSquare },
-				{ to: ROUTES.communicationSend, label: t('nav.communicationSend'), icon: Send },
 				{ to: ROUTES.pushTokens, label: t('nav.pushTokens'), icon: Radio },
 			],
 		},

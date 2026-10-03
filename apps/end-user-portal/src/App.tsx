@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Outlet, useParams } from 'react-router';
+import { Routes, Route, Outlet, useParams, Navigate, useLocation } from 'react-router';
 import {
 	RequireAuth,
 	OAuthCallbackPage,
@@ -7,12 +7,15 @@ import {
 	TenantSlugProvider,
 	TenantRootRedirect,
 	useTenantSlugFromUrl,
+	useTenantSlug,
 	useBranding,
 	BrandingInitializer,
 } from '@autional-cn/shared';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import AppLayout from './components/layout/AppLayout';
+import { buildNavHref } from './lib/nav';
+import { ROUTES } from './lib/routes';
 
 const DashboardPage = lazy(() => import('./app/page'));
 const ProfilePage = lazy(() => import('./app/profile/page'));
@@ -36,7 +39,6 @@ const CompliancePage = lazy(() => import('./app/compliance/page'));
 const StoragePage = lazy(() => import('./app/storage/page'));
 const OnboardingPage = lazy(() => import('./app/onboarding/page'));
 const CommunicationHistoryPage = lazy(() => import('./app/communication/page'));
-const CommunicationSendPage = lazy(() => import('./app/communication/send/page'));
 const PushTokensPage = lazy(() => import('./app/communication/push-tokens/page'));
 const AnnouncementsPage = lazy(() => import('./app/announcements/page'));
 const DevicesPairPage = lazy(() => import('./app/devices/pair/page'));
@@ -51,6 +53,13 @@ const DeleteAccountPage = lazy(() => import('./app/security/delete-account/page'
 const ExportDataPage = lazy(() => import('./app/privacy/export-data/page'));
 const RecoveryContactsPage = lazy(() => import('./app/security/recovery-contacts/page'));
 const NotFoundPage = lazy(() => import('./app/not-found/page'));
+
+/** 旧路径客户端重定向：按 tenantSlug 组装新绝对路径，保留 query/hash，replace 历史记录。 */
+function LegacyRedirect({ to }: { to: string }) {
+	const tenantSlug = useTenantSlug();
+	const { search, hash } = useLocation();
+	return <Navigate to={`${buildNavHref(to, tenantSlug)}${search}${hash}`} replace />;
+}
 
 function LayoutWrapper() {
 	const { tenantSlug } = useParams();
@@ -110,40 +119,61 @@ function appRoutes() {
 				}
 			/>
 			<Route path="profile" element={<ProfilePage />} />
-			<Route path="profile/api/v1/profile/privacy-impact" element={<PrivacyImpactPage />} />
-			<Route path="profile/api/v1/profile/consents" element={<ConsentsPage />} />
+			<Route path="profile/privacy-impact" element={<PrivacyImpactPage />} />
+			<Route path="profile/consents" element={<ConsentsPage />} />
 			<Route path="security" element={<SecurityPage />} />
 			<Route path="security/login-history" element={<LoginHistoryPage />} />
 			<Route path="security/role-activations" element={<RoleActivationsPage />} />
 			<Route path="security/linked-accounts" element={<LinkedAccountsPage />} />
 			<Route path="activity" element={<ActivityPage />} />
-			<Route path="session/api/v1/sessions" element={<SessionsPage />} />
-			<Route path="notification/api/v1/notifications" element={<NotificationsPage />} />
-			<Route path="notification/api/v1/notifications/preferences" element={<NotifPrefsPage />} />
+			<Route path="sessions" element={<SessionsPage />} />
+			<Route path="notifications" element={<NotificationsPage />} />
+			<Route path="notifications/preferences" element={<NotifPrefsPage />} />
 			<Route path="devices" element={<DevicesPage />} />
 			<Route path="devices/pair" element={<DevicesPairPage />} />
 			<Route path="devices/family" element={<DevicesFamilyPage />} />
 			<Route path="devices/:id/transfer" element={<DeviceTransferPage />} />
 			<Route path="devices/:id/activity" element={<DeviceActivityPage />} />
-			<Route path="point/api/v1/points" element={<PointsPage />} />
+			<Route path="points" element={<PointsPage />} />
 			<Route path="wallet" element={<WalletPage />} />
-			<Route path="wallet/api/v1/wallet/recharge" element={<WalletRechargePage />} />
-			<Route path="wallet/api/v1/wallet/withdrawals" element={<WalletWithdrawalsPage />} />
+			<Route path="wallet/recharge" element={<WalletRechargePage />} />
+			<Route path="wallet/withdrawals" element={<WalletWithdrawalsPage />} />
 			<Route path="billing" element={<BillingPage />} />
-			<Route path="billing/api/v1/billing/subscribe" element={<BillingSubscribePage />} />
-			<Route path="billing/api/v1/billing/invoices" element={<BillingInvoicesPage />} />
-			<Route path="compliance/api/v1/compliance" element={<CompliancePage />} />
-			<Route path="pay/api/v1/payments" element={<PaymentsPage />} />
+			<Route path="billing/subscribe" element={<BillingSubscribePage />} />
+			<Route path="billing/invoices" element={<BillingInvoicesPage />} />
+			<Route path="compliance" element={<CompliancePage />} />
+			<Route path="payments" element={<PaymentsPage />} />
 			<Route path="security/passkeys/register" element={<PasskeyRegisterPage />} />
 			<Route path="security/delete-account" element={<DeleteAccountPage />} />
 			<Route path="privacy/export-data" element={<ExportDataPage />} />
 			<Route path="security/recovery-contacts" element={<RecoveryContactsPage />} />
-			<Route path="storage/api/v1/storage" element={<StoragePage />} />
+			<Route path="storage" element={<StoragePage />} />
 			<Route path="onboarding" element={<OnboardingPage />} />
-			<Route path="communication/api/v1/communication" element={<CommunicationHistoryPage />} />
-			<Route path="communication/api/v1/communication/send" element={<CommunicationSendPage />} />
+			<Route path="communication" element={<CommunicationHistoryPage />} />
 			<Route path="communication/push-tokens" element={<PushTokensPage />} />
-			<Route path="notification/api/v1/announcements" element={<AnnouncementsPage />} />
+			<Route path="announcements" element={<AnnouncementsPage />} />
+
+			{/* 旧路径（原 AuthMS 的 /xxx/api/v1/xxx 形态）全量重定向，勿删：书签、跨站深链、
+			    登录回跳都指向它们。发送消息页已移除，其旧路径回落通信记录（发送能力属平台/
+			    开发者面，演示职能由 comm-demo 服务演示台承载）。首段名单需同步
+			    non-tenant-segments.ts（ui 仓 scripts/check-non-tenant.mjs 有闸门比对）。 */}
+			<Route path="profile/api/v1/profile/privacy-impact" element={<LegacyRedirect to={ROUTES.privacyImpact} />} />
+			<Route path="profile/api/v1/profile/consents" element={<LegacyRedirect to={ROUTES.consents} />} />
+			<Route path="session/api/v1/sessions" element={<LegacyRedirect to={ROUTES.sessions} />} />
+			<Route path="notification/api/v1/notifications" element={<LegacyRedirect to={ROUTES.notifications} />} />
+			<Route path="notification/api/v1/notifications/preferences" element={<LegacyRedirect to={ROUTES.notificationPrefs} />} />
+			<Route path="point/api/v1/points" element={<LegacyRedirect to={ROUTES.points} />} />
+			<Route path="wallet/api/v1/wallet/recharge" element={<LegacyRedirect to={ROUTES.walletRecharge} />} />
+			<Route path="wallet/api/v1/wallet/withdrawals" element={<LegacyRedirect to={ROUTES.walletWithdrawals} />} />
+			<Route path="billing/api/v1/billing/subscribe" element={<LegacyRedirect to={ROUTES.billingSubscribe} />} />
+			<Route path="billing/api/v1/billing/invoices" element={<LegacyRedirect to={ROUTES.billingInvoices} />} />
+			<Route path="compliance/api/v1/compliance" element={<LegacyRedirect to={ROUTES.compliance} />} />
+			<Route path="pay/api/v1/payments" element={<LegacyRedirect to={ROUTES.payments} />} />
+			<Route path="storage/api/v1/storage" element={<LegacyRedirect to={ROUTES.storage} />} />
+			<Route path="communication/api/v1/communication" element={<LegacyRedirect to={ROUTES.communication} />} />
+			<Route path="communication/api/v1/communication/send" element={<LegacyRedirect to={ROUTES.communication} />} />
+			<Route path="notification/api/v1/announcements" element={<LegacyRedirect to={ROUTES.announcements} />} />
+
 			<Route path="*" element={<NotFoundPage />} />
 		</>
 	);

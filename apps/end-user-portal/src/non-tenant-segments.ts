@@ -17,18 +17,23 @@ import { registerNonTenantSegments } from '@autional-cn/shared';
 
 export const NON_TENANT_SEGMENTS = [
 	'activity',
+	'announcements',
 	'billing',
 	'communication',
 	'compliance',
 	'devices',
 	'notification',
+	'notifications',
 	'onboarding',
 	'pay',
+	'payments',
 	'point',
+	'points',
 	'privacy',
 	'profile',
 	'security',
 	'session',
+	'sessions',
 	'storage',
 	'wallet',
 ] as const;

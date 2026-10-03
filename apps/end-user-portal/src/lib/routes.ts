@@ -4,44 +4,48 @@
  * 与 App.tsx 的 <Route path> 完全一致（P1-1 修复：消除 AppLayout 短路径与路由路径不一致）。
  * 值为 React Router 内部路径（不含 basename / tenantSlug 前缀）。
  * AppLayout 组装导航链接时用 buildNavPath() 统一拼接 tenantSlug。
+ *
+ * 2026-10-03：路由统一为干净资源形态，淘汰原 AuthMS 单仓遗留的一批
+ * /xxx/api/v1/xxx 形态前端路径（如 /session/api/v1/sessions → /sessions）。
+ * 旧路径在 App.tsx 以 LegacyRedirect 全量保留（保 query/hash），书签、跨站深链、
+ * 登录回跳不受影响；对应首段仍登记在 non-tenant-segments.ts。
  */
 export const ROUTES = {
 	dashboard: '/',
 	profile: '/profile',
-	privacyImpact: '/profile/api/v1/profile/privacy-impact',
-	consents: '/profile/api/v1/profile/consents',
+	privacyImpact: '/profile/privacy-impact',
+	consents: '/profile/consents',
 	security: '/security',
 	loginHistory: '/security/login-history',
 	roleActivations: '/security/role-activations',
 	linkedAccounts: '/security/linked-accounts',
 	activity: '/activity',
-	sessions: '/session/api/v1/sessions',
-	notifications: '/notification/api/v1/notifications',
-	notificationPrefs: '/notification/api/v1/notifications/preferences',
+	sessions: '/sessions',
+	notifications: '/notifications',
+	notificationPrefs: '/notifications/preferences',
 	devices: '/devices',
 	devicesPair: '/devices/pair',
 	devicesFamily: '/devices/family',
 	deviceTransfer: (id: string | number) => `/devices/${id}/transfer`,
 	deviceActivity: (id: string | number) => `/devices/${id}/activity`,
-	points: '/point/api/v1/points',
+	points: '/points',
 	wallet: '/wallet',
-	walletRecharge: '/wallet/api/v1/wallet/recharge',
-	walletWithdrawals: '/wallet/api/v1/wallet/withdrawals',
+	walletRecharge: '/wallet/recharge',
+	walletWithdrawals: '/wallet/withdrawals',
 	billing: '/billing',
-	billingSubscribe: '/billing/api/v1/billing/subscribe',
-	billingInvoices: '/billing/api/v1/billing/invoices',
-	compliance: '/compliance/api/v1/compliance',
-	payments: '/pay/api/v1/payments',
+	billingSubscribe: '/billing/subscribe',
+	billingInvoices: '/billing/invoices',
+	compliance: '/compliance',
+	payments: '/payments',
 	passkeyRegister: '/security/passkeys/register',
 	deleteAccount: '/security/delete-account',
 	exportData: '/privacy/export-data',
 	recoveryContacts: '/security/recovery-contacts',
-	storage: '/storage/api/v1/storage',
+	storage: '/storage',
 	onboarding: '/onboarding',
-	communication: '/communication/api/v1/communication',
-	communicationSend: '/communication/api/v1/communication/send',
+	communication: '/communication',
 	pushTokens: '/communication/push-tokens',
-	announcements: '/notification/api/v1/announcements',
+	announcements: '/announcements',
 } as const;
 
 export type RouteKey = keyof typeof ROUTES;
