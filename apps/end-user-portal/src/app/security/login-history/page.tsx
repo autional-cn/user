@@ -2,7 +2,6 @@
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
-import { extractApiError } from '@autional-cn/shared';
 import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useAuth, extractApiError } from '@autional-cn/shared';
 import { useTranslation } from 'react-i18next';
 import {
-	Bell,
 	CheckCheck,
 	ShieldCheck,
 	CreditCard,
@@ -19,7 +18,7 @@ import {
 	useMarkNotificationRead,
 	useMarkAllNotificationsRead,
 } from '@/hooks/queries';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 export default function NotificationsPage() {

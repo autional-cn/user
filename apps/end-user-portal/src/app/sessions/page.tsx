@@ -18,7 +18,7 @@ import { useToast } from '@/hooks/use-toast';
 import { extractApiError } from '@autional-cn/shared';
 import { useSessions, useRevokeSession, useRevokeAllSessions } from '@/hooks/queries';
 import type { SessionInfo } from '@/hooks/queries';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 function parseUserAgent(ua?: string): { browser: string; os: string } {

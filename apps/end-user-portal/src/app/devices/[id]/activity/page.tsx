@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { useTenantSlug } from '@autional-cn/shared';
 import { buildNavHref } from '@/lib/nav';
@@ -9,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import {
 	Activity,
 	ArrowLeft,
-	Clock,
 	History,
 	Wifi,
 	WifiOff,

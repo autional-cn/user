@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThingsList } from '@/hooks/queries';
-import { LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 
 const thingIcons: Record<string, typeof Smartphone> = {

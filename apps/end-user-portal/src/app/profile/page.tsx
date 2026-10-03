@@ -12,7 +12,6 @@ import {
 	Save,
 	X,
 	Camera,
-	Shield,
 	Eye,
 	ChevronRight,
 	FileCheck,

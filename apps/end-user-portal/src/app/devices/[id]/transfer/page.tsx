@@ -7,12 +7,10 @@ import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useTranslation } from 'react-i18next';
 import {
-	ArrowRightLeft,
 	ArrowLeft,
 	Smartphone,
 	CheckCircle,
 	XCircle,
-	Loader2,
 	Info,
 } from 'lucide-react';
 import { Button, Input, Label, SectionCard, LoadingScreen, ErrorState } from '@autional-cn/ui';

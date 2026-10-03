@@ -21,9 +21,7 @@ import {
 	Search,
 	RefreshCw,
 	MoreVertical,
-	Eye,
 	Share2,
-	Check,
 } from 'lucide-react';
 
 type Entry =
