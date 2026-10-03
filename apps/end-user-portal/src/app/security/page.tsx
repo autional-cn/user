@@ -15,7 +15,6 @@ import {
 	ChevronRight,
 	Eye,
 	EyeOff,
-	X,
 	Copy,
 	Check,
 	Loader2,
@@ -49,8 +48,7 @@ import {
 	useUnbindOAuth,
 } from '@/hooks/queries';
 import type { OAuthConnectionItem } from '@/hooks/queries';
-import { LoadingScreen } from '@autional-cn/ui';
-import { ErrorState } from '@autional-cn/ui';
+import { LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
 
 const passwordSchema = z
 	.object({
@@ -798,49 +796,41 @@ export default function SecurityPage() {
 			</div>
 
 			{/* OAuth Bind Modal */}
-			{bindModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-					<div className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
-						<div className="flex items-center justify-between mb-4">
-							<h3 className="text-lg font-bold text-neutral-900">{t('security.oauth.bindNew')}</h3>
+			<Modal
+				open={bindModalOpen}
+				onClose={() => setBindModalOpen(false)}
+				title={t('security.oauth.bindNew')}
+				// 说明行归表头（Modal 的 description）—— 手写版的这一行本来就在表头里、在分隔线之上；
+				// 搬进正文会让它掉到分隔线下面，观感与原版不一致。
+				description={t('security.oauth.bindPrompt', '选择要绑定的第三方账号')}
+				maxWidth="sm"
+			>
+				<div className="space-y-2">
+					{availableOAuthProviders.map((p) => {
+						const meta = getBindProviderMeta(p.id);
+						return (
 							<button
-								onClick={() => setBindModalOpen(false)}
-								className="text-neutral-400 hover:text-neutral-600"
+								key={p.id}
+								onClick={() => handleBindProvider(p.id)}
+								disabled={bindLoading}
+								className="flex w-full items-center gap-3 rounded-md border border-neutral-200 p-3 text-left hover:bg-neutral-50 transition-colors disabled:opacity-50"
 							>
-								<X size={20} />
+								<span
+									className={`flex h-10 w-10 items-center justify-center rounded-md ${meta.iconStyle}`}
+								>
+									{meta.icon}
+								</span>
+								<div>
+									<p className="text-sm font-medium text-neutral-900">{p.name}</p>
+									<p className="text-xs text-neutral-500">
+										{t(`security.oauth.${p.id}Desc`, `绑定 ${p.name} 账号`)}
+									</p>
+								</div>
 							</button>
-						</div>
-						<p className="text-sm text-neutral-600 mb-4">
-							{t('security.oauth.bindPrompt', '选择要绑定的第三方账号')}
-						</p>
-						<div className="space-y-2">
-							{availableOAuthProviders.map((p) => {
-								const meta = getBindProviderMeta(p.id);
-								return (
-									<button
-										key={p.id}
-										onClick={() => handleBindProvider(p.id)}
-										disabled={bindLoading}
-										className="flex w-full items-center gap-3 rounded-md border border-neutral-200 p-3 text-left hover:bg-neutral-50 transition-colors disabled:opacity-50"
-									>
-										<span
-											className={`flex h-10 w-10 items-center justify-center rounded-md ${meta.iconStyle}`}
-										>
-											{meta.icon}
-										</span>
-										<div>
-											<p className="text-sm font-medium text-neutral-900">{p.name}</p>
-											<p className="text-xs text-neutral-500">
-												{t(`security.oauth.${p.id}Desc`, `绑定 ${p.name} 账号`)}
-											</p>
-										</div>
-									</button>
-								);
-							})}
-						</div>
-					</div>
+						);
+					})}
 				</div>
-			)}
+			</Modal>
 
 			{/* Account Deletion */}
 			<div className="rounded-lg border border-danger/30 bg-danger/5 p-6 shadow-sm">
@@ -869,260 +859,244 @@ export default function SecurityPage() {
 			</div>
 
 			{/* Account Deletion Confirm Modal */}
-			{deleteModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-					<div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
-						<div className="flex items-center justify-between mb-4">
-							<h3 className="text-lg font-bold text-neutral-900">
-								{t('security.deleteAccountConfirmTitle', '确认删除账户')}
-							</h3>
-							<button
-								onClick={() => {
-									setDeleteModalOpen(false);
-									setDeleteConfirmText('');
-									setDeleteError('');
-								}}
-								className="text-neutral-400 hover:text-neutral-600"
-							>
-								<X size={20} />
-							</button>
-						</div>
-
-						<div className="rounded-md bg-red-50 p-4 text-sm text-red-700 mb-4">
-							<p className="font-semibold">
-								{t('security.deleteWarningTitle', '警告：此操作不可逆')}
-							</p>
-							<ul className="mt-2 list-inside list-disc space-y-1">
-								<li>{t('security.deleteWarningItem1', '您的个人资料将被永久删除')}</li>
-								<li>{t('security.deleteWarningItem2', '所有历史记录和数据将被清除')}</li>
-								<li>{t('security.deleteWarningItem3', '您将无法再使用该账号登录任何服务')}</li>
-								<li>
-									{t('security.deleteWarningItem4', '根据GDPR规定，数据将在30天内被永久删除')}
-								</li>
-							</ul>
-						</div>
-
-						{deleteError && (
-							<div className="rounded-md bg-red-50 p-3 text-sm text-danger mb-4">{deleteError}</div>
-						)}
-
-						<p className="text-sm text-neutral-600 mb-3">
-							{t('security.deleteConfirmPrompt', '请输入 DELETE 以确认删除：')}
-						</p>
-						<input
-							type="text"
-							value={deleteConfirmText}
-							onChange={(e) => setDeleteConfirmText(e.target.value)}
-							placeholder="DELETE"
-							className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-danger focus:outline-none focus:ring-1 focus:ring-danger"
-						/>
-						<div className="mt-4 flex justify-end gap-2">
-							<button
-								onClick={() => {
-									setDeleteModalOpen(false);
-									setDeleteConfirmText('');
-									setDeleteError('');
-								}}
-								disabled={deleteLoading}
-								className="rounded-md border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
-							>
-								{t('security.cancel', '取消')}
-							</button>
-							<button
-								onClick={handleDeleteAccount}
-								disabled={deleteConfirmText !== 'DELETE' || deleteLoading}
-								className="rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger/90 disabled:opacity-50"
-							>
-								{deleteLoading ? (
-									<span className="flex items-center gap-1">
-										<Loader2 size={14} className="animate-spin" />{' '}
-										{t('security.deleting', '删除中...')}
-									</span>
-								) : (
-									t('security.confirmDelete', '永久删除')
-								)}
-							</button>
-						</div>
-					</div>
+			<Modal
+				open={deleteModalOpen}
+				onClose={() => {
+					setDeleteModalOpen(false);
+					setDeleteConfirmText('');
+					setDeleteError('');
+				}}
+				title={t('security.deleteAccountConfirmTitle', '确认删除账户')}
+				maxWidth="md"
+				footer={
+					<>
+						<button
+							onClick={() => {
+								setDeleteModalOpen(false);
+								setDeleteConfirmText('');
+								setDeleteError('');
+							}}
+							disabled={deleteLoading}
+							className="rounded-md border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
+						>
+							{t('security.cancel', '取消')}
+						</button>
+						<button
+							onClick={handleDeleteAccount}
+							disabled={deleteConfirmText !== 'DELETE' || deleteLoading}
+							className="rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger/90 disabled:opacity-50"
+						>
+							{deleteLoading ? (
+								<span className="flex items-center gap-1">
+									<Loader2 size={14} className="animate-spin" />{' '}
+									{t('security.deleting', '删除中...')}
+								</span>
+							) : (
+								t('security.confirmDelete', '永久删除')
+							)}
+						</button>
+					</>
+				}
+			>
+				<div className="rounded-md bg-red-50 p-4 text-sm text-red-700 mb-4">
+					<p className="font-semibold">
+						{t('security.deleteWarningTitle', '警告：此操作不可逆')}
+					</p>
+					<ul className="mt-2 list-inside list-disc space-y-1">
+						<li>{t('security.deleteWarningItem1', '您的个人资料将被永久删除')}</li>
+						<li>{t('security.deleteWarningItem2', '所有历史记录和数据将被清除')}</li>
+						<li>{t('security.deleteWarningItem3', '您将无法再使用该账号登录任何服务')}</li>
+						<li>
+							{t('security.deleteWarningItem4', '根据GDPR规定，数据将在30天内被永久删除')}
+						</li>
+					</ul>
 				</div>
-			)}
+
+				{deleteError && (
+					<div className="rounded-md bg-red-50 p-3 text-sm text-danger mb-4">{deleteError}</div>
+				)}
+
+				<p className="text-sm text-neutral-600 mb-3">
+					{t('security.deleteConfirmPrompt', '请输入 DELETE 以确认删除：')}
+				</p>
+				<input
+					type="text"
+					value={deleteConfirmText}
+					onChange={(e) => setDeleteConfirmText(e.target.value)}
+					placeholder="DELETE"
+					className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-danger focus:outline-none focus:ring-1 focus:ring-danger"
+				/>
+			</Modal>
 
 			{/* TOTP Setup Modal */}
-			{totpModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-					<div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
-						<div className="flex items-center justify-between mb-4">
-							<h3 className="text-lg font-bold text-neutral-900">
-								{totpStep === 1 && t('security.totpEnableTitle')}
-								{totpStep === 2 && t('security.totpEnterCode')}
-								{totpStep === 3 && t('security.totpBackupTitle')}
-							</h3>
-							<button onClick={closeTOTPModal} className="text-neutral-400 hover:text-neutral-600">
-								<X size={20} />
-							</button>
-						</div>
-
-						{totpStep === 1 && totpSetup && (
-							<div className="space-y-4">
-								<p className="text-sm text-neutral-600">{t('security.totpScanPrompt')}</p>
-								<div className="flex flex-col items-center gap-3">
-									{totpSetup.qrCodeUrl ? (
-										<img
-											src={totpSetup.qrCodeUrl}
-											alt="TOTP QR Code"
-											className="h-40 w-40 rounded-md border border-neutral-200"
-										/>
-									) : (
-										<div className="flex h-40 w-40 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-400">
-											{t('security.totpQrFail')}
-										</div>
-									)}
-									<div className="flex items-center gap-2 rounded-md bg-neutral-100 px-3 py-2">
-										<code className="text-xs text-neutral-700">{totpSetup.secret}</code>
-										<button
-											onClick={copySecret}
-											className="text-neutral-500 hover:text-primary-700"
-										>
-											{copied ? <Check size={14} /> : <Copy size={14} />}
-										</button>
-									</div>
-								</div>
-								<div>
-									<label className="block text-sm font-medium text-neutral-700">
-										{t('security.totpEnterCode')}
-									</label>
-									<input
-										type="text"
-										inputMode="numeric"
-										maxLength={6}
-										value={totpCode}
-										onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
-										placeholder="000000"
-										className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm tracking-widest focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-									/>
-								</div>
-								<div className="flex justify-end gap-2">
-									<button
-										onClick={closeTOTPModal}
-										className="rounded-md border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
-									>
-										{t('security.cancel')}
-									</button>
-									<button
-										onClick={verifyTOTPCode}
-										disabled={verifyTotpMutation.isPending || totpCode.length < 6}
-										className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
-									>
-										{verifyTotpMutation.isPending ? (
-											<span className="flex items-center gap-1">
-												<Loader2 size={14} className="animate-spin" /> {t('security.totpVerifying')}
-											</span>
-										) : (
-											t('security.totpVerifyAndEnable')
-										)}
-									</button>
-								</div>
-							</div>
-						)}
-
-						{totpStep === 3 && (
-							<div className="space-y-4">
-								<p className="text-sm text-neutral-600">{t('security.totpBackupPrompt')}</p>
-								<div className="rounded-md border border-amber-200 bg-amber-50 p-4">
-									<div className="grid grid-cols-2 gap-2">
-										{backupCodes.map((code, idx) => (
-											<code
-												key={idx}
-												className="rounded bg-white px-2 py-1 text-center text-sm font-mono text-neutral-800 border border-amber-100"
-											>
-												{code}
-											</code>
-										))}
-									</div>
-									<button
-										onClick={copyBackupCodes}
-										className="mt-3 flex items-center gap-1 text-sm font-medium text-amber-800 hover:text-amber-900"
-									>
-										<Copy size={14} /> {t('security.totpCopyBackupCodes')}
-									</button>
-								</div>
-								<div className="flex justify-end">
-									<button
-										onClick={closeTOTPModal}
-										className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
-									>
-										{t('security.totpDone')}
-									</button>
-								</div>
-							</div>
-						)}
-					</div>
-				</div>
-			)}
-
-			{/* Disable MFA Modal */}
-			{disableModalOpen && (
-				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-					<div className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white p-6 shadow-xl">
-						<div className="flex items-center justify-between mb-4">
-							<h3 className="text-lg font-bold text-neutral-900">
-								{t('security.disableTitle', {
-									method:
-										disableMethod === 'totp'
-											? 'TOTP'
-											: disableMethod === 'sms'
-												? t('security.smsTitle')
-												: t('security.emailTitle'),
-								})}
-							</h3>
+			<Modal
+				open={totpModalOpen}
+				onClose={closeTOTPModal}
+				title={
+					totpStep === 1
+						? t('security.totpEnableTitle')
+						: totpStep === 2
+							? t('security.totpEnterCode')
+							: totpStep === 3
+								? t('security.totpBackupTitle')
+								: undefined
+				}
+				maxWidth="md"
+				footer={
+					totpStep === 1 ? (
+						<>
 							<button
-								onClick={() => setDisableModalOpen(false)}
-								className="text-neutral-400 hover:text-neutral-600"
-							>
-								<X size={20} />
-							</button>
-						</div>
-						<p className="text-sm text-neutral-600 mb-4">
-							{t('security.disablePrompt', {
-								hint:
-									disableMethod === 'totp'
-										? t('security.disableTotpHint')
-										: t('security.disableSmsHint'),
-							})}
-						</p>
-						<input
-							type="text"
-							inputMode="numeric"
-							maxLength={8}
-							value={disableCode}
-							onChange={(e) => setDisableCode(e.target.value.replace(/\s/g, ''))}
-							placeholder={
-								disableMethod === 'totp'
-									? t('security.disablePlaceholder', { method: 'TOTP' })
-									: t('security.disablePlaceholder', { method: t('security.smsTitle') })
-							}
-							className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-						/>
-						<div className="mt-4 flex justify-end gap-2">
-							<button
-								onClick={() => setDisableModalOpen(false)}
+								onClick={closeTOTPModal}
 								className="rounded-md border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
 							>
-								{t('security.disableCancel')}
+								{t('security.cancel')}
 							</button>
 							<button
-								onClick={confirmDisable}
-								disabled={disableTotpMutation.isPending}
-								className="rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger/90 disabled:opacity-60"
+								onClick={verifyTOTPCode}
+								disabled={verifyTotpMutation.isPending || totpCode.length < 6}
+								className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60"
 							>
-								{disableTotpMutation.isPending
-									? t('security.processing')
-									: t('security.disableConfirm')}
+								{verifyTotpMutation.isPending ? (
+									<span className="flex items-center gap-1">
+										<Loader2 size={14} className="animate-spin" /> {t('security.totpVerifying')}
+									</span>
+								) : (
+									t('security.totpVerifyAndEnable')
+								)}
+							</button>
+						</>
+					) : totpStep === 3 ? (
+						<button
+							onClick={closeTOTPModal}
+							className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700"
+						>
+							{t('security.totpDone')}
+						</button>
+					) : undefined
+				}
+			>
+				{totpStep === 1 && totpSetup && (
+					<div className="space-y-4">
+						<p className="text-sm text-neutral-600">{t('security.totpScanPrompt')}</p>
+						<div className="flex flex-col items-center gap-3">
+							{totpSetup.qrCodeUrl ? (
+								<img
+									src={totpSetup.qrCodeUrl}
+									alt="TOTP QR Code"
+									className="h-40 w-40 rounded-md border border-neutral-200"
+								/>
+							) : (
+								<div className="flex h-40 w-40 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-400">
+									{t('security.totpQrFail')}
+								</div>
+							)}
+							<div className="flex items-center gap-2 rounded-md bg-neutral-100 px-3 py-2">
+								<code className="text-xs text-neutral-700">{totpSetup.secret}</code>
+								<button
+									onClick={copySecret}
+									className="text-neutral-500 hover:text-primary-700"
+								>
+									{copied ? <Check size={14} /> : <Copy size={14} />}
+								</button>
+							</div>
+						</div>
+						<div>
+							<label className="block text-sm font-medium text-neutral-700">
+								{t('security.totpEnterCode')}
+							</label>
+							<input
+								type="text"
+								inputMode="numeric"
+								maxLength={6}
+								value={totpCode}
+								onChange={(e) => setTotpCode(e.target.value.replace(/\D/g, ''))}
+								placeholder="000000"
+								className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm tracking-widest focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+							/>
+						</div>
+					</div>
+				)}
+
+				{totpStep === 3 && (
+					<div className="space-y-4">
+						<p className="text-sm text-neutral-600">{t('security.totpBackupPrompt')}</p>
+						<div className="rounded-md border border-amber-200 bg-amber-50 p-4">
+							<div className="grid grid-cols-2 gap-2">
+								{backupCodes.map((code, idx) => (
+									<code
+										key={idx}
+										className="rounded bg-white px-2 py-1 text-center text-sm font-mono text-neutral-800 border border-amber-100"
+									>
+										{code}
+									</code>
+								))}
+							</div>
+							<button
+								onClick={copyBackupCodes}
+								className="mt-3 flex items-center gap-1 text-sm font-medium text-amber-800 hover:text-amber-900"
+							>
+								<Copy size={14} /> {t('security.totpCopyBackupCodes')}
 							</button>
 						</div>
 					</div>
-				</div>
-			)}
+				)}
+			</Modal>
+
+			{/* Disable MFA Modal */}
+			<Modal
+				open={disableModalOpen}
+				onClose={() => setDisableModalOpen(false)}
+				title={t('security.disableTitle', {
+					method:
+						disableMethod === 'totp'
+							? 'TOTP'
+							: disableMethod === 'sms'
+								? t('security.smsTitle')
+								: t('security.emailTitle'),
+				})}
+				maxWidth="sm"
+				footer={
+					<>
+						<button
+							onClick={() => setDisableModalOpen(false)}
+							className="rounded-md border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50"
+						>
+							{t('security.disableCancel')}
+						</button>
+						<button
+							onClick={confirmDisable}
+							disabled={disableTotpMutation.isPending}
+							className="rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger/90 disabled:opacity-60"
+						>
+							{disableTotpMutation.isPending
+								? t('security.processing')
+								: t('security.disableConfirm')}
+						</button>
+					</>
+				}
+			>
+				<p className="text-sm text-neutral-600 mb-4">
+					{t('security.disablePrompt', {
+						hint:
+							disableMethod === 'totp'
+								? t('security.disableTotpHint')
+								: t('security.disableSmsHint'),
+					})}
+				</p>
+				<input
+					type="text"
+					inputMode="numeric"
+					maxLength={8}
+					value={disableCode}
+					onChange={(e) => setDisableCode(e.target.value.replace(/\s/g, ''))}
+					placeholder={
+						disableMethod === 'totp'
+							? t('security.disablePlaceholder', { method: 'TOTP' })
+							: t('security.disablePlaceholder', { method: t('security.smsTitle') })
+					}
+					className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+				/>
+			</Modal>
 		</div>
 	);
 }

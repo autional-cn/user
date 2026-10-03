@@ -9,7 +9,7 @@ import {
 	profilesConsentsByProfilesByConsentsDelete,
 } from '@autional-cn/shared/generated/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { LoadingScreen } from '@autional-cn/ui';
+import { LoadingScreen, Modal } from '@autional-cn/ui';
 import { ErrorState, EmptyState } from '@autional-cn/ui';
 import { showToast } from '@autional-cn/ui';
 import { isNotFoundError } from '@/lib/api-error';
@@ -233,102 +233,97 @@ export default function ConsentsPage() {
 			</div>
 
 			{/* Grant Consent Modal */}
-			{showModal && (
-				<>
-					<div className="fixed inset-0 z-40 bg-black/30" onClick={() => setShowModal(false)} />
-					<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-						<div className="w-full max-w-md rounded-xl border border-neutral-200 bg-white shadow-xl">
-							<div className="border-b border-neutral-100 px-6 py-4">
-								<h3 className="text-lg font-semibold text-neutral-900">
-									{t('consents.grantModalTitle')}
-								</h3>
-								<p className="mt-0.5 text-sm text-neutral-500">{t('consents.grantModalDesc')}</p>
-							</div>
-							<div className="px-6 py-4 space-y-3 max-h-80 overflow-y-auto">
-								{availableFields.length === 0 ? (
-									<p className="text-center text-sm text-neutral-400 py-4">
-										{t('consents.allFieldsConsented')}
-									</p>
-								) : (
-									availableFields.map((field) => (
-										<label
-											key={field.key}
-											className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
-												selectedFields.has(field.key)
-													? 'border-primary-300 bg-primary-50'
-													: 'border-neutral-200 hover:border-neutral-300 bg-white'
-											}`}
-										>
-											<input
-												type="checkbox"
-												checked={selectedFields.has(field.key)}
-												onChange={() => toggleField(field.key)}
-												className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
-											/>
-											<div className="flex-1 min-w-0">
-												<p className="text-sm font-medium text-neutral-900">{field.label}</p>
-												<p className="text-xs text-neutral-500">{field.description}</p>
-											</div>
-										</label>
-									))
-								)}
-							</div>
-							<div className="flex items-center justify-end gap-2 border-t border-neutral-100 px-6 py-4">
-								<button
-									onClick={() => {
-										setShowModal(false);
-										setSelectedFields(new Set());
-									}}
-									className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-								>
-									{t('consents.cancel')}
-								</button>
-								<button
-									onClick={handleGrant}
-									disabled={selectedFields.size === 0 || grantMutation.isPending}
-									className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-60"
-								>
-									{grantMutation.isPending ? t('consents.granting') : t('consents.grant')}
-								</button>
-							</div>
-						</div>
-					</div>
-				</>
-			)}
+			<Modal
+				open={showModal}
+				onClose={() => setShowModal(false)}
+				title={t('consents.grantModalTitle')}
+				description={t('consents.grantModalDesc')}
+				maxWidth="md"
+				footer={
+					<>
+						<button
+							onClick={() => {
+								setShowModal(false);
+								setSelectedFields(new Set());
+							}}
+							className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+						>
+							{t('consents.cancel')}
+						</button>
+						<button
+							onClick={handleGrant}
+							disabled={selectedFields.size === 0 || grantMutation.isPending}
+							className="rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-60"
+						>
+							{grantMutation.isPending ? t('consents.granting') : t('consents.grant')}
+						</button>
+					</>
+				}
+			>
+{/* 横向内边距归 Modal 的内容区（px-6 py-4），保留会与表头/表尾错位；这里只留本层自己的滚动与间距 */}
+				<div className="space-y-3 max-h-80 overflow-y-auto">
+					{availableFields.length === 0 ? (
+						<p className="text-center text-sm text-neutral-400 py-4">
+							{t('consents.allFieldsConsented')}
+						</p>
+					) : (
+						availableFields.map((field) => (
+							<label
+								key={field.key}
+								className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+									selectedFields.has(field.key)
+										? 'border-primary-300 bg-primary-50'
+										: 'border-neutral-200 hover:border-neutral-300 bg-white'
+								}`}
+							>
+								<input
+									type="checkbox"
+									checked={selectedFields.has(field.key)}
+									onChange={() => toggleField(field.key)}
+									className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
+								/>
+								<div className="flex-1 min-w-0">
+									<p className="text-sm font-medium text-neutral-900">{field.label}</p>
+									<p className="text-xs text-neutral-500">{field.description}</p>
+								</div>
+							</label>
+						))
+					)}
+				</div>
+			</Modal>
 
 			{/* Revoke Confirmation Dialog */}
-			{revokingField && (
-				<>
-					<div className="fixed inset-0 z-40 bg-black/30" onClick={() => setRevokingField(null)} />
-					<div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-						<div className="w-full max-w-sm rounded-xl border border-neutral-200 bg-white shadow-xl">
-							<div className="px-6 py-5">
-								<h3 className="text-lg font-semibold text-neutral-900">
-									{t('consents.revokeConfirmTitle')}
-								</h3>
-								<p className="mt-2 text-sm text-neutral-500">
-									{t('consents.revokeConfirmDesc', { field: revokingField })}
-								</p>
-							</div>
-							<div className="flex items-center justify-end gap-2 border-t border-neutral-100 px-6 py-4">
-								<button
-									onClick={() => setRevokingField(null)}
-									className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-								>
-									{t('consents.cancel')}
-								</button>
-								<button
-									onClick={() => revokeMutation.mutate(revokingField)}
-									disabled={revokeMutation.isPending}
-									className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 transition-colors disabled:opacity-60"
-								>
-									{revokeMutation.isPending ? t('consents.revoking') : t('consents.confirmRevoke')}
-								</button>
-							</div>
-						</div>
-					</div>
-				</>
-			)}
+			<Modal
+				open={!!revokingField}
+				onClose={() => setRevokingField(null)}
+				title={t('consents.revokeConfirmTitle')}
+				maxWidth="sm"
+				footer={
+					<>
+						<button
+							onClick={() => setRevokingField(null)}
+							className="rounded-md border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+						>
+							{t('consents.cancel')}
+						</button>
+						<button
+							onClick={() => revokeMutation.mutate(revokingField!)}
+							disabled={revokeMutation.isPending}
+							className="rounded-md bg-rose-600 px-4 py-2 text-sm font-medium text-white hover:bg-rose-700 transition-colors disabled:opacity-60"
+						>
+							{revokeMutation.isPending ? t('consents.revoking') : t('consents.confirmRevoke')}
+						</button>
+					</>
+				}
+			>
+				{/* 说明行是这一页唯一的正文。它原本在手写版的**表头**里（分隔线之上），本可以走 Modal 的 description，
+				    但「只有表头、没有正文」需要 Modal 的 children 可选 —— 那是 @autional-cn/ui **rc.18** 才有的形状，
+				    而舰队现在装的是 rc.17（发 rc.18 时 registry 正好在闹证书问题，装不上）。
+				    升到 rc.18 后把这一行改成 description 即可。 */}
+				<p className="text-sm text-[var(--color-text-secondary)]">
+					{t('consents.revokeConfirmDesc', { field: revokingField })}
+				</p>
+			</Modal>
 		</div>
 	);
 }
