@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router';
+import { Link as RouterLink, Outlet, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Breadcrumb } from './Breadcrumb';
 import { useTenant } from '@/hooks/use-tenant';
 import { ROUTES } from '@/lib/routes';
-import { buildNavHref } from '@/lib/nav';
+import { buildNavHref, pickActiveNavPath, stripTenantPrefix } from '@/lib/nav';
 import { useTenantSlug, extractItem, usePortalCatalog } from '@autional-cn/shared';
 import {
 	useAuth,
@@ -96,6 +96,7 @@ export default function AppLayout() {
 		}
 	}, [lastEvent]);
 
+	const { pathname } = useLocation();
 	const { data: gatesData } = useQuery({
 		queryKey: ['featureGates'],
 		queryFn: async () => {
@@ -129,7 +130,10 @@ export default function AppLayout() {
 			items: [
 				{ to: ROUTES.loginHistory, label: t('nav.loginHistory'), icon: Clock },
 				{ to: ROUTES.activity, label: t('nav.activityLog'), icon: History },
-				{ to: ROUTES.devices, label: t('nav.devices'), icon: Smartphone },
+				// NHI 开启时设备入口归「我的设备」组，此处不再重复（曾同目标双入口同时高亮）
+				...(nhiEnabled
+					? []
+					: [{ to: ROUTES.devices, label: t('nav.devices'), icon: Smartphone }]),
 				{ to: ROUTES.sessions, label: t('nav.sessions'), icon: Monitor },
 			],
 		},
@@ -176,6 +180,13 @@ export default function AppLayout() {
 			items: [{ to: ROUTES.announcements, label: t('nav.announcements'), icon: Megaphone }],
 		},
 	];
+
+	// 单高亮：只点亮与当前路径匹配最长的一项（父项在子路由下不再与子项齐亮）
+	const internalPath = stripTenantPrefix(pathname, tenantSlug);
+	const activeTo = pickActiveNavPath(
+		navSections.flatMap((section) => section.items.map((item) => item.to)),
+		internalPath,
+	);
 
 	const handleLogout = useLogout();
 
@@ -252,24 +263,25 @@ export default function AppLayout() {
 								{section.header}
 							</h3>
 							<div className="flex flex-col gap-1">
-								{section.items.map((item) => (
-									<NavLink
-										key={item.to}
-										to={navHref(item.to)}
-										end={item.to === ROUTES.dashboard}
-										onClick={() => setSidebarOpen(false)}
-										className={({ isActive }) =>
-											`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+								{section.items.map((item) => {
+									const isActive = item.to === activeTo;
+									return (
+										<RouterLink
+											key={item.to}
+											to={navHref(item.to)}
+											aria-current={isActive ? 'page' : undefined}
+											onClick={() => setSidebarOpen(false)}
+											className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
 												isActive
 													? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
 													: 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200'
-											}`
-										}
-									>
-										<item.icon size={18} />
-										{item.label}
-									</NavLink>
-								))}
+											}`}
+										>
+											<item.icon size={18} />
+											{item.label}
+										</RouterLink>
+									);
+								})}
 							</div>
 						</div>
 					))}
