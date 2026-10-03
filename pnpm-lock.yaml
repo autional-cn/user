@@ -41,7 +41,7 @@ importers:
         version: 5.8.3
       vitest:
         specifier: 3.2.0
-        version: 3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6(vitest@3.2.0))(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2)
+        version: 3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6)(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2)
 
   apps/end-user-portal:
     dependencies:
@@ -55,8 +55,8 @@ importers:
         specifier: 0.1.0-rc.5
         version: 0.1.0-rc.5
       '@autional-cn/ui':
-        specifier: 0.1.0-rc.27
-        version: 0.1.0-rc.27(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        specifier: 0.1.0-rc.28
+        version: 0.1.0-rc.28(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@hookform/resolvers':
         specifier: 3.10.0
         version: 3.10.0(react-hook-form@7.78.0(react@19.2.5))
@@ -180,7 +180,7 @@ importers:
         version: 1.3.0(vite@6.4.2(@types/node@26.6.3)(jiti@1.21.7)(terser@5.51.2))(workbox-build@7.4.1(@types/babel__core@7.20.5))(workbox-window@7.4.1)
       vitest:
         specifier: 3.2.0
-        version: 3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6(vitest@3.2.0))(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2)
+        version: 3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6)(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2)
 
 packages:
 
@@ -273,8 +273,8 @@ packages:
   '@autional-cn/tsconfig@0.1.0-rc':
     resolution: {integrity: sha512-XY7N2lbMlR1D+OlkxDAw9Pz9CleV4UZ14RfWkkhGTZbbHvxT/d69H8GXWhyc9/634RoEUyVajYmjT75cZbKF4A==}
 
-  '@autional-cn/ui@0.1.0-rc.27':
-    resolution: {integrity: sha512-GQbV6MNssw3zFP4QKEsFJxxvthSXv2FBeakFPohgjwFSO4D8K+VGvJ3Hh9TnO7ggE1nZncdFQg7lInSGXh5kig==}
+  '@autional-cn/ui@0.1.0-rc.28':
+    resolution: {integrity: sha512-Y5RQ84u/lW23bwmZKyQtSzbeCD9dpsYkBTb1YqCtLoTosbVyOmuDpm9+L8yrw8INgDx17N7y2/eSuD4IjtSzKQ==}
     peerDependencies:
       '@autional-cn/tokens': '>=0.1.0-rc'
       antd: '>=6.0.0'
@@ -4739,7 +4739,7 @@ snapshots:
 
   '@autional-cn/tsconfig@0.1.0-rc': {}
 
-  '@autional-cn/ui@0.1.0-rc.27(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@autional-cn/ui@0.1.0-rc.28(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     dependencies:
       '@autional-cn/tokens': 0.1.0-rc.5
       i18next: 26.0.10(typescript@5.8.3)
@@ -6853,7 +6853,7 @@ snapshots:
       sirv: 3.0.2
       tinyglobby: 0.2.17
       tinyrainbow: 3.1.1
-      vitest: 3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6(vitest@3.2.0))(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2)
+      vitest: 3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6)(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2)
 
   '@vitest/utils@2.0.5':
     dependencies:
@@ -9117,7 +9117,7 @@ snapshots:
       jiti: 1.21.7
       terser: 5.51.2
 
-  vitest@3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6(vitest@3.2.0))(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2):
+  vitest@3.2.0(@types/node@26.6.3)(@vitest/ui@4.1.6)(jiti@1.21.7)(jsdom@29.1.1)(terser@5.51.2):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.0
