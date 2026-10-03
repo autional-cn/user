@@ -73,12 +73,16 @@ export default defineConfig({
     sourcemap: false,
     rollupOptions: {
       output: {
+        // 分块策略与三个控制台对齐：同一套键名、同一套归属。同属一个产品的 portal
+        // 不该因为「谁当年记得加 vendor 块」而让首屏体积差出一个量级。
+        // antd / icons 必须单独成块：它们的更新节奏跟业务代码完全不同，
+        // 混进入口块会让每次业务改动都要求用户重下整个 antd（admin 此前正是如此：入口块 2.7MB）。
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router'],
+          'vendor-ui': ['antd', '@ant-design/icons', 'lucide-react'],
           'vendor-query': ['@tanstack/react-query'],
           'vendor-i18n': ['i18next', 'react-i18next'],
-          'vendor-ui': ['lucide-react'],
-          'shared': ['@autional-cn/shared'],
+          'shared-api': ['@autional-cn/shared'],
         },
       },
     },
