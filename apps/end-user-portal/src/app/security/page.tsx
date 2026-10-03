@@ -48,8 +48,8 @@ import {
 	useUnbindOAuth,
 } from '@/hooks/queries';
 import type { OAuthConnectionItem } from '@/hooks/queries';
-import { LoadingScreen, ErrorState, Modal, Input } from '@autional-cn/ui';
-import { FormField, FormInput, useBoundField, useFormFieldA11y } from '@autional-cn/ui/rhf';
+import { LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
+import { FormInput } from '@autional-cn/ui/rhf';
 
 const passwordSchema = z
 	.object({
@@ -146,27 +146,7 @@ export default function SecurityPage() {
 	});
 	const { errors: pwdErrors, isSubmitting: pwdSubmitting } = passwordForm.formState;
 
-	// 当前密码 / 新密码两个框各带一个「显示/隐藏」按钮，按钮必须贴在**输入框**上（绝对定位）。
-	// FormInput 把 标签 + 控件 + 错误 包成一个块、控件槽只有一个 —— 按钮塞进那个块会以整块中线定位，
-	// 被标签推高到输入框上沿。所以这两个字段走 FormField + useBoundField：标签/错误/aria 仍由设计系统
-	// 下发，外观仍取设计系统，只有「谁包住谁」留在这里。错误文案按字段显式覆盖 —— zod 的 message 是
-	// i18n 键，不覆盖就会把它原样显示给用户（那是回归，不是收敛）。
-	const { field: oldPasswordField, error: oldPasswordError } = useBoundField<PasswordForm>(
-		'oldPassword',
-		passwordForm.control,
-		undefined,
-		pwdErrors.oldPassword
-			? t(pwdErrors.oldPassword.message || 'security.oldPasswordRequired')
-			: undefined,
-	);
-	const { field: newPasswordField, error: newPasswordError } = useBoundField<PasswordForm>(
-		'newPassword',
-		passwordForm.control,
-		undefined,
-		pwdErrors.newPassword
-			? t(pwdErrors.newPassword.message || 'security.newPasswordRequired')
-			: undefined,
-	);
+
 
 	function getPasswordStrength(pwd: string): { score: number; label: string; color: string } {
 		if (!pwd) return { score: 0, label: '', color: 'bg-neutral-200' };
@@ -531,56 +511,50 @@ export default function SecurityPage() {
 
 				{showPasswordForm && (
 					<div className="mt-4 space-y-4 border-t border-neutral-100 pt-4">
-						{/* 这个字段带「显示/隐藏」按钮：按钮靠绝对定位贴在输入框上，而 FormInput 的控件槽
-						    只有一个、标签又和控件同一块 —— 按钮塞进去会以整块中线定位、浮到输入框上沿。
-						    所以这里用 FormField + FieldControlSlot，让按钮与控件同处一个定位块。 */}
-						<FormField label={t('security.oldPassword')} error={oldPasswordError}>
-							<FieldControlSlot
-								render={(a11y) => (
-									<div className="relative">
-										<Input
-											{...oldPasswordField}
-											id={a11y.id}
-											aria-invalid={a11y.invalid || undefined}
-											aria-describedby={a11y.describedBy}
-											type={showOld ? 'text' : 'password'}
-											className="pr-10"
-										/>
-										<button
-											type="button"
-											onClick={() => setShowOld(!showOld)}
-											className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-										>
-											{showOld ? <EyeOff size={16} /> : <Eye size={16} />}
-										</button>
-									</div>
-								)}
-							/>
-						</FormField>
-						{/* 同上：新密码框也带显示/隐藏按钮，按钮要贴在输入框上，不能交给 FormField 那一块去定位。 */}
-						<FormField label={t('security.newPassword')} error={newPasswordError}>
-							<FieldControlSlot
-								render={(a11y) => (
-									<div className="relative">
-										<Input
-											{...newPasswordField}
-											id={a11y.id}
-											aria-invalid={a11y.invalid || undefined}
-											aria-describedby={a11y.describedBy}
-											type={showNew ? 'text' : 'password'}
-											className="pr-10"
-										/>
-										<button
-											type="button"
-											onClick={() => setShowNew(!showNew)}
-											className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
-										>
-											{showNew ? <EyeOff size={16} /> : <Eye size={16} />}
-										</button>
-									</div>
-								)}
-							/>
-						</FormField>
+						{/* 「显示/隐藏」按钮走 FormInput 的 trailing 槽：按钮必须贴在**输入框**上，
+						    槽由设计系统定位（`pr-10` 也随之自动让出），页面不再自己拼定位块。 */}
+						<FormInput<PasswordForm>
+							name="oldPassword"
+							control={passwordForm.control}
+							label={t('security.oldPassword')}
+							type={showOld ? 'text' : 'password'}
+							// zod 的 message 是 i18n 键，不显式覆盖就会把那串键显示给用户。
+							error={
+								pwdErrors.oldPassword
+									? t(pwdErrors.oldPassword.message || 'security.oldPasswordRequired')
+									: undefined
+							}
+							trailing={
+								<button
+									type="button"
+									onClick={() => setShowOld(!showOld)}
+									className="text-neutral-400 hover:text-neutral-600"
+								>
+									{showOld ? <EyeOff size={16} /> : <Eye size={16} />}
+								</button>
+							}
+						/>
+						{/* 同上：新密码框的显示/隐藏按钮也走 trailing 槽。 */}
+						<FormInput<PasswordForm>
+							name="newPassword"
+							control={passwordForm.control}
+							label={t('security.newPassword')}
+							type={showNew ? 'text' : 'password'}
+							error={
+								pwdErrors.newPassword
+									? t(pwdErrors.newPassword.message || 'security.newPasswordRequired')
+									: undefined
+							}
+							trailing={
+								<button
+									type="button"
+									onClick={() => setShowNew(!showNew)}
+									className="text-neutral-400 hover:text-neutral-600"
+								>
+									{showNew ? <EyeOff size={16} /> : <Eye size={16} />}
+								</button>
+							}
+						/>
 						{pwd && (
 							<div className="mt-1 space-y-1">
 								<div className="flex gap-1">
@@ -1126,16 +1100,3 @@ export default function SecurityPage() {
 	);
 }
 
-// 带装饰的控件（密码框里的显示/隐藏按钮）需要「装饰与控件同处一个定位块」，而 /rhf 的绑定控件
-// 把 标签 + 控件 + 错误 包成一个块、控件槽只有一个 —— 装饰塞进去会被标签推高。
-// 这里补的正是那个槽：id / aria-invalid / aria-describedby 仍由 FormField 下发（与 /rhf 内部同一套做法），
-// 页面只决定谁包住谁。纯装饰字段请直接用 FormInput，不要走这里。
-function FieldControlSlot({
-	render,
-}: {
-	render: (a11y: { id: string; invalid: boolean; describedBy?: string }) => ReactNode;
-}) {
-	const a11y = useFormFieldA11y();
-	// FormField 一定会提供上下文；兜底只为类型收敛，不改变行为。
-	return <>{render(a11y ?? { id: '', invalid: false, describedBy: undefined })}</>;
-}
