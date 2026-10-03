@@ -18,10 +18,10 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@autional-cn/shared": "^0.1.0-rc.13",
-    "@autional-cn/tailwind-preset": "^0.1.0-rc",
-    "@autional-cn/tokens": "^0.1.0-rc.2",
-    "@autional-cn/ui": "0.1.0-rc.3",
+    "@autional-cn/shared": "0.1.0-rc.13",
+    "@autional-cn/tailwind-preset": "0.1.0-rc",
+    "@autional-cn/tokens": "0.1.0-rc.2",
+    "@autional-cn/ui": "0.1.0-rc.5",
     "@hookform/resolvers": "3.10.0",
     "@tanstack/react-query": "5.100.9",
     "i18next": "26.0.10",
@@ -38,7 +38,7 @@
     "zustand": "5.0.13"
   },
   "devDependencies": {
-    "@autional-cn/tsconfig": "^0.1.0-rc",
+    "@autional-cn/tsconfig": "0.1.0-rc",
     "@storybook/addon-essentials": "8.6.14",
     "@storybook/addon-interactions": "8.6.14",
     "@storybook/react": "8.6.18",
