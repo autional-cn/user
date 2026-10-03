@@ -21,9 +21,9 @@ import {
 import { useMFAStatus, useProfile, useDevices, useNotificationPreferences } from '@/hooks/queries';
 import { LoadingScreen } from '@autional-cn/ui';
 
-const STORAGE_KEY = 'authms_onboarding_completed';
-const STEPS_KEY = 'authms_onboarding_steps';
-const SKIP_KEY = 'authms_onboarding_skipped';
+const STORAGE_KEY = 'autional_onboarding_completed';
+const STEPS_KEY = 'autional_onboarding_steps';
+const SKIP_KEY = 'autional_onboarding_skipped';
 
 function loadStepsCompleted(): Record<string, boolean> {
 	try {

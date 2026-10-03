@@ -19,7 +19,7 @@ self.addEventListener('push', (event) => {
       icon: '/user/icon-192.png',
       badge: '/user/icon-192.png',
       data: { url: data.deep_link || '/user/notifications' },
-      tag: data.tag || 'authms-notification',
+      tag: data.tag || 'autional-notification',
     })
   );
 });
