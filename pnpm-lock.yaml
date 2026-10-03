@@ -55,8 +55,8 @@ importers:
         specifier: 0.1.0-rc.5
         version: 0.1.0-rc.5
       '@autional-cn/ui':
-        specifier: 0.1.0-rc.15
-        version: 0.1.0-rc.15(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react@19.2.5)
+        specifier: 0.1.0-rc.16
+        version: 0.1.0-rc.16(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react@19.2.5)
       '@hookform/resolvers':
         specifier: 3.10.0
         version: 3.10.0(react-hook-form@7.78.0(react@19.2.5))
@@ -66,6 +66,9 @@ importers:
       antd:
         specifier: 6.5.0
         version: 6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      dayjs:
+        specifier: 1.11.20
+        version: 1.11.20
       i18next:
         specifier: 26.0.10
         version: 26.0.10(typescript@5.8.3)
@@ -255,11 +258,12 @@ packages:
   '@autional-cn/tsconfig@0.1.0-rc':
     resolution: {integrity: sha512-XY7N2lbMlR1D+OlkxDAw9Pz9CleV4UZ14RfWkkhGTZbbHvxT/d69H8GXWhyc9/634RoEUyVajYmjT75cZbKF4A==}
 
-  '@autional-cn/ui@0.1.0-rc.15':
-    resolution: {integrity: sha512-YN4gRqOEQGpUw7tqsS8ASM9b2hWfEt/rzb5XShT89vdi7r58JaT3JHXCrvL1oYilGqy2e87splWvRQaJT6xRQw==}
+  '@autional-cn/ui@0.1.0-rc.16':
+    resolution: {integrity: sha512-bGe8LvHmFrcjcCmHwVQI8mnuMvbFuzhkGW2dCHnrFYQcT89XLr9lNE/xeuCb5zew2rjrwSVt9oDT5uRBTt7tOg==}
     peerDependencies:
       '@autional-cn/tokens': '>=0.1.0-rc'
       antd: '>=6.0.0'
+      dayjs: '>=1.11.0'
       i18next: '>=26.0.0'
       lucide-react: '>=0.500.0'
       react: 19.2.5
@@ -267,6 +271,8 @@ packages:
       react-i18next: '>=17.0.0'
     peerDependenciesMeta:
       antd:
+        optional: true
+      dayjs:
         optional: true
 
   '@babel/code-frame@7.29.7':
@@ -2500,6 +2506,9 @@ packages:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
 
+  dayjs@1.11.20:
+    resolution: {integrity: sha512-YbwwqR/uYpeoP4pu043q+LTDLFBLApUP6VxRihdfNTqu4ubqMlGDLd6ErXhEgsyvY0K6nCs7nggYumAN+9uEuQ==}
+
   dayjs@1.11.23:
     resolution: {integrity: sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==}
 
@@ -4402,7 +4411,7 @@ snapshots:
 
   '@autional-cn/tsconfig@0.1.0-rc': {}
 
-  '@autional-cn/ui@0.1.0-rc.15(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react@19.2.5)':
+  '@autional-cn/ui@0.1.0-rc.16(@autional-cn/tokens@0.1.0-rc.5)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.20)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react@19.2.5)':
     dependencies:
       '@autional-cn/tokens': 0.1.0-rc.5
       i18next: 26.0.10(typescript@5.8.3)
@@ -4412,6 +4421,7 @@ snapshots:
       react-i18next: 17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3)
     optionalDependencies:
       antd: 6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      dayjs: 1.11.20
 
   '@babel/code-frame@7.29.7':
     dependencies:
@@ -6746,6 +6756,8 @@ snapshots:
       call-bound: 1.0.4
       es-errors: 1.3.0
       is-data-view: 1.0.2
+
+  dayjs@1.11.20: {}
 
   dayjs@1.11.23: {}
 

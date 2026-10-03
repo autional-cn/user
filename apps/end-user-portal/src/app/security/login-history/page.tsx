@@ -9,7 +9,7 @@ import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
-import { DataTable } from '@autional-cn/ui/antd';
+import { DataTable, DateRangeFilter } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import {
 	History,
@@ -247,34 +247,18 @@ export default function LoginHistoryPage() {
 					))}
 				</div>
 				<div className="h-5 w-px bg-neutral-200" />
-				<div className="flex items-center gap-2">
-					<label className="text-xs font-medium text-neutral-500">
-						{t('loginHistory.startDate')}
-					</label>
-					<input
-						type="date"
-						value={startDate}
-						onChange={(e) => {
-							setStartDate(e.target.value);
-							setPage(1);
-						}}
-						className="rounded-md border border-neutral-200 px-2 py-1 text-xs focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-					/>
-				</div>
-				<div className="flex items-center gap-2">
-					<label className="text-xs font-medium text-neutral-500">
-						{t('loginHistory.endDate')}
-					</label>
-					<input
-						type="date"
-						value={endDate}
-						onChange={(e) => {
-							setEndDate(e.target.value);
-							setPage(1);
-						}}
-						className="rounded-md border border-neutral-200 px-2 py-1 text-xs focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-					/>
-				</div>
+				{/* 两个原生 date 输入 → 设计系统的区间件。原来「开始日期 / 结束日期」是两个独立标签，
+					现在这两个文案变成区间件的两个占位符（同一批 i18n 键，语义不变）。 */}
+				<DateRangeFilter
+					size="small"
+					placeholder={[t('loginHistory.startDate'), t('loginHistory.endDate')]}
+					value={startDate && endDate ? [startDate, endDate] : null}
+					onChange={(v) => {
+						setStartDate(v?.[0] ?? '');
+						setEndDate(v?.[1] ?? '');
+						setPage(1);
+					}}
+				/>
 			</div>
 
 			{/* 列定义只描述「这一页有哪些列」；表头 / 悬浮态 / 边框 / 行高 / 分页外观

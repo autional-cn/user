@@ -6,7 +6,7 @@ import type { AuditLogItem } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
 import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
-import { DataTable } from '@autional-cn/ui/antd';
+import { DataTable, DateRangeFilter } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { History, Download, CheckCircle2, XCircle, Clock, Monitor, Smartphone } from 'lucide-react';
 
@@ -187,24 +187,16 @@ export default function ActivityPage() {
 
 				<div className="flex items-center gap-2">
 					<Clock size={14} className="text-neutral-400" />
-					<input
-						type="date"
-						value={startDate}
-						onChange={(e) => {
-							setStartDate(e.target.value);
+					{/* 原来是两个原生 <input type="date"> 加一个「~」分隔符：自绘、与其余三个门户的日期控件
+					    不同源，而且「空区间」有 startDate / endDate 两个半选状态（只选了一端时查询里会出现一个
+					    孤立的边界）。换成设计系统的区间件之后，值进值出都是字符串、空只有 null 一种。 */}
+					<DateRangeFilter
+						value={startDate && endDate ? [startDate, endDate] : null}
+						onChange={(v) => {
+							setStartDate(v?.[0] ?? '');
+							setEndDate(v?.[1] ?? '');
 							setPage(1);
 						}}
-						className="h-10 rounded-md border border-neutral-300 bg-white px-3 text-sm"
-					/>
-					<span className="text-sm text-neutral-400">{t('activity.dateRangeSeparator')}</span>
-					<input
-						type="date"
-						value={endDate}
-						onChange={(e) => {
-							setEndDate(e.target.value);
-							setPage(1);
-						}}
-						className="h-10 rounded-md border border-neutral-300 bg-white px-3 text-sm"
 					/>
 				</div>
 
