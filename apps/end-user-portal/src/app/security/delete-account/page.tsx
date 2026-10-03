@@ -150,6 +150,9 @@ export default function DeleteAccountPage() {
 							control={control}
 							label={t('security.deleteAccount.confirmPrompt')}
 							placeholder="DELETE"
+							// 等宽 + 加宽字距不是装饰：它提示这个框要**逐字**打对 DELETE（防误操作的那道闸）。
+							// 控件外观归设计系统，但这层「这框要你手打」的语义得留着。
+							className="font-mono tracking-widest"
 							// 报错文案沿用今天那句（与上方标签同一个键），而不是 zod 的 `mustMatch`
 							error={errors.confirmText ? t('security.deleteAccount.confirmPrompt') : undefined}
 						/>
