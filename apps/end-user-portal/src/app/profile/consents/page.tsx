@@ -9,7 +9,7 @@ import {
 	profilesConsentsByProfilesByConsentsDelete,
 } from '@autional-cn/shared/generated/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
 import { ErrorState, EmptyState } from '@autional-cn/ui';
 import { showToast } from '@autional-cn/ui';
 import { isNotFoundError } from '@/lib/api-error';
@@ -186,7 +186,7 @@ export default function ConsentsPage() {
 			/>
 
 			{/* Active Consents */}
-			<div className="rounded-lg border border-neutral-200 bg-white shadow-sm">
+			<SectionCard padding="none">
 				<div className="border-b border-neutral-100 px-6 py-4">
 					<h3 className="text-sm font-semibold text-neutral-700">{t('consents.activeConsents')}</h3>
 				</div>
@@ -250,7 +250,7 @@ export default function ConsentsPage() {
 						))}
 					</div>
 				)}
-			</div>
+			</SectionCard>
 
 			{/* Grant Consent Modal */}
 			<Modal

@@ -9,7 +9,7 @@ import {
 } from '@autional-cn/shared/generated/api';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
@@ -276,7 +276,7 @@ export default function RoleActivationsPage() {
 
 			{/* Request Form */}
 			{showForm && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard>
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="text-lg font-semibold text-neutral-900">
 							{t('roleActivations.requestTitle')}
@@ -393,7 +393,7 @@ export default function RoleActivationsPage() {
 							</button>
 						</div>
 					</form>
-				</div>
+				</SectionCard>
 			)}
 
 			{/* Info banner */}

@@ -23,7 +23,7 @@ import {
 	Banknote,
 	Shield,
 } from 'lucide-react';
-import { ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -315,13 +315,16 @@ function Card({
 	valueClassName?: string;
 }) {
 	return (
-		<div className="bg-white rounded-lg border p-4 flex items-center gap-3">
+		<SectionCard
+			padding="sm"
+			className="flex items-center gap-3"
+		>
 			{icon}
 			<div>
 				<div className="text-xs text-neutral-600">{label}</div>
 				<div className={`text-lg font-semibold ${valueClassName ?? ''}`}>{value}</div>
 			</div>
-		</div>
+		</SectionCard>
 	);
 }
 
@@ -335,13 +338,16 @@ function StatBox({
 	icon?: React.ReactNode;
 }) {
 	return (
-		<div className="bg-white rounded-lg border p-3 text-center">
+		<SectionCard
+			padding="sm"
+			className="text-center"
+		>
 			<div className="text-xs text-neutral-600 mb-1 flex items-center justify-center gap-1">
 				{icon}
 				{label}
 			</div>
 			<div className="text-base font-semibold">{value ?? '0'}</div>
-		</div>
+		</SectionCard>
 	);
 }
 

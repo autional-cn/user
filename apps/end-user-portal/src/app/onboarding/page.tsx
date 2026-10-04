@@ -19,7 +19,7 @@ import {
 	RotateCcw,
 } from 'lucide-react';
 import { useMFAStatus, useProfile, useDevices, useNotificationPreferences } from '@/hooks/queries';
-import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 
 const STORAGE_KEY = 'autional_onboarding_completed';
 const STEPS_KEY = 'autional_onboarding_steps';
@@ -178,7 +178,7 @@ export default function OnboardingPage() {
 			/>
 
 			{/* Progress bar */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+			<SectionCard>
 				<div className="flex items-center justify-between mb-3">
 					<span className="text-sm font-medium text-neutral-700">
 						{t('onboarding.progress', { completed: completedCount, total: totalSteps })}
@@ -201,10 +201,13 @@ export default function OnboardingPage() {
 						/>
 					))}
 				</div>
-			</div>
+			</SectionCard>
 
 			{/* Steps */}
-			<div className="rounded-lg border border-neutral-200 bg-white shadow-sm divide-y divide-neutral-100">
+			<SectionCard
+				padding="none"
+				className="divide-y divide-neutral-100"
+			>
 				{steps.map((step) => {
 					const done = mergedCompleted[step.key];
 					const Icon = step.icon;
@@ -235,7 +238,7 @@ export default function OnboardingPage() {
 						</Link>
 					);
 				})}
-			</div>
+			</SectionCard>
 
 			{/* Dismiss banner - "不再显示" */}
 			{!dismissed && !allDone && (

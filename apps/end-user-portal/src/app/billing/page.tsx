@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -212,7 +212,7 @@ export default function BillingPage() {
 			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-				<div className="bg-white rounded-lg border p-5">
+				<SectionCard>
 					<div className="flex items-center gap-3 mb-3">
 						<div className="flex h-10 w-10 items-center justify-center rounded-md bg-info-soft text-info-text">
 							<CreditCard size={20} />
@@ -274,10 +274,10 @@ export default function BillingPage() {
 						<Calendar size={12} />
 						{periodStart} ~ {periodEnd}
 					</div>
-				</div>
+				</SectionCard>
 
 				{stats && (
-					<div className="bg-white rounded-lg border p-5">
+					<SectionCard>
 						<div className="flex items-center gap-3 mb-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-purple-50 text-purple-700">
 								<BarChart3 size={20} />
@@ -338,7 +338,7 @@ export default function BillingPage() {
 								{t('billing.statsUnavailableHint', '「暂不可用」项待计费服务提供数据后开放')}
 							</p>
 						)}
-					</div>
+					</SectionCard>
 				)}
 			</div>
 
@@ -435,7 +435,7 @@ function UsageCard({
 }) {
 	const { t } = useTranslation();
 	return (
-		<div className="bg-white rounded-lg border p-4">
+		<SectionCard padding="sm">
 			<div className="flex items-center gap-2 mb-3">
 				{icon}
 				<span className="text-sm text-neutral-600">{label}</span>
@@ -462,7 +462,7 @@ function UsageCard({
 			) : (
 				<p className="text-xs text-neutral-500">{t('billing.quotaUnset', '未设置配额上限')}</p>
 			)}
-		</div>
+		</SectionCard>
 	);
 }
 

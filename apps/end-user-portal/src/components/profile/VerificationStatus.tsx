@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { extractApiErrorMessage } from '@autional-cn/shared';
-import { Button, StatusBadge, showToast } from '@autional-cn/ui';
+import { SectionCard, Button, StatusBadge, showToast } from '@autional-cn/ui';
 import { ShieldCheck, AlertTriangle, Clock, Loader2, ExternalLink } from 'lucide-react';
 
 interface VerificationInfo {
@@ -62,7 +62,7 @@ export function VerificationStatus() {
 
 	if (!info) {
 		return (
-			<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+			<SectionCard>
 				<div className="flex items-center gap-3">
 					<div className="flex h-10 w-10 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
 						<ShieldCheck size={20} />
@@ -76,7 +76,7 @@ export function VerificationStatus() {
 						<ExternalLink size={14} className="ml-1" />
 					</Button>
 				</div>
-			</div>
+			</SectionCard>
 		);
 	}
 
@@ -102,7 +102,7 @@ export function VerificationStatus() {
 	const isProcessing = ['pending', 'ocr_pending', 'ocr_completed'].includes(info.status);
 
 	return (
-		<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+		<SectionCard>
 			<div className="flex items-center justify-between">
 				<div className="flex items-center gap-3">
 					<div
@@ -186,7 +186,7 @@ export function VerificationStatus() {
 					)}
 				</div>
 			)}
-		</div>
+		</SectionCard>
 	);
 }
 

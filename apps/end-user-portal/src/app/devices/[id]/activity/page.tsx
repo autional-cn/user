@@ -101,12 +101,12 @@ export default function DeviceActivityPage() {
 			/>
 
 			{deviceId && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-4">
+				<SectionCard padding="sm">
 					<p className="text-xs font-medium text-neutral-600 uppercase tracking-wide">
 						{t('devices.activity.deviceId')}
 					</p>
 					<p className="mt-1 text-sm font-mono text-neutral-700">{deviceId}</p>
-				</div>
+				</SectionCard>
 			)}
 
 			<SectionCard padding="none">

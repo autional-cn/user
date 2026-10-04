@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@autional-cn/shared';
 import { useAnnouncements } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
-import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { Megaphone, ChevronDown, ChevronRight, ChevronLeft, Eye, X } from 'lucide-react';
 
@@ -168,17 +168,23 @@ export default function AnnouncementsPage() {
 				))}
 
 				{visibleList.length === 0 && (
-					<div className="flex flex-col items-center justify-center rounded-lg border border-neutral-200 bg-white py-16 text-center">
+					<SectionCard
+						padding="none"
+						className="flex flex-col items-center justify-center text-center"
+					>
 						<Megaphone size={40} className="text-neutral-300" />
 						<p className="mt-4 text-sm text-neutral-600">
 							{t('announcements.empty', 'No announcements')}
 						</p>
-					</div>
+					</SectionCard>
 				)}
 			</div>
 
 			{pagination && pagination.totalPages > 1 && (
-				<div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3">
+				<SectionCard
+					padding="sm"
+					className="flex items-center justify-between"
+				>
 					<span className="text-sm text-neutral-600">
 						{t('announcements.pageInfo', {
 							page: pagination.page,
@@ -202,7 +208,7 @@ export default function AnnouncementsPage() {
 							<ChevronRight size={14} />
 						</button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 		</div>
 	);

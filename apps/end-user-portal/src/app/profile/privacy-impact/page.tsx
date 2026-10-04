@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { useAuth, useTenantSlug } from '@autional-cn/shared';
 import { profilesPrivacyImpactByProfiles } from '@autional-cn/shared/generated/api';
-import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
@@ -264,7 +264,7 @@ export default function PrivacyImpactPage() {
 			/>
 
 			{/* Risk Score Card */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+			<SectionCard>
 				<div className="flex items-start gap-4">
 					<div
 						className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-md ${RISK_COLORS[riskLevel]?.bg || 'bg-neutral-50'} ${RISK_COLORS[riskLevel]?.text || 'text-neutral-600'}`}
@@ -305,10 +305,10 @@ export default function PrivacyImpactPage() {
 						</p>
 					</div>
 				</div>
-			</div>
+			</SectionCard>
 
 			{/* Field Exposure Table */}
-			<div className="rounded-lg border border-neutral-200 bg-white shadow-sm">
+			<SectionCard padding="none">
 				<div className="border-b border-neutral-200 px-6 py-4">
 					<h3 className="text-lg font-semibold text-neutral-900">
 						{t('privacyImpact.fieldExposure')}
@@ -324,7 +324,7 @@ export default function PrivacyImpactPage() {
 					scroll={{ x: 'max-content' }}
 					pagination={false}
 				/>
-			</div>
+			</SectionCard>
 
 			{/* Recommendations */}
 			{impact?.recommendations && impact.recommendations.length > 0 && (
@@ -348,7 +348,7 @@ export default function PrivacyImpactPage() {
 			)}
 
 			{/* Link to Privacy Settings */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+			<SectionCard>
 				<div className="flex items-center justify-between">
 					<div className="flex items-center gap-3">
 						<div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
@@ -369,7 +369,7 @@ export default function PrivacyImpactPage() {
 						<ArrowRight size={14} />
 					</Link>
 				</div>
-			</div>
+			</SectionCard>
 		</div>
 	);
 }

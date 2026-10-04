@@ -11,7 +11,7 @@ import {
 } from '@/hooks/queries';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { ConsolePageHeader, LoadingScreen, ErrorState, ConfirmDialog } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, ConfirmDialog } from '@autional-cn/ui';
 import { Link } from 'react-router';
 import { Smartphone, Monitor, Globe, Laptop, Plus, Trash2, ChevronLeft } from 'lucide-react';
 
@@ -113,7 +113,10 @@ export default function PushTokensPage() {
 			/>
 
 			{showForm && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm max-w-lg">
+				<SectionCard
+					title={t('communication.pushTokens.registerTitle', 'Register New Push Token')}
+					className="max-w-lg"
+				>
 					<h3 className="text-base font-semibold text-neutral-900">
 						{t('communication.pushTokens.registerTitle', 'Register New Push Token')}
 					</h3>
@@ -193,7 +196,7 @@ export default function PushTokensPage() {
 							)}
 						</button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -255,7 +258,10 @@ export default function PushTokensPage() {
 					);
 				})}
 				{list.length === 0 && (
-					<div className="col-span-full flex flex-col items-center justify-center rounded-lg border border-neutral-200 bg-white py-16 text-center">
+					<SectionCard
+						padding="none"
+						className="col-span-full flex flex-col items-center justify-center text-center"
+					>
 						<Laptop size={40} className="text-neutral-300" />
 						<p className="mt-4 text-sm text-neutral-600">
 							{t('communication.pushTokens.empty', 'No push tokens registered')}
@@ -266,7 +272,7 @@ export default function PushTokensPage() {
 						>
 							{t('communication.pushTokens.registerFirst', 'Register your first token')}
 						</button>
-					</div>
+					</SectionCard>
 				)}
 			</div>
 

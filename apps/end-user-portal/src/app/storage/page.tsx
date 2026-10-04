@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth, extractApiErrorMessage, apiClient } from '@autional-cn/shared';
 import * as Generated from '@autional-cn/shared/generated/api';
 import type { FileMetadataResponse, FolderMetadataResponse } from '@autional-cn/shared/generated/types';
-import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Modal } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Modal } from '@autional-cn/ui';
 import { useToast } from '@/hooks/use-toast';
 import { isNotFoundError } from '@/lib/api-error';
 import {
@@ -284,7 +284,7 @@ export default function StoragePage() {
 
 			{/* Quota Bar */}
 			{quotaData && (
-				<div className="bg-white rounded-lg border p-4">
+				<SectionCard padding="sm">
 					<div className="flex items-center justify-between text-sm mb-2">
 						<span className="text-neutral-700">{t('storage.quota')}</span>
 						<span className="font-mono text-neutral-800">
@@ -297,7 +297,7 @@ export default function StoragePage() {
 							style={{ width: `${Math.min(quotaData.usagePercent || 0, 100)}%` }}
 						/>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			{/* Breadcrumb */}

@@ -15,7 +15,7 @@ import { Link } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError, useTenantSlug } from '@autional-cn/shared';
 import { authMeExportDataPost } from '@autional-cn/shared/generated/api';
-import { ConsolePageHeader, Button, ConfirmDialog } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, Button, ConfirmDialog } from '@autional-cn/ui';
 
 export default function ExportDataPage() {
 	const tenantSlug = useTenantSlug();
@@ -78,7 +78,10 @@ export default function ExportDataPage() {
 			/>
 
 			{step === 'idle' && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('privacy.exportData.ready')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-700">
 						<FileJson size={32} />
 					</div>
@@ -110,11 +113,14 @@ export default function ExportDataPage() {
 							{t('privacy.exportData.start')}
 						</Button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'loading' && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('privacy.exportData.loading')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center">
 						<Loader2 size={32} className="animate-spin text-primary-600" />
 					</div>
@@ -122,11 +128,14 @@ export default function ExportDataPage() {
 						{t('privacy.exportData.loading')}
 					</h3>
 					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.loadingDesc')}</p>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'error' && (
-				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('privacy.exportData.errorTitle')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<AlertTriangle size={32} />
 					</div>
@@ -142,11 +151,14 @@ export default function ExportDataPage() {
 							{t('common.retry')}
 						</Button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'success' && (
-				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('privacy.exportData.successTitle')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
 						<CheckCircle2 size={32} />
 					</div>
@@ -166,7 +178,7 @@ export default function ExportDataPage() {
 						</Button>
 					</div>
 					<p className="mt-2 text-xs text-neutral-600">{t('privacy.exportData.autoDownload')}</p>
-				</div>
+				</SectionCard>
 			)}
 
 			<ConfirmDialog

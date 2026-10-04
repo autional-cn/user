@@ -19,7 +19,7 @@ import {
 	useMarkNotificationRead,
 	useMarkAllNotificationsRead,
 } from '@/hooks/queries';
-import { ConsolePageHeader, ErrorState, EmptyState } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 export default function NotificationsPage() {
@@ -215,7 +215,10 @@ export default function NotificationsPage() {
 
 			{/* Pagination */}
 			{pagination && pagination.totalPages > 1 && (
-				<div className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white px-4 py-3">
+				<SectionCard
+					padding="sm"
+					className="flex items-center justify-between"
+				>
 					<span className="text-sm text-neutral-600">
 						{t('notifications.pageInfo', {
 							page: pagination.page,
@@ -239,7 +242,7 @@ export default function NotificationsPage() {
 							<ChevronRight size={14} />
 						</button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 		</div>
 	);

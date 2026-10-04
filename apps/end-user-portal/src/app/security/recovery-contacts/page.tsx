@@ -14,7 +14,7 @@ import {
 	authMeRecoveryContactsPost,
 	authMeRecoveryContactsByRecoveryContactsDelete,
 } from '@autional-cn/shared/generated/api';
-import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { addContactSchema, type AddContactFormData } from '@/lib/validators';
 
@@ -129,7 +129,7 @@ export default function RecoveryContactsPage() {
 			) : error ? (
 				<ErrorState message={error} onRetry={fetchContacts} />
 			) : contacts.length === 0 && !showAddForm ? (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard>
 					<EmptyState
 						icon={<Mail size={32} />}
 						title={t('security.recoveryContacts.empty')}
@@ -141,7 +141,7 @@ export default function RecoveryContactsPage() {
 							{t('security.recoveryContacts.addFirst')}
 						</Button>
 					</div>
-				</div>
+				</SectionCard>
 			) : (
 				<div className="space-y-3">
 					{contacts.map((contact) => (
@@ -199,7 +199,7 @@ export default function RecoveryContactsPage() {
 			)}
 
 			{showAddForm && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard>
 					<div className="flex items-center justify-between mb-4">
 						<h3 className="font-semibold text-neutral-900">
 							{t('security.recoveryContacts.addTitle')}
@@ -287,7 +287,7 @@ export default function RecoveryContactsPage() {
 							</Button>
 						</div>
 					</form>
-				</div>
+				</SectionCard>
 			)}
 		</div>
 	);

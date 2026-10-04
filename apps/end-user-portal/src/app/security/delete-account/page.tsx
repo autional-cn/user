@@ -20,7 +20,7 @@ import {
 	authMeDeleteAccountPost,
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
-import { ConsolePageHeader, Button } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, Button } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { deleteSchema, type DeleteFormData } from '@/lib/validators';
 
@@ -95,7 +95,7 @@ export default function DeleteAccountPage() {
 				description={t('security.deleteAccount.pageSubtitle')}
 			/>
 
-			<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm">
+			<SectionCard>
 				<div className="flex items-start gap-4">
 					<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<ShieldOff size={24} />
@@ -179,7 +179,7 @@ export default function DeleteAccountPage() {
 						</Button>
 					</div>
 				</form>
-			</div>
+			</SectionCard>
 		</div>
 	);
 }

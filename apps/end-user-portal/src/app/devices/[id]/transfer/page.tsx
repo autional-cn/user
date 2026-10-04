@@ -40,7 +40,10 @@ export default function DeviceTransferPage() {
 			/>
 
 			{deviceId && (
-				<div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4">
+				<SectionCard
+					padding="sm"
+					className="flex items-center gap-3"
+				>
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
 						<Smartphone size={20} />
 					</div>
@@ -48,7 +51,7 @@ export default function DeviceTransferPage() {
 						<p className="text-sm font-medium text-neutral-900">{t('devices.transfer.deviceId')}</p>
 						<p className="text-xs text-neutral-600 font-mono">{deviceId}</p>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			<SectionCard padding="none">

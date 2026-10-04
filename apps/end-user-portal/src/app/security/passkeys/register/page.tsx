@@ -19,7 +19,7 @@ import {
 	authWebauthnRegisterCompletePost,
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
-import { ConsolePageHeader, Button } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, Button } from '@autional-cn/ui';
 
 export default function PasskeyRegisterPage() {
 	const tenantSlug = useTenantSlug();
@@ -158,7 +158,10 @@ export default function PasskeyRegisterPage() {
 			/>
 
 			{step === 'idle' && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('security.passkeys.register.ready')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-700">
 						<Fingerprint size={32} />
 					</div>
@@ -186,11 +189,11 @@ export default function PasskeyRegisterPage() {
 							{t('security.passkeys.register.start')}
 						</Button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'password' && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard title={t('security.passkeys.register.passwordTitle')}>
 					<h3 className="text-lg font-semibold text-neutral-900">
 						{t('security.passkeys.register.passwordTitle')}
 					</h3>
@@ -251,11 +254,14 @@ export default function PasskeyRegisterPage() {
 							</Button>
 						</div>
 					</form>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'loading' && (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('security.passkeys.register.loading')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center">
 						<Loader2 size={32} className="animate-spin text-primary-600" />
 					</div>
@@ -265,11 +271,14 @@ export default function PasskeyRegisterPage() {
 					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.loadingDesc')}
 					</p>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'error' && (
-				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('security.passkeys.register.errorTitle')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<AlertTriangle size={32} />
 					</div>
@@ -285,11 +294,14 @@ export default function PasskeyRegisterPage() {
 							{t('common.retry')}
 						</Button>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			{step === 'success' && (
-				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
+				<SectionCard
+					title={t('security.passkeys.register.successTitle')}
+					className="text-center"
+				>
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
 						<CheckCircle2 size={32} />
 					</div>
@@ -302,7 +314,7 @@ export default function PasskeyRegisterPage() {
 					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.redirecting')}
 					</p>
-				</div>
+				</SectionCard>
 			)}
 		</div>
 	);

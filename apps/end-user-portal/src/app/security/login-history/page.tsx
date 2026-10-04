@@ -7,7 +7,7 @@ import type { AuditLogItem, AuditLogsParams } from '@/hooks/queries';
 import { authMeAuditLogs } from '@autional-cn/shared/generated/api';
 import { auditStatusKind, formatTime } from '@/lib/format';
 import { parseUserAgent } from '@/lib/user-agent';
-import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
@@ -241,7 +241,10 @@ export default function LoginHistoryPage() {
 			/>
 
 			{/* Filters */}
-			<div className="flex flex-wrap items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4">
+			<SectionCard
+				padding="sm"
+				className="flex flex-wrap items-center gap-3"
+			>
 				<div className="flex items-center gap-1 rounded-md bg-neutral-100 p-0.5">
 					{(['all', 'success', 'failed'] as const).map((f) => (
 						<button
@@ -293,7 +296,7 @@ export default function LoginHistoryPage() {
 						className="h-8 w-56 rounded-md border border-neutral-300 bg-white pl-8 pr-2 text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none"
 					/>
 				</div>
-			</div>
+			</SectionCard>
 
 			{/* 列定义只描述「这一页有哪些列」；表头 / 悬浮态 / 边框 / 行高 / 分页外观
 			    由设计系统下发的组件级令牌决定，与其它三个门户同源。 */}

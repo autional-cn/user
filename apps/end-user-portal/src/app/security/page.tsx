@@ -47,7 +47,7 @@ import {
 	useUnbindOAuth,
 } from '@/hooks/queries';
 import type { OAuthConnectionItem } from '@/hooks/queries';
-import { ConsolePageHeader, LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 
 // message 一律用完整扁平 ns 键：i18n keySeparator:false，消费处 t(message) 才可解析（UP-14）。
@@ -421,7 +421,7 @@ export default function SecurityPage() {
 		};
 
 		return (
-			<div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-surface)] p-5 shadow-sm">
+			<SectionCard>
 				<div className="flex items-start gap-4">
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
 						<Icon size={20} />
@@ -447,7 +447,7 @@ export default function SecurityPage() {
 						)}
 					</div>
 				</div>
-			</div>
+			</SectionCard>
 		);
 	};
 
@@ -486,7 +486,7 @@ export default function SecurityPage() {
 			</div>
 
 			{/* Password section */}
-			<div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-surface)] p-6 shadow-sm">
+			<SectionCard>
 				<div className="flex items-center gap-3">
 					<div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
 						<Lock size={20} />
@@ -604,7 +604,7 @@ export default function SecurityPage() {
 						</div>
 					</div>
 				)}
-			</div>
+			</SectionCard>
 
 			{/* MFA status */}
 			{mfaLoading ? (
@@ -676,7 +676,7 @@ export default function SecurityPage() {
 			)}
 
 			{/* Passkeys list */}
-			<div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-surface)] p-6 shadow-sm">
+			<SectionCard title={t('security.passkeyListTitle')}>
 				<h3 className="text-lg font-semibold text-[var(--color-text-primary)]">
 					{t('security.passkeyListTitle')}
 				</h3>
@@ -734,10 +734,10 @@ export default function SecurityPage() {
 				) : (
 					<div className="mt-4 text-sm text-neutral-600">{t('security.passkeyEmpty')}</div>
 				)}
-			</div>
+			</SectionCard>
 
 			{/* OAuth Connections */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+			<SectionCard>
 				<div className="flex items-center justify-between mb-4">
 					<div>
 						<h3 className="text-lg font-semibold text-neutral-900">{t('security.oauth.title')}</h3>
@@ -812,7 +812,7 @@ export default function SecurityPage() {
 						{t('security.oauth.empty')}
 					</div>
 				)}
-			</div>
+			</SectionCard>
 
 			{/* OAuth Bind Modal */}
 			<Modal

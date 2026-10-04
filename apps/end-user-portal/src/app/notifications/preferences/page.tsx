@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/hooks/queries';
-import { ConsolePageHeader, LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState } from '@autional-cn/ui';
 import { Link } from 'react-router';
 
 const NOTIFICATION_TYPES = [
@@ -153,7 +153,7 @@ export default function NotificationPreferencesPage() {
 			/>
 
 			{/* Notification Types */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+			<SectionCard title={t('notifications.prefs.typesTitle', '通知类型')}>
 				<h3 className="text-base font-semibold text-neutral-900">
 					{t('notifications.prefs.typesTitle', '通知类型')}
 				</h3>
@@ -192,10 +192,10 @@ export default function NotificationPreferencesPage() {
 						</div>
 					))}
 				</div>
-			</div>
+			</SectionCard>
 
 			{/* Delivery Channels */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+			<SectionCard title={t('notifications.prefs.channelsTitle', '通知渠道')}>
 				<h3 className="text-base font-semibold text-neutral-900">
 					{t('notifications.prefs.channelsTitle', '通知渠道')}
 				</h3>
@@ -231,7 +231,7 @@ export default function NotificationPreferencesPage() {
 						</div>
 					))}
 				</div>
-			</div>
+			</SectionCard>
 
 			{/* Save button */}
 			<div className="flex items-center gap-3">

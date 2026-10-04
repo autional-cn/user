@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThingsList } from '@/hooks/queries';
-import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 
 const thingIcons: Record<string, typeof Smartphone> = {
@@ -179,8 +179,11 @@ export default function DevicesPage() {
 						);
 					})}
 
-					{items.length === 0 && (
-						<div className="flex flex-col items-center justify-center rounded-lg border border-neutral-200 bg-white py-12 text-center">
+					{(!thingsResult?.items || thingsResult.items.length === 0) && (
+						<SectionCard
+							padding="none"
+							className="flex flex-col items-center justify-center text-center"
+						>
 							<Wifi size={40} className="text-neutral-300" />
 							<p className="mt-4 text-sm text-neutral-600">{t('devices.things.empty')}</p>
 							<Link
@@ -190,7 +193,7 @@ export default function DevicesPage() {
 								<Plus size={14} />
 								{t('devices.things.pair')}
 							</Link>
-						</div>
+						</SectionCard>
 					)}
 				</div>
 			)}

@@ -10,7 +10,7 @@ import {
 	useUnreadNotifications,
 	useMFAStatus,
 } from '@/hooks/queries';
-import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { ROUTES } from '@/lib/routes';
 import { buildNavHref } from '@/lib/nav';
@@ -122,7 +122,7 @@ export default function DashboardPage() {
 				<ErrorState message={t('dashboard.statsError')} />
 			) : (
 				<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+					<SectionCard>
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-info-soft text-info-text">
 								<Wallet size={20} />
@@ -143,8 +143,8 @@ export default function DashboardPage() {
 								)}
 							</div>
 						</div>
-					</div>
-					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+					</SectionCard>
+					<SectionCard>
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-amber-50 text-amber-700">
 								<Coins size={20} />
@@ -160,8 +160,8 @@ export default function DashboardPage() {
 								)}
 							</div>
 						</div>
-					</div>
-					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+					</SectionCard>
+					<SectionCard>
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-success-soft text-success-text">
 								<ShieldCheck size={20} />
@@ -185,8 +185,8 @@ export default function DashboardPage() {
 								</p>
 							</div>
 						</div>
-					</div>
-					<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+					</SectionCard>
+					<SectionCard>
 						<div className="flex items-center gap-3">
 							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-danger-soft text-danger-text">
 								<Bell size={20} />
@@ -200,7 +200,7 @@ export default function DashboardPage() {
 								</p>
 							</div>
 						</div>
-					</div>
+					</SectionCard>
 				</div>
 			)}
 
@@ -242,14 +242,14 @@ export default function DashboardPage() {
 					</div>
 				</div>
 			) : (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6">
+				<SectionCard title={t('dashboard.securityTips')}>
 					<h3 className="text-lg font-semibold text-neutral-900">{t('dashboard.securityTips')}</h3>
 					<ul className="mt-4 list-disc list-inside space-y-2 text-neutral-700">
 						{tips.map((tip, i) => (
 							<li key={i}>{tip}</li>
 						))}
 					</ul>
-				</div>
+				</SectionCard>
 			)}
 		</div>
 	);

@@ -28,7 +28,7 @@ import {
 } from '@/hooks/queries';
 import { useLanguage } from '@/hooks/use-language';
 import { useTheme } from '@/hooks/use-theme';
-import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 import { IdentifierChangeDialog } from '@/components/profile/IdentifierChangeDialog';
 
@@ -294,7 +294,7 @@ export default function ProfilePage() {
 			</div>
 
 			{activeTab === 'basic' ? (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard>
 					<div className="flex items-center gap-4 pb-6 border-b border-neutral-100">
 						<div className="relative group">
 							{displayAvatar ? (
@@ -416,9 +416,9 @@ export default function ProfilePage() {
 							</div>
 						</div>
 					)}
-				</div>
+				</SectionCard>
 			) : activeTab === 'privacy' ? (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard title={t('profile.privacy.title')}>
 					<h3 className="text-lg font-semibold text-neutral-900">{t('profile.privacy.title')}</h3>
 					<div className="mt-2 divide-y divide-neutral-100">
 						<PrivacyToggle
@@ -445,9 +445,9 @@ export default function ProfilePage() {
 							}
 						/>
 					</div>
-				</div>
+				</SectionCard>
 			) : (
-				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">
+				<SectionCard title={t('profile.preferences.title')}>
 					<h3 className="text-lg font-semibold text-neutral-900">
 						{t('profile.preferences.title')}
 					</h3>
@@ -510,7 +510,7 @@ export default function ProfilePage() {
 							</p>
 						</div>
 					</div>
-				</div>
+				</SectionCard>
 			)}
 
 			{changeDialog !== null && (

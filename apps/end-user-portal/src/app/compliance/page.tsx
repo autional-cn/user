@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ConsolePageHeader, ErrorState, EmptyState } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { ShieldCheck, Award, FileSearch, ChevronRight } from 'lucide-react';
 import { extractApiError } from '@autional-cn/shared';
@@ -94,7 +94,7 @@ export default function CompliancePage() {
 			/>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-				<div className="rounded-lg border bg-card p-6">
+				<SectionCard>
 					<div className="flex items-center gap-3 mb-4">
 						<Award className="w-5 h-5 text-[var(--color-brand)]" />
 						<span className="font-medium">{t('compliance.score', '合规评分')}</span>
@@ -118,9 +118,9 @@ export default function CompliancePage() {
 							style={{ width: `${Math.min(score || 0, 100)}%` }}
 						/>
 					</div>
-				</div>
+				</SectionCard>
 
-				<div className="rounded-lg border bg-card p-6">
+				<SectionCard>
 					<div className="flex items-center gap-3 mb-4">
 						<FileSearch className="w-5 h-5 text-[var(--color-brand)]" />
 						<span className="font-medium">{t('compliance.standards', '遵守标准')}</span>
@@ -139,11 +139,11 @@ export default function CompliancePage() {
 							{t('compliance.noStandards', '暂未选择特定合规标准')}
 						</p>
 					)}
-				</div>
+				</SectionCard>
 			</div>
 
 			{frameworks.length > 0 && (
-				<div className="rounded-lg border bg-card p-6">
+				<SectionCard>
 					<h2 className="font-medium mb-3 flex items-center gap-2">
 						<ShieldCheck className="w-4 h-4" />
 						{t('compliance.enabledFrameworks', '已启用的合规框架')}
@@ -158,7 +158,7 @@ export default function CompliancePage() {
 							</span>
 						))}
 					</div>
-				</div>
+				</SectionCard>
 			)}
 		</div>
 	);

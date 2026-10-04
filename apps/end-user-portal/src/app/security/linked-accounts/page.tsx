@@ -6,7 +6,7 @@ import { useAuth, extractApiError } from '@autional-cn/shared';
 import { authMeSamlLinks, authMeSamlLinksBySamlLinksDelete } from '@autional-cn/shared/generated/api';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { Link2, Unlink, Loader2, ExternalLink, Info } from 'lucide-react';
 
@@ -106,7 +106,7 @@ export default function LinkedAccountsPage() {
 			</div>
 
 			{/* Accounts List */}
-			<div className="rounded-lg border border-neutral-200 bg-white shadow-sm">
+			<SectionCard padding="none">
 				{accounts && accounts.length > 0 ? (
 					<div className="divide-y divide-neutral-100">
 						{accounts.map((account) => (
@@ -159,10 +159,10 @@ export default function LinkedAccountsPage() {
 						<p className="mt-1 text-xs text-neutral-600">{t('linkedAccounts.emptyHint')}</p>
 					</div>
 				)}
-			</div>
+			</SectionCard>
 
 			{/* External SSO link */}
-			<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">
+			<SectionCard>
 				<div className="flex items-center gap-3">
 					<div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary-50 text-primary-700">
 						<ExternalLink size={20} />
@@ -172,7 +172,7 @@ export default function LinkedAccountsPage() {
 						<p className="text-sm text-neutral-600">{t('linkedAccounts.ssoInfoDesc')}</p>
 					</div>
 				</div>
-			</div>
+			</SectionCard>
 
 			{/* Unlink Confirm Modal */}
 			<Modal
