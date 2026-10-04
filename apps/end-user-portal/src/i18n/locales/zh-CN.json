@@ -568,6 +568,7 @@
     "revokeError": "注销失败",
     "revokeAllSuccess": "所有其他会话已注销",
     "revokeAllConfirm": "确定要注销所有其他设备的会话吗？当前会话不受影响。",
+    "revokeAllUnresolvable": "无法识别当前会话，已中止操作以保护您的登录。请刷新页面后重试。",
     "revoking": "处理中...",
     "current": "当前会话",
     "currentDevice": "当前设备",

@@ -54,6 +54,11 @@ export function useRevokeSession(): UseMutationResult<unknown, Error, string> {
 	});
 }
 
+// U353 哨兵错误：exceptCurrent 分支无法唯一解析当前会话（0 个或 >1 个 isCurrentSession）。
+// is_current_session 依赖令牌的 sid claim；铸造链缺 sid 时列表全为 false——按旧逻辑
+// 会把当前会话一并删除（等同全登出自毁）。解析不出唯一当前会话时宁可拒绝执行。
+export const CURRENT_SESSION_UNRESOLVABLE = 'current-session-unresolvable';
+
 export function useRevokeAllSessions(): UseMutationResult<
 	unknown,
 	Error,
@@ -64,9 +69,12 @@ export function useRevokeAllSessions(): UseMutationResult<
 		mutationFn: async (data) => {
 			if (data.exceptCurrent) {
 				const sessions = await authMeSessions({});
-				const others = ((sessions as { items?: SessionInfo[] }).items || []).filter(
-					(s) => !s.isCurrentSession,
-				);
+				const items = (sessions as { items?: SessionInfo[] }).items || [];
+				const currentCount = items.filter((s) => s.isCurrentSession).length;
+				if (currentCount !== 1) {
+					throw new Error(CURRENT_SESSION_UNRESOLVABLE);
+				}
+				const others = items.filter((s) => !s.isCurrentSession);
 				await Promise.all(others.map((s) => authMeSessionsBySessionsDelete(s.id)));
 			} else {
 				await authMeSessionsDelete();

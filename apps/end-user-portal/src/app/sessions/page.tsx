@@ -16,7 +16,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError } from '@autional-cn/shared';
-import { useSessions, useRevokeSession, useRevokeAllSessions } from '@/hooks/queries';
+import {
+	useSessions,
+	useRevokeSession,
+	useRevokeAllSessions,
+	CURRENT_SESSION_UNRESOLVABLE,
+} from '@/hooks/queries';
 import type { SessionInfo } from '@/hooks/queries';
 import { ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
@@ -88,6 +93,17 @@ export default function SessionsPage() {
 			await revokeAllMutation.mutateAsync({ exceptCurrent: true });
 			toast.success(t('sessions.revokeAllSuccess', '所有其他会话已注销'));
 		} catch (err: any) {
+			// U353 守卫哨兵：当前会话无法唯一识别（历史令牌缺 sid 时列表全为 false）。
+			// 操作已在 mutationFn 中止（否则会把当前会话一并删除），此处给出可读提示。
+			if (err?.message === CURRENT_SESSION_UNRESOLVABLE) {
+				toast.error(
+					t(
+						'sessions.revokeAllUnresolvable',
+						'无法识别当前会话，已中止操作以保护您的登录。请刷新页面后重试。',
+					),
+				);
+				return;
+			}
 			toast.error(extractApiError(err, t('common.error')).message);
 		}
 	};

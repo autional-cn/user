@@ -568,6 +568,7 @@
     "revokeError": "Failed to revoke",
     "revokeAllSuccess": "All other sessions revoked",
     "revokeAllConfirm": "Revoke all sessions on other devices? Your current session will not be affected.",
+    "revokeAllUnresolvable": "Could not identify your current session; the operation was aborted to protect your login. Please refresh and try again.",
     "revoking": "Processing...",
     "current": "Current Session",
     "currentDevice": "Current Device",
