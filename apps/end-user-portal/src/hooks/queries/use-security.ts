@@ -15,6 +15,7 @@ import {
 	mfaTotpVerifyPost,
 	mfaTotpDisablePost,
 	mfaBackupCodesGeneratePost,
+	mfaMethodsByMethodsDelete,
 	authMeWebauthnCredentials,
 	authMeWebauthnCredentialsByWebauthnCredentialsDelete,
 	adminUsersOauthConnectionsByUsers,
@@ -140,6 +141,21 @@ export function useGenerateBackupCodes(): UseMutationResult<
 	const { userId } = useAuth();
 	return useMutation<{ codes?: string[]; message?: string }, Error, void>({
 		mutationFn: () => generateBackupCodes({ userId: userId || '' }),
+	});
+}
+
+async function resetTOTP(userId: string): Promise<unknown> {
+	// 删除当前用户的 TOTP 配置（非 Primary 无码删；Primary → 服务端 61040084 拒绝）。
+	// 复用 same-user 护栏（service-core require_same.go），调用面仅限 user_id 自身。
+	return mfaMethodsByMethodsDelete('totp', { user_id: userId });
+}
+
+export function useResetTOTPMutation(): UseMutationResult<unknown, Error, void> {
+	const qc = useQueryClient();
+	const { userId } = useAuth();
+	return useMutation<unknown, Error, void>({
+		mutationFn: () => resetTOTP(userId || ''),
+		onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.mfa(userId || '') }),
 	});
 }
 

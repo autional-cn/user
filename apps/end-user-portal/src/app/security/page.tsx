@@ -29,7 +29,7 @@ import {
 	useAuth,
 	extractApiError,
 	logout,
-	AUTH_PAGES_URL,
+	getAUTH_PAGES_URL,
 	API_BASE_URL,
 	processPasswordForTransmission,
 	useTenantSlug,
@@ -44,6 +44,7 @@ import {
 	useVerifyTOTP,
 	useDisableTOTP,
 	useGenerateBackupCodes,
+	useResetTOTPMutation,
 	useOAuthConnections,
 	useUnbindOAuth,
 } from '@/hooks/queries';
@@ -72,7 +73,12 @@ export default function SecurityPage() {
 	const { user } = useAuth();
 	const userId = user?.id || '';
 
-	const { data: mfaStatus, isLoading: mfaLoading, error: mfaError } = useMFAStatus();
+	const {
+		data: mfaStatus,
+		isLoading: mfaLoading,
+		error: mfaError,
+		refetch: refetchMFA,
+	} = useMFAStatus();
 	const { data: passkeys, isLoading: pkLoading, error: pkError } = usePasskeys();
 	const changePwdMutation = useChangePassword();
 	const deletePkMutation = useDeletePasskey();
@@ -80,6 +86,7 @@ export default function SecurityPage() {
 	const verifyTotpMutation = useVerifyTOTP();
 	const disableTotpMutation = useDisableTOTP();
 	const backupCodesMutation = useGenerateBackupCodes();
+	const resetTotpMutation = useResetTOTPMutation();
 	const {
 		data: oauthConnections,
 		isLoading: oauthLoading,
@@ -179,11 +186,14 @@ export default function SecurityPage() {
 	const [totpSetup, setTotpSetup] = useState<{
 		secret: string;
 		qrCodeUrl?: string;
+		qrCode?: string;
 		provisioningUri?: string;
 	} | null>(null);
 	const [totpCode, setTotpCode] = useState('');
 	const [backupCodes, setBackupCodes] = useState<string[]>([]);
 	const [copied, setCopied] = useState(false);
+	// 409（61040010）+ refetch 后仍非「已启用」→ pending 残留，展示恢复条（探针 UF1-05 判 P1：DELETE 转发可用）
+	const [totpPendingDetected, setTotpPendingDetected] = useState(false);
 
 	// TOTP disable modal
 	const [disableModalOpen, setDisableModalOpen] = useState(false);
@@ -191,7 +201,7 @@ export default function SecurityPage() {
 	const [disableMethod, setDisableMethod] = useState<'totp' | 'sms' | 'email' | null>(null);
 
 	const handleMfaSetup = () => {
-		window.location.href = `${AUTH_PAGES_URL}/mfa-setup`;
+		window.location.href = `${getAUTH_PAGES_URL()}/mfa-setup`;
 	};
 
 	// Account deletion
@@ -229,7 +239,7 @@ export default function SecurityPage() {
 				password: result.password,
 				password_transmission: result.passwordTransmission,
 			});
-			logout(`${AUTH_PAGES_URL}/login?account_deleted=true`);
+			logout(`${getAUTH_PAGES_URL()}/login?account_deleted=true`);
 		} catch (err: any) {
 			setDeleteError(extractApiError(err, '账户删除失败，请稍后重试').message);
 			setDeleteModalOpen(false);
@@ -284,7 +294,22 @@ export default function SecurityPage() {
 			setTotpSetup(data);
 			setTotpStep(1);
 			setTotpModalOpen(true);
+			setTotpPendingDetected(false);
 		} catch (err: any) {
+			// 409 = 61040010「TOTP already enabled」：存在既有配置（已启用或未验证的 pending）阻塞再启用。
+			// 探针 UF1-05 结论：状态接口可见形状无 methods / verified 字段，pending 时 totp_enabled=false、
+			// 已启用时为 true —— 以 refetch 后状态分流：已启用 → 友好提示并关闭弹窗；否则 → 打开恢复条。
+			if (err?.response?.data?.code === 61040010) {
+				const fresh = (await refetchMFA()).data;
+				if (fresh?.totpEnabled || fresh?.methods?.includes('totp')) {
+					setTotpPendingDetected(false);
+					closeTOTPModal();
+					toast.info(t('security.totpAlreadyEnabled'));
+				} else {
+					setTotpPendingDetected(true);
+				}
+				return;
+			}
 			toast.error(extractApiError(err, t('security.totpEnableError')).message);
 		}
 	};
@@ -316,6 +341,19 @@ export default function SecurityPage() {
 		setTotpCode('');
 		setBackupCodes([]);
 		setCopied(false);
+	};
+
+	// pending 恢复闭环（UP-17-A，P1 分支）：危险操作语义 —— 清除当前未验证的 TOTP 配置（含 secret），
+	// 成功后用户可再次点「开启」。DELETE 复用 same-user 护栏；Primary 配置由服务端 61040084 拒绝。
+	const handleResetTOTP = async () => {
+		if (!confirm(t('security.totpResetConfirm'))) return;
+		try {
+			await resetTotpMutation.mutateAsync();
+			setTotpPendingDetected(false);
+			toast.success(t('security.totpResetSuccess'));
+		} catch (err: any) {
+			toast.error(extractApiError(err, t('security.totpResetError')).message);
+		}
 	};
 
 	const startDisable = (method: 'totp' | 'sms' | 'email') => {
@@ -614,6 +652,7 @@ export default function SecurityPage() {
 			) : mfaError ? (
 				<ErrorState message={t('security.statusError')} />
 			) : (
+				<>
 				<div className="grid gap-4 sm:grid-cols-2">
 					<SecurityCard
 						icon={Smartphone}
@@ -649,9 +688,27 @@ export default function SecurityPage() {
 						status={hasPasskey ? 'enabled' : 'disabled'}
 						statusText={hasPasskey ? t('security.enabled') : t('security.disabled')}
 						action={t('security.enable')}
-						onClick={() => window.open(`${AUTH_PAGES_URL}/passkey?mode=register`, '_blank')}
+						onClick={() => window.open(`${getAUTH_PAGES_URL()}/passkey?mode=register`, '_blank')}
 					/>
 				</div>
+				{totpPendingDetected && (
+					<div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4">
+						<div className="flex items-start gap-3">
+							<AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-600" />
+							<div className="flex-1">
+								<p className="text-sm text-amber-800">{t('security.totpPendingDetected')}</p>
+								<button
+									onClick={handleResetTOTP}
+									disabled={resetTotpMutation.isPending}
+									className="mt-3 rounded-md bg-danger px-3 py-1.5 text-sm font-medium text-white hover:bg-danger/90 disabled:opacity-60"
+								>
+									{resetTotpMutation.isPending ? t('security.processing') : t('security.totpReset')}
+								</button>
+							</div>
+						</div>
+					</div>
+				)}
+				</>
 			)}
 
 			{/* Passkeys list */}
@@ -978,9 +1035,9 @@ export default function SecurityPage() {
 					<div className="space-y-4">
 						<p className="text-sm text-neutral-600">{t('security.totpScanPrompt')}</p>
 						<div className="flex flex-col items-center gap-3">
-							{totpSetup.qrCodeUrl ? (
+							{totpSetup.qrCode ? (
 								<img
-									src={totpSetup.qrCodeUrl}
+									src={totpSetup.qrCode}
 									alt="TOTP QR Code"
 									className="h-40 w-40 rounded-md border border-neutral-200"
 								/>

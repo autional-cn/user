@@ -11,7 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import {
 	extractApiError,
 	logout,
-	AUTH_PAGES_URL,
+	getAUTH_PAGES_URL,
 	processPasswordForTransmission,
 	getCurrentTenantId,
 	useTenantSlug,
@@ -67,7 +67,7 @@ export default function DeleteAccountPage() {
 			});
 			toast.success(t('security.deleteAccount.success'));
 			setTimeout(() => {
-				logout(`${AUTH_PAGES_URL}/login?account_deleted=true`);
+				logout(`${getAUTH_PAGES_URL()}/login?account_deleted=true`);
 			}, 1500);
 		} catch (err: any) {
 			const msg = extractApiError(err, t('security.deleteAccount.error')).message;

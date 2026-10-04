@@ -13,7 +13,7 @@ import {
 	useBootstrap,
 	refreshAccessToken,
 	logout,
-	AUTH_PAGES_URL,
+	getAUTH_PAGES_URL,
 } from '@autional-cn/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useUnreadNotifications } from '@/hooks/queries';
@@ -86,7 +86,7 @@ export default function AppLayout() {
 	useEffect(() => {
 		if (!authExpired) return;
 		refreshAccessToken().catch(() => {
-			logout(`${AUTH_PAGES_URL}/login?session_expired=true`);
+			logout(`${getAUTH_PAGES_URL()}/login?session_expired=true`);
 		});
 	}, [authExpired]);
 

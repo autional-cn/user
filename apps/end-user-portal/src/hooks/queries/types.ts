@@ -70,7 +70,8 @@ export interface NotificationItem {
 	title?: string;
 	content?: string;
 	type: string;
-	read: boolean;
+	/** 对齐 generated 契约（SHARED/generated/types.ts 的 isRead）；旧字段名 read 导致未读判定恒真（UP-71） */
+	isRead: boolean;
 	createdAt?: string;
 	readAt?: string;
 	actionUrl?: string;

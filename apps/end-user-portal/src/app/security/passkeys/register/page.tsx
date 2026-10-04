@@ -48,10 +48,18 @@ export default function PasskeyRegisterPage() {
 			setPasswordError(t('security.passkeys.register.passwordRequired'));
 			return;
 		}
+		// UP-91-A：user_name 仅作凭据 label（服务端身份取自 JWT），无 username 的账号回退 email；
+		// 两者皆空 → 不发请求（否则后端 required 校验恒 400），显式提示不静默。
+		const userName = user?.username || user?.email || '';
+		if (!userName) {
+			setErrorMsg(
+				t('security.passkeys.register.usernameMissing', '无法获取用户名或邮箱，请先完善账号信息'),
+			);
+			setStep('error');
+			return;
+		}
 		setStep('loading');
 		setErrorMsg('');
-
-		const userName = user?.username || '';
 
 		try {
 			const tenantId = useAuthStore.getState().currentTenantId || '';

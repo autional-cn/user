@@ -37,7 +37,7 @@ export default function NotificationsPage() {
 	const list = data?.items || [];
 	const total = data?.total || 0;
 	const pagination = data?.pagination;
-	const unreadCount = list.filter((n) => !n.read).length;
+	const unreadCount = list.filter((n) => !n.isRead).length;
 
 	const typeMeta: Record<string, { icon: typeof Info; color: string; bg: string; label: string }> =
 		{
@@ -141,7 +141,7 @@ export default function NotificationsPage() {
 						<div
 							key={n.id}
 							className={`rounded-lg border p-4 shadow-sm transition-colors ${
-								n.read ? 'border-neutral-200 bg-white opacity-75' : 'border-neutral-200 bg-white'
+								n.isRead ? 'border-neutral-200 bg-white opacity-75' : 'border-neutral-200 bg-white'
 							}`}
 						>
 							<div className="flex items-start gap-3">
@@ -153,11 +153,11 @@ export default function NotificationsPage() {
 								<div className="flex-1 min-w-0">
 									<div className="flex items-center gap-2">
 										<h3
-											className={`text-sm font-semibold ${n.read ? 'text-neutral-600' : 'text-neutral-900'}`}
+											className={`text-sm font-semibold ${n.isRead ? 'text-neutral-600' : 'text-neutral-900'}`}
 										>
 											{n.title}
 										</h3>
-										{!n.read && (
+										{!n.isRead && (
 											<span className="inline-block h-2 w-2 rounded-full bg-primary-500" />
 										)}
 										<span
@@ -168,8 +168,8 @@ export default function NotificationsPage() {
 									</div>
 									<p className="mt-1 text-sm text-neutral-600">{n.content}</p>
 									<div className="mt-2 flex items-center justify-between">
-										<span className="text-xs text-neutral-500">{formatTime(n.createdAt)}</span>
-										{!n.read && (
+										<span className="text-xs text-neutral-600">{formatTime(n.createdAt)}</span>
+										{!n.isRead && (
 											<button
 												onClick={() => handleMarkRead(n.id)}
 												disabled={markReadMutation.isPending}

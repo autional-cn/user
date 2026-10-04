@@ -73,9 +73,13 @@ export default function NotificationPreferencesPage() {
 
 	useEffect(() => {
 		if (prefs) {
+			// UP-74：读侧按真实持久化源 channels.email.types 派生（旧读路径取 typePrefs —— 后端从不返回该键
+			// 族，恒 undefined → `?? true` 把开关全部假显示为 ON）。email 为权威源（写侧三通道同集合）；
+			// types 缺失 → 回退全开；types=[]（若存在）→ 全部 OFF。
+			const persistedTypes = prefs.channels?.email?.types;
 			const types: Record<string, boolean> = {};
 			for (const t of NOTIFICATION_TYPES) {
-				types[t.key] = prefs.typePrefs?.[t.key]?.enabled ?? true;
+				types[t.key] = persistedTypes ? persistedTypes.includes(t.key) : true;
 			}
 			setTypeToggles(types);
 
@@ -90,7 +94,15 @@ export default function NotificationPreferencesPage() {
 		}
 	}, [prefs]);
 
+	// 探针 UF1-09 判 P2：后端对空 types 跳过持久化（全关保存 = 假成功 + 回读弹回），
+	// 故全关在 UI 层禁止（保存按钮禁用 + 提示，不发请求）。
+	const allTypesOff = NOTIFICATION_TYPES.every((nt) => typeToggles[nt.key] === false);
+
 	const handleSave = async () => {
+		if (allTypesOff) {
+			toast.error(t('notifications.prefs.atLeastOneType', '至少保留一种通知类型'));
+			return;
+		}
 		try {
 			await updateMutation.mutateAsync({
 				emailEnabled: channelToggles.email,
@@ -115,9 +127,6 @@ export default function NotificationPreferencesPage() {
 							.map(([k]) => k),
 					},
 				},
-				typePrefs: Object.fromEntries(
-					NOTIFICATION_TYPES.map((t) => [t.key, { enabled: typeToggles[t.key] }]),
-				),
 			});
 			toast.success(t('notifications.prefs.saved', '偏好设置已保存'));
 		} catch (err: any) {
@@ -220,9 +229,14 @@ export default function NotificationPreferencesPage() {
 
 			{/* Save button */}
 			<div className="flex items-center gap-3">
+				{allTypesOff && (
+					<p className="text-sm text-danger-text">
+						{t('notifications.prefs.atLeastOneType', '至少保留一种通知类型')}
+					</p>
+				)}
 				<button
 					onClick={handleSave}
-					disabled={updateMutation.isPending}
+					disabled={updateMutation.isPending || allTypesOff}
 					className="flex items-center gap-2 rounded-md bg-primary-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
 				>
 					{updateMutation.isPending ? (

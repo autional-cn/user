@@ -25,7 +25,9 @@ vi.mock('@autional-cn/shared', () => ({
 		message: err?.response?.data?.message || fallback,
 	}),
 	logout: (...args: any[]) => mockLogout(...args),
-	AUTH_PAGES_URL: '/auth',
+	// UP-13：页面已改调 getAUTH_PAGES_URL()（函数）；普通对象 mock 必须提供同名键，
+	// 否则页面调用 undefined → 直接崩溃。此处键名与页面 import 严格一致。
+	getAUTH_PAGES_URL: () => '/auth',
 	getCurrentTenantId: () => '',
 	useTenantSlug: () => 'acme-corp',
 	processPasswordForTransmission: (password: string) => ({
