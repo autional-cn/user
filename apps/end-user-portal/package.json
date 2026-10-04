@@ -18,7 +18,7 @@
     "build-storybook": "storybook build"
   },
   "dependencies": {
-    "@autional-cn/shared": "0.1.0-rc.22",
+    "@autional-cn/shared": "0.1.0-rc.23",
     "@autional-cn/tailwind-preset": "0.1.0-rc.2",
     "@autional-cn/tokens": "0.1.0-rc.5",
     "@autional-cn/ui": "0.1.0-rc.38",

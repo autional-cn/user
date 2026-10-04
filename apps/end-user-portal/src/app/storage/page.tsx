@@ -81,10 +81,10 @@ export default function StoragePage() {
 	} = useQuery({
 		queryKey: ['storage', 'folder', currentFolder],
 		queryFn: async () => {
-			// root 无 folder 记录（虚拟根目录）；根目录文件 = parent_id IS NULL，
-			// GET /files 不填 parent_id 即列根目录文件（is_directory=false，仅文件）
+			// root 无 folder 记录（虚拟根目录）；根目录内容 = parent_id IS NULL，
+			// include_directories=true 使根目录文件夹与文件同列（U365 目录浏览）
 			if (currentFolder === 'root') {
-				const res = await Generated.files({ page_size: 100 });
+				const res = await Generated.files({ page_size: 100, include_directories: true });
 				return { folder: undefined, contents: extractList<FileMetadataResponse>(res) } as {
 					folder?: FolderMetadataResponse;
 					contents?: FileMetadataResponse[];
@@ -249,14 +249,15 @@ export default function StoragePage() {
 
 	// 条目对象须跨渲染保持引用稳定：菜单开合走 contextMenu?.entry === entry 引用比较，
 	// 若此处每次渲染重建对象，setContextMenu 触发的重渲染立即失配 → 菜单永不显示（卡片操作全死）
+	// is_directory=true 的行分派为 folder 条目（可进入 + 文件夹操作）；当前 folder 自身不再入列（U365）
 	const entries: Entry[] = useMemo(
-		() => [
-			...(folderData?.folder && currentFolder !== 'root'
-				? [{ ...folderData.folder, _type: 'folder' as const }]
-				: []),
-			...(folderData?.contents?.map((f) => ({ ...f, _type: 'file' as const }) as Entry) || []),
-		],
-		[folderData, currentFolder],
+		() =>
+			(folderData?.contents || []).map((f) =>
+				f.isDirectory
+					? ({ ...f, _type: 'folder' as const, folderId: f.fileId } as Entry)
+					: ({ ...f, _type: 'file' as const } as Entry),
+			),
+		[folderData],
 	);
 	// Deduplicate by id
 	const seen = new Set<string>();
