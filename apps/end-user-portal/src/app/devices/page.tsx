@@ -19,6 +19,7 @@ import {
 	Users,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { formatTime } from '@/lib/format';
 import { useThingsList } from '@/hooks/queries';
 import { SectionCard, ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
@@ -150,7 +151,7 @@ export default function DevicesPage() {
 												)}
 												<span className="flex items-center gap-1">
 													<Clock size={14} />
-													{t('devices.lastSeen')}: {thing.lastSeen || thing.createdAt || '--'}
+													{t('devices.lastSeen')}: {formatTime(thing.lastSeen || thing.createdAt)}
 												</span>
 												{thing.online !== undefined && (
 													<span className="flex items-center gap-1">
