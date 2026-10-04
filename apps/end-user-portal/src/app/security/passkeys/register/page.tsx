@@ -4,7 +4,7 @@ import { buildNavHref } from '@/lib/nav';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Fingerprint, Loader2, AlertTriangle, CheckCircle2, ChevronLeft } from 'lucide-react';
+import { Fingerprint, Loader2, CheckCircle2, ChevronLeft } from 'lucide-react';
 import { Link } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -19,7 +19,7 @@ import {
 	authWebauthnRegisterCompletePost,
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
-import { SectionCard, ConsolePageHeader, Button } from '@autional-cn/ui';
+import { Result, SectionCard, ConsolePageHeader, Button } from '@autional-cn/ui';
 
 export default function PasskeyRegisterPage() {
 	const tenantSlug = useTenantSlug();
@@ -275,40 +275,34 @@ export default function PasskeyRegisterPage() {
 			)}
 
 			{step === 'error' && (
-				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
-						<AlertTriangle size={32} />
-					</div>
-					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
-						{t('security.passkeys.register.errorTitle')}
-					</h3>
-					<p className="mt-2 text-sm text-danger-text">{errorMsg}</p>
-					<div className="mt-6 flex justify-center gap-3">
-						<Button onClick={() => setStep('idle')} variant="outline">
-							{t('common.cancel')}
-						</Button>
-						<Button onClick={handleRegister} variant="primary">
-							{t('common.retry')}
-						</Button>
-					</div>
-				</div>
+				<Result
+					variant="danger"
+					title={t('security.passkeys.register.errorTitle')}
+					description={errorMsg}
+					action={
+						<>
+							<Button onClick={() => setStep('idle')} variant="outline">
+								{t('common.cancel')}
+							</Button>
+							<Button onClick={handleRegister} variant="primary">
+								{t('common.retry')}
+							</Button>
+						</>
+					}
+				/>
 			)}
 
 			{step === 'success' && (
-				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
-						<CheckCircle2 size={32} />
-					</div>
-					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
-						{t('security.passkeys.register.successTitle')}
-					</h3>
-					<p className="mt-2 text-sm text-neutral-600">
-						{t('security.passkeys.register.successDesc')}
-					</p>
-					<p className="mt-2 text-sm text-neutral-600">
-						{t('security.passkeys.register.redirecting')}
-					</p>
-				</div>
+				<Result
+					variant="success"
+					title={t('security.passkeys.register.successTitle')}
+					description={
+						<>
+							<span className="block">{t('security.passkeys.register.successDesc')}</span>
+							<span className="mt-1 block">{t('security.passkeys.register.redirecting')}</span>
+						</>
+					}
+				/>
 			)}
 		</div>
 	);

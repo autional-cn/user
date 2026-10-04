@@ -6,8 +6,8 @@ import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Smartphone, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { SectionCard, ConsolePageHeader, Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { Smartphone, ArrowLeft } from 'lucide-react';
+import { Result, SectionCard, ConsolePageHeader, Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DevicePairingPage() {
@@ -62,13 +62,12 @@ export default function DevicePairingPage() {
 			/>
 
 			{success ? (
-				<div className="rounded-lg border border-success-soft bg-success-soft p-8 text-center shadow-sm">
-					<CheckCircle2 size={48} className="mx-auto text-success" />
-					<h3 className="mt-4 text-lg font-semibold text-success-text">
-						{t('devices.pair.successTitle')}
-					</h3>
-					<p className="mt-2 text-sm text-success-text">{t('devices.pair.successMessage')}</p>
-				</div>
+				<Result
+					variant="success"
+					surface="tinted"
+					title={t('devices.pair.successTitle')}
+					description={t('devices.pair.successMessage')}
+				/>
 			) : pairMutation.isError ? (
 				<ErrorState message={t('devices.pair.errorRetry')} className="min-h-[40vh]" />
 			) : (

@@ -7,15 +7,14 @@ import {
 	Download,
 	Loader2,
 	CheckCircle2,
-	AlertTriangle,
 	ChevronLeft,
-	FileJson,
+	FileJson
 } from 'lucide-react';
 import { Link } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError, useTenantSlug } from '@autional-cn/shared';
 import { authMeExportDataPost } from '@autional-cn/shared/generated/api';
-import { SectionCard, ConsolePageHeader, Button, ConfirmDialog } from '@autional-cn/ui';
+import { Result, SectionCard, ConsolePageHeader, Button, ConfirmDialog } from '@autional-cn/ui';
 
 export default function ExportDataPage() {
 	const tenantSlug = useTenantSlug();
@@ -132,47 +131,45 @@ export default function ExportDataPage() {
 			)}
 
 			{step === 'error' && (
-				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
-						<AlertTriangle size={32} />
-					</div>
-					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
-						{t('privacy.exportData.errorTitle')}
-					</h3>
-					<p className="mt-2 text-sm text-danger-text">{errorMsg}</p>
-					<div className="mt-6 flex justify-center gap-3">
-						<Button onClick={() => setStep('idle')} variant="outline">
-							{t('common.cancel')}
-						</Button>
-						<Button onClick={handleExport} variant="primary">
-							{t('common.retry')}
-						</Button>
-					</div>
-				</div>
+				<Result
+					variant="danger"
+					title={t('privacy.exportData.errorTitle')}
+					description={errorMsg}
+					action={
+						<>
+							<Button onClick={() => setStep('idle')} variant="outline">
+								{t('common.cancel')}
+							</Button>
+							<Button onClick={handleExport} variant="primary">
+								{t('common.retry')}
+							</Button>
+						</>
+					}
+				/>
 			)}
 
 			{step === 'success' && (
-				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
-					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
-						<CheckCircle2 size={32} />
-					</div>
-					<h3 className="mt-4 text-lg font-semibold text-neutral-900">
-						{t('privacy.exportData.successTitle')}
-					</h3>
-					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.successDesc')}</p>
-					{exportId && (
-						<p className="mt-1 text-xs text-neutral-600">
-							{t('privacy.exportData.exportId')}: {exportId}
-						</p>
-					)}
-					<div className="mt-4">
+				<Result
+					variant="success"
+					title={t('privacy.exportData.successTitle')}
+					description={
+						<>
+							<span className="block">{t('privacy.exportData.successDesc')}</span>
+							{exportId && (
+								<span className="mt-1 block text-xs">
+									{t('privacy.exportData.exportId')}: {exportId}
+								</span>
+							)}
+							<span className="mt-1 block text-xs">{t('privacy.exportData.autoDownload')}</span>
+						</>
+					}
+					action={
 						<Button onClick={handleDownload} variant="primary" className="gap-2">
 							<Download size={16} />
 							{t('privacy.exportData.download')}
 						</Button>
-					</div>
-					<p className="mt-2 text-xs text-neutral-600">{t('privacy.exportData.autoDownload')}</p>
-				</div>
+					}
+				/>
 			)}
 
 			<ConfirmDialog
