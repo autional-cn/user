@@ -78,7 +78,10 @@ export default function PasskeyRegisterPage() {
 				password: result.password,
 				password_transmission: result.passwordTransmission,
 			} as any);
-			const options = beginRes as PublicKeyCredentialCreationOptions;
+			// 响应信封解包后 options 位于 publicKey 层（identity dto: WebAuthnRegistrationResponse{PublicKey}），
+			// 不可整包当 options（整包取 challenge 恒 undefined → 流程击穿，UP-91-C 线上实证）
+			const options = (beginRes as { publicKey?: PublicKeyCredentialCreationOptions } | undefined)
+				?.publicKey;
 
 			if (!options || !options.challenge) {
 				throw new Error('Server returned invalid WebAuthn registration options');
