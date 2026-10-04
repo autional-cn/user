@@ -23,7 +23,7 @@ import {
 	CURRENT_SESSION_UNRESOLVABLE,
 } from '@/hooks/queries';
 import type { SessionInfo } from '@/hooks/queries';
-import { ErrorState, EmptyState } from '@autional-cn/ui';
+import { ErrorState, EmptyState, ConfirmDialog } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 function parseUserAgent(ua?: string): { browser: string; os: string } {
@@ -73,29 +73,36 @@ export default function SessionsPage() {
 	const toast = useToast();
 	const [highRiskOnly, setHighRiskOnly] = useState(false);
 	const [page, setPage] = useState(1);
+	// UP-39：单会话注销原无确认、revokeAll 用原生 confirm()。统一改组件化确认弹窗。
+	const [revokeTarget, setRevokeTarget] = useState<SessionInfo | null>(null);
+	const [revokeAllOpen, setRevokeAllOpen] = useState(false);
 
 	const { data: sessions, isLoading, error } = useSessions(page, PAGE_SIZE);
 	const revokeMutation = useRevokeSession();
 	const revokeAllMutation = useRevokeAllSessions();
 
-	const handleRevoke = async (sessionId: string) => {
+	// 成功才关弹窗；失败保留（toast 报错后可就地重试）。
+	const handleRevokeConfirm = async () => {
+		if (!revokeTarget) return;
 		try {
-			await revokeMutation.mutateAsync(sessionId);
+			await revokeMutation.mutateAsync(revokeTarget.id);
 			toast.success(t('sessions.revokeSuccess', '会话已注销'));
+			setRevokeTarget(null);
 		} catch (err: any) {
 			toast.error(extractApiError(err, t('sessions.revokeError', '注销失败')).message);
 		}
 	};
 
-	const handleRevokeAll = async () => {
-		if (!confirm(t('sessions.revokeAllConfirm'))) return;
+	const handleRevokeAllConfirm = async () => {
 		try {
 			await revokeAllMutation.mutateAsync({ exceptCurrent: true });
 			toast.success(t('sessions.revokeAllSuccess', '所有其他会话已注销'));
+			setRevokeAllOpen(false);
 		} catch (err: any) {
 			// U353 守卫哨兵：当前会话无法唯一识别（历史令牌缺 sid 时列表全为 false）。
 			// 操作已在 mutationFn 中止（否则会把当前会话一并删除），此处给出可读提示。
 			if (err?.message === CURRENT_SESSION_UNRESOLVABLE) {
+				setRevokeAllOpen(false);
 				toast.error(
 					t(
 						'sessions.revokeAllUnresolvable',
@@ -163,7 +170,7 @@ export default function SessionsPage() {
 					</button>
 					{rawList.length > 1 && (
 						<button
-							onClick={handleRevokeAll}
+							onClick={() => setRevokeAllOpen(true)}
 							disabled={revokeAllMutation.isPending}
 							className="rounded-md border border-danger/20 bg-danger/5 px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
 						>
@@ -252,7 +259,7 @@ export default function SessionsPage() {
 								)}
 								{!session.isCurrentSession && (
 										<button
-											onClick={() => handleRevoke(session.id)}
+											onClick={() => setRevokeTarget(session)}
 											disabled={revokeMutation.isPending}
 											className="flex shrink-0 items-center gap-1 rounded-md border border-danger/20 bg-danger/5 px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
 										>
@@ -299,6 +306,31 @@ export default function SessionsPage() {
 					</button>
 				</div>
 			)}
+
+			<ConfirmDialog
+				open={revokeTarget !== null}
+				title={t('sessions.revokeConfirmTitle', '注销该会话')}
+				description={t(
+					'sessions.revokeConfirmDesc',
+					'该设备将被退出登录，需要重新认证才能访问账户。',
+				)}
+				variant="danger"
+				confirmText={t('sessions.revoke', '注销')}
+				onConfirm={handleRevokeConfirm}
+				onCancel={() => setRevokeTarget(null)}
+			/>
+			<ConfirmDialog
+				open={revokeAllOpen}
+				title={t('sessions.revokeAllConfirmTitle', '注销所有其他会话')}
+				description={t(
+					'sessions.revokeAllConfirm',
+					'确定要注销所有其他设备的会话吗？当前会话不受影响。',
+				)}
+				variant="danger"
+				confirmText={t('sessions.revokeAll', '注销其他设备')}
+				onConfirm={handleRevokeAllConfirm}
+				onCancel={() => setRevokeAllOpen(false)}
+			/>
 		</div>
 	);
 }

@@ -8,6 +8,7 @@ import {
 	useWalletBalance,
 	usePointAccount,
 	useUnreadNotifications,
+	useMFAStatus,
 } from '@/hooks/queries';
 import { ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
@@ -24,13 +25,31 @@ export default function DashboardPage() {
 	const walletQ = useWalletBalance();
 	const pointQ = usePointAccount();
 	const unreadQ = useUnreadNotifications();
+	const mfaQ = useMFAStatus();
 	const userInitial =
 		profile?.username?.[0]?.toUpperCase() || profile?.email?.[0]?.toUpperCase() || 'U';
 
-	const isStatsLoading = walletQ.isLoading || pointQ.isLoading || unreadQ.isLoading;
+	const isStatsLoading =
+		walletQ.isLoading || pointQ.isLoading || unreadQ.isLoading || mfaQ.isLoading;
 	const statsError =
 		(walletQ.error && !isNotFoundError(walletQ.error)) ||
 		(pointQ.error && !isNotFoundError(pointQ.error));
+
+	// UP-01/48：404（wallet/point account not found）= 实体不存在，属业务空态而非「余额 0」。
+	// 有数据才渲染数值（真实 0 仍显 0/¥0.00），空态走「暂无钱包 / 暂无积分账户」文案，
+	// 与钱包页「尚未开通」语义链统一，不再用假 0 兜底。
+	const walletBalance = walletQ.data?.availableBalance ?? walletQ.data?.balance;
+	const pointsBalance = pointQ.data
+		? ((pointQ.data as any)?.available ?? pointQ.data?.balance)
+		: undefined;
+	// UP-101：安全状态卡原为静态「良好」常量（无数据源）。改接 mfa/status 真实数据：
+	// 任一 MFA 方式启用 → 已启用；全未启用 → amber 短板提示；查询失败 → 暂不可用。
+	const mfaEnabled =
+		!!mfaQ.data &&
+		(mfaQ.data.totpEnabled ||
+			mfaQ.data.smsEnabled ||
+			mfaQ.data.emailEnabled ||
+			(mfaQ.data.methods?.length ?? 0) > 0);
 
 	const quickLinks = [
 		{
@@ -101,14 +120,18 @@ export default function DashboardPage() {
 							</div>
 							<div>
 								<p className="text-sm text-neutral-600">{t('dashboard.stats.walletBalance')}</p>
-								{/* 2026-08-17 修复：member/guest 等无钱包账户（wallet 404，空态由 isNotFoundError 过滤）
-								    显示 ¥0.00 而非 ¥ --；有账户时格式化 ¥ + 2 位小数 */}
-								<p className="text-lg font-semibold text-neutral-900">
-									¥
-									{Number(
-										walletQ.data?.availableBalance ?? walletQ.data?.balance ?? 0,
-									).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-								</p>
+								{walletBalance != null ? (
+									<p className="text-lg font-semibold text-neutral-900">
+										¥
+										{Number(walletBalance).toLocaleString(undefined, {
+											minimumFractionDigits: 2,
+										})}
+									</p>
+								) : (
+									<p className="text-lg font-semibold text-neutral-500">
+										{t('dashboard.stats.walletNone', '暂无钱包')}
+									</p>
+								)}
 							</div>
 						</div>
 					</div>
@@ -119,14 +142,13 @@ export default function DashboardPage() {
 							</div>
 							<div>
 								<p className="text-sm text-neutral-600">{t('dashboard.stats.points')}</p>
-								{/* 2026-08-17 修复：member/guest 无积分账户（404，isNotFoundError 判定）显示 0 而非 -- */}
-								<p className="text-lg font-semibold text-neutral-900">
-									{pointQ.isError
-										? isNotFoundError(pointQ.error)
-											? '0'
-											: '0'
-										: ((pointQ.data as any)?.available ?? pointQ.data?.balance ?? '0')}
-								</p>
+								{pointsBalance != null ? (
+									<p className="text-lg font-semibold text-neutral-900">{pointsBalance}</p>
+								) : (
+									<p className="text-lg font-semibold text-neutral-500">
+										{t('dashboard.stats.pointsNone', '暂无积分账户')}
+									</p>
+								)}
 							</div>
 						</div>
 					</div>
@@ -137,8 +159,20 @@ export default function DashboardPage() {
 							</div>
 							<div>
 								<p className="text-sm text-neutral-600">{t('dashboard.stats.securityStatus')}</p>
-								<p className="text-lg font-semibold text-success-text">
-									{t('dashboard.securityGood')}
+								<p
+									className={`text-lg font-semibold ${
+										mfaQ.isError
+											? 'text-neutral-500'
+											: mfaEnabled
+												? 'text-success-text'
+												: 'text-amber-600'
+									}`}
+								>
+									{mfaQ.isError
+										? t('dashboard.stats.securityUnavailable', '暂不可用')
+										: mfaEnabled
+											? t('dashboard.stats.mfaEnabled', 'MFA 已启用')
+											: t('dashboard.stats.mfaNotEnabled', 'MFA 未启用')}
 								</p>
 							</div>
 						</div>

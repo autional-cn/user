@@ -15,7 +15,7 @@ import { Link } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError, useTenantSlug } from '@autional-cn/shared';
 import { authMeExportDataPost } from '@autional-cn/shared/generated/api';
-import { Button } from '@autional-cn/ui';
+import { Button, ConfirmDialog } from '@autional-cn/ui';
 
 export default function ExportDataPage() {
 	const tenantSlug = useTenantSlug();
@@ -27,6 +27,8 @@ export default function ExportDataPage() {
 	const [errorMsg, setErrorMsg] = useState('');
 	const [downloadUrl, setDownloadUrl] = useState('');
 	const [exportId, setExportId] = useState('');
+	// UP-95：PII 导出原为单击直发。补轻确认（neutral 档），不升级为 step-up 级重认证闸门。
+	const [confirmOpen, setConfirmOpen] = useState(false);
 
 	const handleExport = async () => {
 		setStep('loading');
@@ -105,7 +107,7 @@ export default function ExportDataPage() {
 						</li>
 					</ul>
 					<div className="mt-6">
-						<Button onClick={handleExport} variant="primary" className="gap-2">
+						<Button onClick={() => setConfirmOpen(true)} variant="primary" className="gap-2">
 							<Download size={16} />
 							{t('privacy.exportData.start')}
 						</Button>
@@ -168,6 +170,22 @@ export default function ExportDataPage() {
 					<p className="mt-2 text-xs text-neutral-600">{t('privacy.exportData.autoDownload')}</p>
 				</div>
 			)}
+
+			<ConfirmDialog
+				open={confirmOpen}
+				title={t('privacy.exportData.confirmTitle', '确认导出个人数据')}
+				description={t(
+					'privacy.exportData.confirmDesc',
+					'将生成包含您个人数据的导出文件，以下载链接形式提供。请确认由您本人操作。',
+				)}
+				variant="neutral"
+				confirmText={t('privacy.exportData.confirmAction', '开始导出')}
+				onConfirm={() => {
+					setConfirmOpen(false);
+					handleExport();
+				}}
+				onCancel={() => setConfirmOpen(false)}
+			/>
 		</div>
 	);
 }

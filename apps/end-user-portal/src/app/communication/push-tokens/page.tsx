@@ -11,8 +11,7 @@ import {
 } from '@/hooks/queries';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { LoadingScreen } from '@autional-cn/ui';
-import { ErrorState } from '@autional-cn/ui';
+import { LoadingScreen, ErrorState, ConfirmDialog } from '@autional-cn/ui';
 import { Link } from 'react-router';
 import { Smartphone, Monitor, Globe, Laptop, Plus, Trash2, ChevronLeft } from 'lucide-react';
 
@@ -43,6 +42,8 @@ export default function PushTokensPage() {
 	const [newToken, setNewToken] = useState('');
 	const [newPlatform, setNewPlatform] = useState('web');
 	const [newDeviceId, setNewDeviceId] = useState('');
+	// UP-84：删除令牌原为单击直删、无确认。改组件化确认（不可逆操作 = danger 档）。
+	const [deleteTarget, setDeleteTarget] = useState<{ id: string } | null>(null);
 
 	const list = (data as any)?.items || [];
 
@@ -67,11 +68,14 @@ export default function PushTokensPage() {
 		}
 	};
 
-	const handleDelete = async (id: string) => {
+	const handleDeleteConfirm = async () => {
+		if (!deleteTarget) return;
 		try {
-			await deleteMutation.mutateAsync(id);
+			await deleteMutation.mutateAsync(deleteTarget.id);
 			toast.success(t('communication.pushTokens.deleted', 'Push token deleted'));
+			setDeleteTarget(null);
 		} catch (err: any) {
+			// 失败保留弹窗（可就地重试），与 family 页模式一致。
 			toast.error(extractApiError(err, t('common.error')).message);
 		}
 	};
@@ -210,7 +214,7 @@ export default function PushTokensPage() {
 									</div>
 								</div>
 								<button
-									onClick={() => handleDelete(token.id)}
+									onClick={() => setDeleteTarget(token)}
 									disabled={deleteMutation.isPending}
 									className="rounded-md p-1.5 text-neutral-600 hover:bg-danger-soft hover:text-danger-text transition-colors disabled:opacity-40"
 									title={t('communication.pushTokens.delete', 'Delete')}
@@ -257,6 +261,19 @@ export default function PushTokensPage() {
 					</div>
 				)}
 			</div>
+
+			<ConfirmDialog
+				open={deleteTarget !== null}
+				title={t('communication.pushTokens.confirmDeleteTitle', '删除推送令牌')}
+				description={t(
+					'communication.pushTokens.confirmDeleteDesc',
+					'删除后该设备将不再接收推送通知，需要重新注册令牌才能恢复。',
+				)}
+				variant="danger"
+				confirmText={t('communication.pushTokens.delete', '删除')}
+				onConfirm={handleDeleteConfirm}
+				onCancel={() => setDeleteTarget(null)}
+			/>
 		</div>
 	);
 }

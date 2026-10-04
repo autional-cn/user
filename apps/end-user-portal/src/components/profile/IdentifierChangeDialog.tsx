@@ -203,7 +203,13 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 							</button>
 							<button
 								onClick={handleSubmit}
-								disabled={changePhoneMut.isPending || changeEmailMut.isPending}
+								// UP-07：空值直发会被后端拒。前置禁用（新值 trim 后非空 + 密码非空才可提交）。
+								disabled={
+									changePhoneMut.isPending ||
+									changeEmailMut.isPending ||
+									!newValue.trim() ||
+									!password
+								}
 								className={btnCls}
 							>
 								{t('profile.identifierChange.sendCode')}

@@ -19,6 +19,7 @@ import {
 } from '@autional-cn/shared/generated/api';
 import type { WalletBalance } from './types';
 import { queryKeys } from './query-keys';
+import { isNotFoundError } from '@/lib/api-error';
 
 export async function getWalletBalance(userId: string): Promise<WalletBalance> {
 	return walletsBalanceByWallets(userId) as Promise<WalletBalance>;
@@ -30,7 +31,8 @@ export function useWalletBalance(): UseQueryResult<WalletBalance, Error> {
 		queryKey: queryKeys.wallet(userId || ''),
 		queryFn: () => getWalletBalance(userId || ''),
 		enabled: !!userId,
-		retry: 1,
+		// UP-01：wallet not found（404）= 业务空态，重试无意义（原 retry:1 造成 404×2 console 噪声）；其余错误保持 1 次重试。
+		retry: (failureCount, err) => !isNotFoundError(err) && failureCount < 1,
 	});
 }
 

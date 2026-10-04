@@ -10,6 +10,7 @@ import {
 } from '@autional-cn/shared/generated/api';
 import type { PointAccount } from './types';
 import { queryKeys } from './query-keys';
+import { isNotFoundError } from '@/lib/api-error';
 
 async function getPointAccount(userId: string): Promise<PointAccount> {
 	return pointsByPoints(userId) as Promise<PointAccount>;
@@ -21,7 +22,8 @@ export function usePointAccount(): UseQueryResult<PointAccount, Error> {
 		queryKey: queryKeys.points(userId || ''),
 		queryFn: () => getPointAccount(userId || ''),
 		enabled: !!userId,
-		retry: 1,
+		// UP-01：积分账户 404（point account not found）= 业务空态，不重试；其余错误保持 1 次重试。
+		retry: (failureCount, err) => !isNotFoundError(err) && failureCount < 1,
 	});
 }
 

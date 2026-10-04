@@ -110,7 +110,7 @@ export default function WalletPage() {
 				<div className="max-w-4xl mx-auto px-4 py-8 space-y-4">
 					<EmptyState
 						title={t('wallet.empty', '暂无钱包数据')}
-						description={t('wallet.emptyDesc', '当前账户尚未开通钱包，完成充值后即可使用')}
+						description={t('wallet.emptyDesc', '当前账户尚未开通钱包，开通后即可使用')}
 					/>
 					<div className="flex justify-center">
 						<button

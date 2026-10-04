@@ -13,6 +13,7 @@ import {
 	useBillingRecords,
 	useBillingUsage,
 	useBillingStatistics,
+	usePublicPlans,
 } from '@/hooks/queries';
 // 行的形状**只有一份**：由 hooks 导出。此前本页自己声明过一个等价接口，那是第二份定义，
 // 后端的字段一改就会有一边跟不上（而类型检查不会报——两边各自成立）。
@@ -51,6 +52,8 @@ export default function BillingPage() {
 	} = useBillingSubscription(tenantId, !!tenantId);
 	const { data: usage } = useBillingUsage(tenantId, !!tenantId);
 	const { data: stats } = useBillingStatistics(tenantId, !!tenantId);
+	// UP-54：用量分母需套餐真实配额，公开套餐列表含 quotas（见 PublicPlanResponse）。
+	const { data: plansData } = usePublicPlans();
 
 	const [page, setPage] = useState(1);
 	const { data: records } = useBillingRecords(tenantId, { page, pageSize: 20 }, !!tenantId);
@@ -99,15 +102,28 @@ export default function BillingPage() {
 	const currency = sub?.currency ?? 'CNY';
 	const autoRenew = sub?.autoRenew ?? false;
 
-	const maxApiCalls = 10000;
-	const maxStorage = 100;
-	const maxUsers = 100;
+	// UP-54：用量分母改接套餐真实配额（公开套餐 quotas，camelCaseKeys 后键为 camel 形），
+	// 原硬编码 10000/100/100 与套餐无关联已退役；配额缺失/为 0（未设置）时该卡不画进度条。
+	const currentPlan = (plansData?.items ?? []).find(
+		(p) => (p.planId ?? p.plan ?? p.id) === sub?.planId,
+	);
+	const planQuotas = currentPlan?.quotas;
+	const maxApiCalls =
+		planQuotas?.maxApiRequests && planQuotas.maxApiRequests > 0
+			? planQuotas.maxApiRequests
+			: undefined;
+	const maxStorage =
+		planQuotas?.maxStorageGb && planQuotas.maxStorageGb > 0 ? planQuotas.maxStorageGb : undefined;
+	const maxUsers = planQuotas?.maxUsers && planQuotas.maxUsers > 0 ? planQuotas.maxUsers : undefined;
 
 	const apiPercent =
-		usage?.apiCallsToday != null ? Math.min((usage.apiCallsToday / maxApiCalls) * 100, 100) : 0;
+		maxApiCalls != null
+			? Math.min(((usage?.apiCallsToday ?? 0) / maxApiCalls) * 100, 100)
+			: null;
 	const storagePercent =
-		usage?.storageGb != null ? Math.min((usage.storageGb / maxStorage) * 100, 100) : 0;
-	const usersPercent = usage?.users != null ? Math.min((usage.users / maxUsers) * 100, 100) : 0;
+		maxStorage != null ? Math.min(((usage?.storageGb ?? 0) / maxStorage) * 100, 100) : null;
+	const usersPercent =
+		maxUsers != null ? Math.min(((usage?.users ?? 0) / maxUsers) * 100, 100) : null;
 
 	// 列定义：只描述「这一页有哪些列」。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
 	// 由设计系统下发的组件级令牌决定 —— 与控制台那 156 处 antd Table 吃的是同一份令牌。
@@ -269,8 +285,16 @@ export default function BillingPage() {
 							<div>
 								<p className="text-sm text-neutral-600">{t('billing.spendingStats')}</p>
 								<p className="text-lg font-semibold">
-									{currency === 'CNY' ? '¥' : ''}
-									{(stats.totalSpend ?? 0).toLocaleString()}
+									{stats.totalSpend != null ? (
+										<>
+											{currency === 'CNY' ? '¥' : ''}
+											{Number(stats.totalSpend).toLocaleString()}
+										</>
+									) : (
+										<span className="text-neutral-500">
+											{t('billing.statsUnavailable', '暂不可用')}
+										</span>
+									)}
 								</p>
 							</div>
 						</div>
@@ -278,8 +302,16 @@ export default function BillingPage() {
 							<div>
 								<span className="text-neutral-600">{t('billing.mrr')}</span>
 								<p className="font-medium">
-									{currency === 'CNY' ? '¥' : ''}
-									{(stats.mrr ?? 0).toLocaleString()}
+									{stats.mrr != null ? (
+										<>
+											{currency === 'CNY' ? '¥' : ''}
+											{Number(stats.mrr).toLocaleString()}
+										</>
+									) : (
+										<span className="text-neutral-500">
+											{t('billing.statsUnavailable', '暂不可用')}
+										</span>
+									)}
 								</p>
 							</div>
 							<div>
@@ -289,10 +321,23 @@ export default function BillingPage() {
 							<div>
 								<span className="text-neutral-600">{t('billing.retentionRate')}</span>
 								<p className="font-medium">
-									{stats.retentionRate != null ? `${(stats.retentionRate * 100).toFixed(1)}%` : '-'}
+									{stats.retentionRate != null ? (
+										`${(stats.retentionRate * 100).toFixed(1)}%`
+									) : (
+										<span className="text-neutral-500">
+											{t('billing.statsUnavailable', '暂不可用')}
+										</span>
+									)}
 								</p>
 							</div>
 						</div>
+						{(stats.totalSpend == null ||
+							stats.mrr == null ||
+							stats.retentionRate == null) && (
+							<p className="mt-3 pt-3 border-t text-xs text-neutral-500">
+								{t('billing.statsUnavailableHint', '「暂不可用」项待计费服务提供数据后开放')}
+							</p>
+						)}
 					</div>
 				)}
 			</div>
@@ -312,7 +357,7 @@ export default function BillingPage() {
 					<UsageCard
 						icon={<HardDrive className="w-5 h-5 text-purple-500" />}
 						label={t('billing.storageUsage')}
-						value={`${usage?.storageGb ?? 0} GB`}
+						value={`${(usage?.storageGb ?? 0).toLocaleString()} GB`}
 						max={maxStorage}
 						percent={storagePercent}
 						unit="GB"
@@ -320,7 +365,7 @@ export default function BillingPage() {
 					<UsageCard
 						icon={<Users className="w-5 h-5 text-success" />}
 						label={t('billing.usageUsers')}
-						value={`${usage?.users ?? 0}`}
+						value={`${(usage?.users ?? 0).toLocaleString()}`}
 						max={maxUsers}
 						percent={usersPercent}
 					/>
@@ -383,10 +428,12 @@ function UsageCard({
 	icon: React.ReactNode;
 	label: string;
 	value: string;
-	max: number;
-	percent: number;
+	// UP-54：max/percent 可空 —— 套餐配额缺失时不画进度条（无分母的百分比无意义），只报用量。
+	max?: number;
+	percent: number | null;
 	unit?: string;
 }) {
+	const { t } = useTranslation();
 	return (
 		<div className="bg-white rounded-lg border p-4">
 			<div className="flex items-center gap-2 mb-3">
@@ -394,16 +441,27 @@ function UsageCard({
 				<span className="text-sm text-neutral-600">{label}</span>
 			</div>
 			<div className="text-xl font-bold mb-2">{value}</div>
-			<div className="w-full bg-neutral-200 rounded-full h-2 mb-1">
-				<div
-					className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-danger' : percent > 60 ? 'bg-amber-500' : 'bg-success'}`}
-					style={{ width: `${Math.max(percent, 2)}%` }}
-				/>
-			</div>
-			<div className="text-xs text-neutral-600">
-				{value} / {max}
-				{unit ? ` ${unit}` : ''} ({percent.toFixed(1)}%)
-			</div>
+			{max != null && percent != null ? (
+				<>
+					<div className="w-full bg-neutral-200 rounded-full h-2 mb-1">
+						<div
+							className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-danger' : percent > 60 ? 'bg-amber-500' : 'bg-success'}`}
+							style={{ width: `${Math.max(percent, 2)}%` }}
+						/>
+					</div>
+					<div className="text-xs text-neutral-600">
+						{value} / {max.toLocaleString()}
+						{unit ? ` ${unit}` : ''} ({percent.toFixed(1)}%)
+					</div>
+					{percent > 80 && (
+						<p className="mt-1 text-xs font-medium text-danger-text">
+							{t('billing.quotaWarning', '用量已达配额的 80% 以上，请留意扩容')}
+						</p>
+					)}
+				</>
+			) : (
+				<p className="text-xs text-neutral-500">{t('billing.quotaUnset', '未设置配额上限')}</p>
+			)}
 		</div>
 	);
 }

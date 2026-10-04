@@ -8,6 +8,7 @@ import {
 	useBillingUsage,
 	useBillingStatistics,
 	useBillingRecords,
+	usePublicPlans,
 } from '@/hooks/queries';
 
 // UP-56 回归锁：后端 decimal 序列化金额可能是字符串（"499"）。
@@ -24,6 +25,7 @@ vi.mock('@/hooks/queries', () => ({
 	useBillingUsage: vi.fn(),
 	useBillingStatistics: vi.fn(),
 	useBillingRecords: vi.fn(),
+	usePublicPlans: vi.fn(),
 }));
 
 function renderPage() {
@@ -55,6 +57,7 @@ describe('BillingPage 金额格式化（UP-56 / decimal 字符串形态）', () 
 		} as any);
 		vi.mocked(useBillingUsage).mockReturnValue({ data: undefined } as any);
 		vi.mocked(useBillingStatistics).mockReturnValue({ data: undefined } as any);
+		vi.mocked(usePublicPlans).mockReturnValue({ data: undefined } as any);
 		vi.mocked(useBillingRecords).mockReturnValue({
 			data: {
 				items: [
@@ -93,5 +96,52 @@ describe('BillingPage 金额格式化（UP-56 / decimal 字符串形态）', () 
 	it('数值金额 7.5 渲染为 ¥7.50（同口径两位小数）', async () => {
 		renderPage();
 		expect(await screen.findByText(/^¥7[.,]50$/)).toBeInTheDocument();
+	});
+});
+
+// UP-53/UP-54 回归锁：「未实现」与「真实 0」必须可区分 ——
+// 统计字段缺失渲染「暂不可用」（而非假 0）；套餐配额缺失不画无分母进度条。
+describe('BillingPage 三态分离（UP-53 / UP-54）', () => {
+	it('统计未实现 + 配额缺失 → 「暂不可用」×3 + 提示行 + 「未设置配额上限」×3，零假 0', async () => {
+		vi.mocked(useBillingStatistics).mockReturnValue({
+			data: { tenantId: 'tenant-1', activeUsers: 3 },
+		} as any);
+		vi.mocked(usePublicPlans).mockReturnValue({ data: undefined } as any);
+		renderPage();
+		const unavailable = await screen.findAllByText('暂不可用');
+		expect(unavailable.length).toBeGreaterThanOrEqual(3);
+		expect(screen.getByText('「暂不可用」项待计费服务提供数据后开放')).toBeInTheDocument();
+		expect(screen.queryByText(/^¥0[.,]00$/)).not.toBeInTheDocument();
+		expect(screen.getAllByText('未设置配额上限')).toHaveLength(3);
+	});
+
+	it('套餐含真实 quotas + 用量超 80% → 真实分母百分比 + 警示文案（UP-54）', async () => {
+		vi.mocked(usePublicPlans).mockReturnValue({
+			data: {
+				items: [
+					{
+						id: 'p1',
+						plan: 'pro',
+						planId: 'pro',
+						name: 'Pro',
+						description: '',
+						monthlyPrice: '499',
+						yearlyPrice: '4990',
+						features: [],
+						quotas: { maxUsers: 500, maxStorageGb: 10, maxApiRequests: 100000 },
+					},
+				],
+			},
+		} as any);
+		vi.mocked(useBillingUsage).mockReturnValue({
+			data: { apiCallsToday: 85001, storageGb: 9, users: 40 },
+		} as any);
+		renderPage();
+		// api 85001/100000=85.0%、storage 9/10=90.0% 均超 80% → 两条警示
+		expect(await screen.findByText('85.0%', { exact: false })).toBeInTheDocument();
+		expect(screen.getByText('90.0%', { exact: false })).toBeInTheDocument();
+		expect(screen.getAllByText('用量已达配额的 80% 以上，请留意扩容')).toHaveLength(2);
+		// users 40/500=8.0%，未超阈值 → 无警示
+		expect(screen.getByText('40 / 500 (8.0%)')).toBeInTheDocument();
 	});
 });
