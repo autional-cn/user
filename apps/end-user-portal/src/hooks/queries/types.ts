@@ -239,6 +239,8 @@ export interface PublicPlanResponse {
 	monthlyPrice: string;
 	yearlyPrice: string;
 	features: string[];
+	// 后端 is_popular 恒随响应下发（当前派生自 plan==pro，DEBT-063 待扩展）。
+	isPopular?: boolean;
 	// UP-54：后端 services/billing 公开套餐带 quotas（max_users / max_storage_gb / max_api_requests），
 	// 经 apiClient camelCaseKeys 深转换后键名为 camel（含 map 键）。
 	quotas?: Record<string, number>;

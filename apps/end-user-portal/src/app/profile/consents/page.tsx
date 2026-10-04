@@ -26,27 +26,35 @@ interface ConsentField {
 
 interface ConsentFieldMetadata {
 	key: string;
-	label: string;
-	description: string;
+	labelKey: string;
+	descKey: string;
 }
 
 const AVAILABLE_FIELDS: ConsentFieldMetadata[] = [
 	{
 		key: 'health_data',
-		label: 'Health Data',
-		description: 'Access to your health-related profile data',
+		labelKey: 'consents.field.healthData.label',
+		descKey: 'consents.field.healthData.desc',
 	},
-	{ key: 'location', label: 'Location', description: 'Your geographic location data' },
-	{ key: 'contacts', label: 'Contacts', description: 'Your contact list and address book' },
+	{
+		key: 'location',
+		labelKey: 'consents.field.location.label',
+		descKey: 'consents.field.location.desc',
+	},
+	{
+		key: 'contacts',
+		labelKey: 'consents.field.contacts.label',
+		descKey: 'consents.field.contacts.desc',
+	},
 	{
 		key: 'biometric_data',
-		label: 'Biometric Data',
-		description: 'Fingerprint, face recognition, and other biometric data',
+		labelKey: 'consents.field.biometricData.label',
+		descKey: 'consents.field.biometricData.desc',
 	},
 	{
 		key: 'browsing_history',
-		label: 'Browsing History',
-		description: 'Your in-app browsing and activity history',
+		labelKey: 'consents.field.browsingHistory.label',
+		descKey: 'consents.field.browsingHistory.desc',
 	},
 ];
 
@@ -73,6 +81,12 @@ export default function ConsentsPage() {
 	const [showModal, setShowModal] = useState(false);
 	const [selectedFields, setSelectedFields] = useState<Set<string>>(new Set());
 	const [revokingField, setRevokingField] = useState<string | null>(null);
+
+	// 已收录字段 → 本地化标签；未收录回退服务端 displayName / 原始键
+	const fieldLabelFor = (fieldKey: string): string | undefined => {
+		const known = AVAILABLE_FIELDS.find((f) => f.key === fieldKey);
+		return known ? t(known.labelKey) : undefined;
+	};
 
 	const {
 		data: consents = [],
@@ -185,7 +199,9 @@ export default function ConsentsPage() {
 							<div key={field.fieldKey} className="flex items-center justify-between px-6 py-4">
 								<div className="flex-1 min-w-0">
 									<div className="flex items-center gap-2">
-										<h4 className="text-sm font-medium text-neutral-900">{field.displayName}</h4>
+										<h4 className="text-sm font-medium text-neutral-900">
+											{fieldLabelFor(field.fieldKey) || field.displayName}
+										</h4>
 										{field.consented ? (
 											<span className="inline-flex items-center gap-0.5 rounded-full bg-success-soft px-2 py-0.5 text-xs font-medium text-success-text">
 												<Check size={10} />
@@ -285,8 +301,8 @@ export default function ConsentsPage() {
 									className="mt-0.5 h-4 w-4 rounded border-neutral-300 text-primary-600 focus:ring-primary-500"
 								/>
 								<div className="flex-1 min-w-0">
-									<p className="text-sm font-medium text-neutral-900">{field.label}</p>
-									<p className="text-xs text-neutral-600">{field.description}</p>
+									<p className="text-sm font-medium text-neutral-900">{t(field.labelKey)}</p>
+									<p className="text-xs text-neutral-600">{t(field.descKey)}</p>
 								</div>
 							</label>
 						))
@@ -299,7 +315,9 @@ export default function ConsentsPage() {
 				open={!!revokingField}
 				onClose={() => setRevokingField(null)}
 				title={t('consents.revokeConfirmTitle')}
-				description={t('consents.revokeConfirmDesc', { field: revokingField })}
+				description={t('consents.revokeConfirmDesc', {
+					field: fieldLabelFor(revokingField ?? '') || revokingField,
+				})}
 				maxWidth="sm"
 				footer={
 					<>

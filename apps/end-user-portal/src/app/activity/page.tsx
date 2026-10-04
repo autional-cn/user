@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem } from '@/hooks/queries';
 import { auditStatusKind, formatTime } from '@/lib/format';
+import { parseUserAgent } from '@/lib/user-agent';
 import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable, DateRangeFilter } from '@autional-cn/ui/antd';
@@ -140,11 +141,13 @@ export default function ActivityPage() {
 			// 接口字段为 created_at（createdAt），timestamp 仅为兼容旧形状的兜底（UP-32，
 			// 与登录历史页 `timestamp || createdAt` 同一口径）。
 			const ts = log.timestamp || log.createdAt;
+			const ua = parseUserAgent(log.userAgent);
 			return [
 				ts ? formatTime(ts) : '',
 				getActionLabel(log.action),
 				log.ip || '',
-				log.userAgent || '',
+				// UP-36：与登录历史页 CSV 同口径（解析后的「浏览器 (平台)」而非 40 字符断尾原文）。
+				log.userAgent ? `${ua.browser} ${ua.os}`.trim() : '—',
 				// 空值同显「—」（与登录历史表/CSV 同族判定，AC-02-2/3）。
 				log.location || '—',
 				// 三态：'' 既不算成功也不算失败（与表格列同一语义）。
@@ -201,12 +204,19 @@ export default function ActivityPage() {
 			title: t('activity.table.device'),
 			dataIndex: 'userAgent',
 			key: 'userAgent',
-			render: (v: string | undefined) => (
-				<span className="inline-flex items-center gap-1.5 text-xs">
-					{getDeviceIcon(v)}
-					<span>{v ? v.slice(0, 40) : '—'}</span>
-				</span>
-			),
+			render: (v: string | undefined) => {
+				// UP-36：与登录历史页同口径（解析为「浏览器 (平台)」；截断交给 CSS ellipsis + title 悬浮全量）。
+				const ua = parseUserAgent(v);
+				const text = v ? `${ua.browser} ${ua.os}`.trim() : '—';
+				return (
+					<span className="inline-flex items-center gap-1.5 text-xs">
+						{getDeviceIcon(v)}
+						<span className="inline-block max-w-[200px] truncate" title={text}>
+							{text}
+						</span>
+					</span>
+				);
+			},
 		},
 		{
 			title: t('activity.table.result'),

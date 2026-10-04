@@ -6,6 +6,7 @@ import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem, AuditLogsParams } from '@/hooks/queries';
 import { authMeAuditLogs } from '@autional-cn/shared/generated/api';
 import { auditStatusKind, formatTime } from '@/lib/format';
+import { parseUserAgent } from '@/lib/user-agent';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
@@ -75,23 +76,9 @@ export default function LoginHistoryPage() {
 	const total: number = data?.total || 0;
 	const hasFilters = statusFilter !== 'all' || !!keyword || !!startDate || !!endDate;
 
-	const parseUserAgent = (ua?: string): { browser: string; os: string } => {
-		if (!ua) return { browser: t('loginHistory.unknownBrowser'), os: '' };
-		let browser = ua;
-		let os = '';
-		if (ua.includes('Chrome')) browser = 'Chrome';
-		else if (ua.includes('Firefox')) browser = 'Firefox';
-		else if (ua.includes('Safari')) browser = 'Safari';
-		else if (ua.includes('Edge')) browser = 'Edge';
-
-		if (ua.includes('Windows')) os = 'Windows';
-		else if (ua.includes('Mac')) os = 'macOS';
-		else if (ua.includes('Linux')) os = 'Linux';
-		else if (ua.includes('Android')) os = 'Android';
-		else if (ua.includes('iPhone') || ua.includes('iOS')) os = 'iOS';
-
-		return { browser, os: os ? `(${os})` : '' };
-	};
+	// 空 UA 归「未知浏览器」（CSV 与表格同值）；粗解析口径见 lib/user-agent（UP-36 两页共用）。
+	const uaOf = (ua?: string) =>
+		ua ? parseUserAgent(ua) : { browser: t('loginHistory.unknownBrowser'), os: '' };
 
 	// UP-29：导出全量（跨页）而非仅当前页 —— 按同一筛选条件逐页拉取，
 	// 直到拉满 total 或遇到不足一页（修正「列表显示 300 条、CSV 只有 10 条」的欺骗性口径）。
@@ -119,7 +106,7 @@ export default function LoginHistoryPage() {
 				t('loginHistory.reason'),
 			];
 			const rows = all.map((item) => {
-				const ua = parseUserAgent(item.userAgent);
+				const ua = uaOf(item.userAgent);
 				const statusKind = auditStatusKind(item.status);
 				return [
 					item.timestamp || item.createdAt || '',
@@ -194,10 +181,11 @@ export default function LoginHistoryPage() {
 			),
 			key: 'device',
 			render: (_: unknown, item: AuditLogItem) => {
-				const ua = parseUserAgent(item.userAgent);
+				const ua = uaOf(item.userAgent);
+				const text = `${ua.browser} ${ua.os}`.trim() || t('loginHistory.unknownDevice');
 				return (
-					<span className="inline-block max-w-[200px] truncate">
-						{`${ua.browser} ${ua.os}`.trim() || t('loginHistory.unknownDevice')}
+					<span className="inline-block max-w-[200px] truncate" title={text}>
+						{text}
 					</span>
 				);
 			},

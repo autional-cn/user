@@ -81,8 +81,10 @@ const mockStats = {
 	spentThisMonth: 800,
 };
 
+// UP-50：服务端 cash_value 为 decimal 裸字符串（service-point point_query.go 计算、审计实测 "18"），
+// 页面补「¥」单位。mock 复刻真实契约形状，不再用臆造的已格式化串。
 const mockValue = {
-	cashValue: '¥150.00',
+	cashValue: '18',
 };
 
 const mockRisk = {
@@ -160,7 +162,7 @@ describe('PointsPage', () => {
 		expect(screen.getByText('冻结积分')).toBeInTheDocument();
 		expect(screen.getByText('500')).toBeInTheDocument();
 		expect(screen.getByText('可兑换现金')).toBeInTheDocument();
-		expect(screen.getByText('¥150.00')).toBeInTheDocument();
+		expect(screen.getByText('¥18')).toBeInTheDocument();
 		expect(screen.getByText('风险评分')).toBeInTheDocument();
 		expect(screen.getByText('85分')).toBeInTheDocument();
 		expect(screen.getByText('即将过期')).toBeInTheDocument();
@@ -178,7 +180,7 @@ describe('PointsPage', () => {
 		expect(screen.getByText('积分中心')).toBeInTheDocument();
 		expect(screen.getByText('15,000')).toBeInTheDocument();
 		expect(screen.getByText('500')).toBeInTheDocument();
-		expect(screen.getByText('¥150.00')).toBeInTheDocument();
+		expect(screen.getByText('¥18')).toBeInTheDocument();
 		expect(screen.getByText('暂无积分数据')).toBeInTheDocument();
 	});
 

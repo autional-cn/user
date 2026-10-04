@@ -85,6 +85,25 @@ const RISK_STATUS_VARIANTS: Record<string, StatusVariant> = {
 	high: 'danger',
 };
 
+// 后端 recommendations 为英文原文（service-profile profile_service.go）且不随 Accept-Language 变化；
+// 按原文映射本地化键，未收录原文透传（服务端新增建议时不致断裂）。
+const RECOMMENDATION_KEYS: Record<string, string> = {
+	'too many custom fields; consider periodically cleaning up unnecessary personal data to reduce leak risk':
+		'privacyImpact.rec.tooManyFields',
+	'moderate number of custom fields; evaluate the necessity of each field':
+		'privacyImpact.rec.moderateFields',
+	'profile visibility is public; change to contacts-only or private to reduce privacy risk':
+		'privacyImpact.rec.publicVisibility',
+	'email address is publicly visible; disable this option': 'privacyImpact.rec.emailVisible',
+	'phone number is publicly visible; disable this option': 'privacyImpact.rec.phoneVisible',
+	'location info is publicly visible; enable only when necessary': 'privacyImpact.rec.locationVisible',
+	'profile is archived; data processing is suspended, risk is low': 'privacyImpact.rec.archived',
+	'profile is fairly complete; more sensitive fields increase risk; fill in only necessary information':
+		'privacyImpact.rec.fairlyComplete',
+	'current privacy configuration is good; review privacy settings periodically':
+		'privacyImpact.rec.configGood',
+};
+
 const AUDIENCE_ICONS: Record<string, typeof Globe> = {
 	public: Globe,
 	contacts: Users,
@@ -319,7 +338,7 @@ export default function PrivacyImpactPage() {
 							<ul className="mt-2 list-inside list-disc space-y-1">
 								{impact.recommendations.map((rec, idx) => (
 									<li key={idx} className="text-sm text-info-text">
-										{rec}
+										{RECOMMENDATION_KEYS[rec] ? t(RECOMMENDATION_KEYS[rec]) : rec}
 									</li>
 								))}
 							</ul>

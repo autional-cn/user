@@ -48,6 +48,21 @@ const planActiveColors: Record<string, string> = {
 	enterprise: 'ring-purple-500 bg-purple-50',
 };
 
+// UP-58：服务端 features 是语言包键原文（service-core lang_base 缺包/缺键时原样返回键、丢参数），
+// 前端按键映射本地化文案；数值参数从响应 quotas 重建（丢参后的唯一来源）。未收录键透传。
+const FEATURE_LOCALE_KEYS: Record<string, string> = {
+	'billing.plans.feature.mfa_enabled': 'billing.plans.feature.mfaEnabled',
+	'billing.plans.feature.sso_enabled': 'billing.plans.feature.ssoEnabled',
+	'billing.plans.feature.max_users': 'billing.plans.feature.maxUsers',
+	'billing.plans.feature.storage_gb': 'billing.plans.feature.storageGb',
+	'billing.plans.feature.api_calls': 'billing.plans.feature.apiCalls',
+	'billing.plans.feature.audit_log_days': 'billing.plans.feature.auditLogDays',
+	'billing.plans.support.community': 'billing.plans.feature.supportCommunity',
+	'billing.plans.support.basic': 'billing.plans.feature.supportBasic',
+	'billing.plans.support.priority': 'billing.plans.feature.supportPriority',
+	'billing.plans.support.dedicated': 'billing.plans.feature.supportDedicated',
+};
+
 export default function SubscribePage() {
 	const { t } = useTranslation();
 	const { user } = useAuth();
@@ -69,7 +84,25 @@ export default function SubscribePage() {
 	>('idle');
 	const [resultMsg, setResultMsg] = useState('');
 
-	const plans = plansData?.items || [];
+	// UP-61：卡片按「月付价升序」显式排序（免费档在前）；同价保持服务端顺序（sort 稳定）。
+	const plans = [...(plansData?.items || [])].sort(
+		(a, b) => parseFloat(a.monthlyPrice || '0') - parseFloat(b.monthlyPrice || '0'),
+	);
+
+	const featureLabel = (f: string, quotas?: PublicPlanResponse['quotas']): string => {
+		const key = FEATURE_LOCALE_KEYS[f];
+		if (!key) return f;
+		switch (f) {
+			case 'billing.plans.feature.max_users':
+				return t(key, { count: quotas?.maxUsers ?? 0 });
+			case 'billing.plans.feature.storage_gb':
+				return t(key, { size: quotas?.maxStorageGb ?? 0 });
+			case 'billing.plans.feature.api_calls':
+				return t(key, { count: quotas?.maxApiRequests ?? 0 });
+			default:
+				return t(key);
+		}
+	};
 
 	const getCycleLabel = (cycle: string) => {
 		const labels: Record<string, string> = {
@@ -149,7 +182,8 @@ export default function SubscribePage() {
 			{currentSub?.plan && (
 				<div className="text-center">
 					<span className="inline-block px-4 py-1.5 rounded-full bg-amber-50 text-amber-700 text-sm font-medium border border-amber-200">
-						{t('billing.subscribe.currentPlan')}: {currentSub.plan} (
+						{t('billing.subscribe.currentPlan')}:{' '}
+						{plans.find((p) => p.plan === currentSub.plan)?.name || currentSub.plan} (
 						{currentSub.billingCycle === 'monthly'
 							? getCycleLabel('monthly')
 							: getCycleLabel('yearly')}
@@ -211,6 +245,11 @@ export default function SubscribePage() {
 									{t('billing.subscribe.currentBadge')}
 								</span>
 							)}
+							{plan.isPopular && (
+								<span className="pointer-events-none absolute -top-2.5 left-3 px-3 py-0.5 rounded-full bg-[var(--color-brand)] text-white text-xs font-bold">
+									{t('billing.subscribe.recommendedBadge')}
+								</span>
+							)}
 
 							<div className="flex flex-col items-center text-center space-y-3">
 								<div className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-200">
@@ -237,7 +276,7 @@ export default function SubscribePage() {
 									{features(plan).map((f, i) => (
 										<li key={i} className="flex items-start gap-2 text-sm text-neutral-700">
 											<Check className="w-4 h-4 text-success mt-0.5 shrink-0" />
-											{f}
+											{featureLabel(f, plan.quotas)}
 										</li>
 									))}
 								</ul>

@@ -20,7 +20,7 @@ import {
 	TrendingDown,
 	Clock,
 	AlertTriangle,
-	DollarSign,
+	Banknote,
 	Shield,
 } from 'lucide-react';
 import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
@@ -182,9 +182,9 @@ export default function PointsPage() {
 					value={frozen.toLocaleString()}
 				/>
 				<Card
-					icon={<DollarSign className="w-5 h-5 text-success" />}
+					icon={<Banknote className="w-5 h-5 text-success" />}
 					label={t('points.redeemableCash')}
-					value={value?.cashValue ?? '-'}
+					value={value?.cashValue != null ? `¥${value.cashValue}` : '-'}
 				/>
 				<Card
 					icon={<Shield className="w-5 h-5 text-purple-500" />}

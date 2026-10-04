@@ -24,22 +24,24 @@ import {
 	ConfirmDialog,
 } from '@autional-cn/ui';
 
-const roleConfig: Record<string, { icon: typeof ShieldCheck; label: string; color: string }> = {
-	parent_admin: { icon: Crown, label: 'Parent Admin', color: 'text-amber-600' },
-	child_limited: { icon: ShieldCheck, label: 'Child (Limited)', color: 'text-primary-600' },
-	guest_viewer: { icon: Eye, label: 'Guest Viewer', color: 'text-neutral-600' },
+const roleConfig: Record<string, { icon: typeof ShieldCheck; labelKey: string; color: string }> = {
+	parent_admin: { icon: Crown, labelKey: 'devices.family.role.parentAdmin', color: 'text-amber-600' },
+	child_limited: {
+		icon: ShieldCheck,
+		labelKey: 'devices.family.role.childLimited',
+		color: 'text-primary-600',
+	},
+	guest_viewer: { icon: Eye, labelKey: 'devices.family.role.guestViewer', color: 'text-neutral-600' },
 };
 
 const roleOptions = [
-	{ value: 'parent_admin', label: 'Parent Admin' },
-	{ value: 'child_limited', label: 'Child (Limited)' },
-	{ value: 'guest_viewer', label: 'Guest Viewer' },
+	{ value: 'parent_admin', labelKey: 'devices.family.role.parentAdmin' },
+	{ value: 'child_limited', labelKey: 'devices.family.role.childLimited' },
+	{ value: 'guest_viewer', labelKey: 'devices.family.role.guestViewer' },
 ];
 
-function getRoleConfig(role?: string) {
-	return (
-		roleConfig[role || ''] || { icon: Users, label: role || 'Unknown', color: 'text-neutral-600' }
-	);
+function getRoleConfig(role?: string): { icon: typeof ShieldCheck; color: string; labelKey?: string } {
+	return roleConfig[role || ''] || { icon: Users, color: 'text-neutral-600' };
 }
 
 export default function FamilyAccessPage() {
@@ -196,7 +198,7 @@ export default function FamilyAccessPage() {
 							>
 								{roleOptions.map((opt) => (
 									<option key={opt.value} value={opt.value}>
-										{opt.label}
+										{t(opt.labelKey)}
 									</option>
 								))}
 							</select>
@@ -233,6 +235,9 @@ export default function FamilyAccessPage() {
 							{members.map((member) => {
 								const cfg = getRoleConfig(member.role);
 								const RoleIcon = cfg.icon;
+								const roleLabel = cfg.labelKey
+									? t(cfg.labelKey)
+									: member.role || t('devices.family.roleUnknown');
 								return (
 									<li key={member.id} className="flex items-center justify-between gap-4 p-4">
 										<div className="flex items-center gap-3">
@@ -245,7 +250,7 @@ export default function FamilyAccessPage() {
 												</p>
 												<div className={`flex items-center gap-1 text-xs ${cfg.color}`}>
 													<RoleIcon size={12} />
-													{cfg.label}
+													{roleLabel}
 												</div>
 											</div>
 										</div>

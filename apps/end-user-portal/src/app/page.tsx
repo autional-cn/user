@@ -94,7 +94,12 @@ export default function DashboardPage() {
 				<div>
 					<h2 className="text-2xl font-bold text-neutral-900">
 						{t('dashboard.greeting', {
-							name: profile?.username || user?.username || user?.email || t('common.userFallback'),
+							name:
+								user?.displayName?.trim() ||
+								profile?.username ||
+								user?.username ||
+								user?.email ||
+								t('common.userFallback'),
 						})}
 					</h2>
 					<p className="mt-1 text-neutral-600">{t('dashboard.welcome')}</p>

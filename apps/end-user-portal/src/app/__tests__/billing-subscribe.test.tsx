@@ -101,3 +101,77 @@ describe('SubscribePage 套餐卡键盘可达（UP-60）', () => {
 		expect(h.subscribe).not.toHaveBeenCalled();
 	});
 });
+
+// UP-58/61 回归锁：①服务端 features 键映射本地化 + quotas 参数重建；②月付价升序排序；
+// ③isPopular 徽标；④当前套餐胶囊显示名（服务端 name 优先，非 plan 代码）；⑤未收录键透传。
+const PLANS_58 = [
+	{
+		id: 'p-pro',
+		plan: 'pro',
+		name: 'Pro',
+		description: '专业版',
+		monthlyPrice: '499',
+		yearlyPrice: '4990',
+		features: ['billing.plans.feature.max_users', 'billing.plans.feature.mfa_enabled', 'vendor.raw.key'],
+		quotas: { maxUsers: 10 },
+		isPopular: true,
+	},
+	{
+		id: 'p-basic',
+		plan: 'basic',
+		name: 'Basic',
+		description: '基础版',
+		monthlyPrice: '99',
+		yearlyPrice: '990',
+		features: ['billing.plans.feature.sso_enabled'],
+		quotas: {},
+	},
+];
+
+describe('SubscribePage 套餐文案/排序/徽标（UP-58/61）', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		vi.mocked(usePublicPlans).mockReturnValue({
+			data: { items: PLANS_58 },
+			isLoading: false,
+			error: null,
+			refetch: vi.fn(),
+		} as any);
+		vi.mocked(useSubscription).mockReturnValue({
+			data: { plan: 'pro', billingCycle: 'monthly' },
+		} as any);
+		vi.mocked(useSubscribe).mockReturnValue({
+			mutateAsync: vi.fn(),
+			isPending: false,
+		} as any);
+	});
+
+	it('服务端 feature 键映射本地化 + quotas 重建数值参数（UP-58）', async () => {
+		renderPage();
+		await screen.findByText('选择套餐');
+		expect(screen.getByText('多因素认证（MFA）')).toBeInTheDocument();
+		expect(screen.getByText('单点登录（SSO）')).toBeInTheDocument();
+		// max_users 丢参后从 quotas.maxUsers 重建（"最多 10 名用户"）
+		expect(screen.getByText('最多 10 名用户')).toBeInTheDocument();
+		// 未收录键透传（服务端新增建议/特性时不致断裂）
+		expect(screen.getByText('vendor.raw.key')).toBeInTheDocument();
+	});
+
+	it('卡片按月付价升序 + isPopular 显示「推荐」徽标（UP-61）', async () => {
+		renderPage();
+		await screen.findByText('选择套餐');
+		const headings = screen.getAllByRole('heading', { level: 3 });
+		// fixture 故意 Pro(499) 在前，排序后 Basic(99) 必须在前面
+		expect(headings[0]).toHaveTextContent('Basic');
+		expect(headings[1]).toHaveTextContent('Pro');
+		expect(screen.getByText('推荐')).toBeInTheDocument();
+	});
+
+	it('当前套餐胶囊用套餐显示名而非 plan 代码（UP-61）', async () => {
+		renderPage();
+		await screen.findByText('选择套餐');
+		const badge = screen.getByText(/当前套餐/, { selector: 'span' });
+		expect(badge.textContent).toContain('Pro');
+		expect(badge.textContent).toContain('按月');
+	});
+});
