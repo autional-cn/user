@@ -258,6 +258,7 @@ export default function LoginHistoryPage() {
 					{(['all', 'success', 'failed'] as const).map((f) => (
 						<button
 							key={f}
+							aria-pressed={statusFilter === f}
 							onClick={() => {
 								setStatusFilter(f);
 								setPage(1);

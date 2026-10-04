@@ -74,4 +74,28 @@ describe('AnnouncementsPage — UP-88 忽略持久化（per-user localStorage）
 		await waitFor(() => expect(screen.getByText('公告一')).toBeInTheDocument());
 		expect(screen.getByText('公告二')).toBeInTheDocument();
 	});
+
+	it('UP-87：展开=平级透明覆盖 button（aria-expanded + 可访问名=标题）；DOM 无 button 嵌套 button', async () => {
+		render(<AnnouncementsPage />, { wrapper: TestWrapper });
+		await screen.findByText('公告一');
+
+		// 旧结构：外层整卡 button 内又嵌「忽略」button（HTML 非法，AT 行为不确定）
+		expect(document.querySelectorAll('button button')).toHaveLength(0);
+
+		const cover = screen.getByRole('button', { name: '公告一' });
+		expect(cover.tagName).toBe('BUTTON');
+		expect(cover).toHaveAttribute('aria-expanded', 'false');
+		// 「忽略」是抬升的平级按钮，不是覆盖层后代
+		const dismiss = screen.getAllByRole('button', { name: '忽略' })[0];
+		expect(cover.contains(dismiss)).toBe(false);
+
+		fireEvent.click(cover);
+		expect(cover).toHaveAttribute('aria-expanded', 'true');
+		// 展开面板出现第三种「忽略」按钮（dismissAndClose 文案同为「忽略」）
+		expect(screen.getAllByRole('button', { name: '忽略' })).toHaveLength(3);
+
+		fireEvent.click(cover);
+		expect(cover).toHaveAttribute('aria-expanded', 'false');
+		expect(screen.getAllByRole('button', { name: '忽略' })).toHaveLength(2);
+	});
 });

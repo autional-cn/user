@@ -241,6 +241,7 @@ export default function ActivityPage() {
 
 			<div className="flex flex-wrap items-center gap-3">
 				<select
+					aria-label={t('activity.table.action')}
 					value={actionFilter}
 					onChange={(e) => {
 						setActionFilter(e.target.value);

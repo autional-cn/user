@@ -81,57 +81,64 @@ export default function AnnouncementsPage() {
 						key={ann.id}
 						className="rounded-lg border border-neutral-200 bg-white shadow-sm overflow-hidden transition-shadow hover:shadow-md"
 					>
-						<button
-							onClick={() => setExpandedId(expandedId === ann.id ? null : ann.id)}
-							className="flex w-full items-start gap-4 p-5 text-left"
-						>
-							<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-amber-50 text-amber-700">
-								<Megaphone size={20} />
-							</div>
-							<div className="flex-1 min-w-0">
-								<div className="flex items-center gap-2">
-									<h3 className="text-base font-semibold text-neutral-900">{ann.title}</h3>
-									{ann.views != null && (
-										<span className="flex items-center gap-1 text-xs text-neutral-600">
-											<Eye size={12} />
-											{ann.views}
-										</span>
-									)}
+						{/* UP-87：此前外层整卡 button 内又嵌「忽略」button（HTML 非法，AT 行为不确定；
+						    整卡可访问名 144 字符）。展开=透明覆盖 button（aria-label 取标题）；
+						    忽略=平级 button 抬到其上。覆盖层只罩头部区，展开区控件不受影响。 */}
+						<div className="relative">
+							<button
+								type="button"
+								onClick={() => setExpandedId(expandedId === ann.id ? null : ann.id)}
+								aria-expanded={expandedId === ann.id}
+								aria-label={ann.title}
+								className="absolute inset-0 cursor-pointer focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary-500"
+							/>
+							<div className="flex items-start gap-4 p-5">
+								<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-amber-50 text-amber-700">
+									<Megaphone size={20} />
 								</div>
-								{expandedId !== ann.id && (
-									<p className="mt-1 text-sm text-neutral-600 line-clamp-2">
-										{ann.content?.slice(0, 200) ||
-											t('announcements.noContentPreview', '(no content)')}
-									</p>
-								)}
-								<div className="mt-2 flex items-center justify-between">
-									<span className="text-xs text-neutral-600">
-										{ann.publishAt
-											? t('announcements.published', { date: formatTime(ann.publishAt) })
-											: formatTime(ann.createdAt)}
-									</span>
+								<div className="flex-1 min-w-0">
 									<div className="flex items-center gap-2">
-										<button
-											onClick={(e) => {
-												e.stopPropagation();
-												handleDismiss(ann.id);
-											}}
-											className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-600 transition-colors"
-										>
-											<X size={12} />
-											{t('announcements.dismiss', 'Dismiss')}
-										</button>
+										<h3 className="text-base font-semibold text-neutral-900">{ann.title}</h3>
+										{ann.views != null && (
+											<span className="flex items-center gap-1 text-xs text-neutral-600">
+												<Eye size={12} />
+												{ann.views}
+											</span>
+										)}
+									</div>
+									{expandedId !== ann.id && (
+										<p className="mt-1 text-sm text-neutral-600 line-clamp-2">
+											{ann.content?.slice(0, 200) ||
+												t('announcements.noContentPreview', '(no content)')}
+										</p>
+									)}
+									<div className="mt-2 flex items-center justify-between">
 										<span className="text-xs text-neutral-600">
-											{expandedId === ann.id ? (
-												<ChevronDown size={14} className="text-neutral-500" />
-											) : (
-												<ChevronRight size={14} className="text-neutral-500" />
-											)}
+											{ann.publishAt
+												? t('announcements.published', { date: formatTime(ann.publishAt) })
+												: formatTime(ann.createdAt)}
 										</span>
+										<div className="flex items-center gap-2">
+											<button
+												type="button"
+												onClick={() => handleDismiss(ann.id)}
+												className="relative z-10 flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-600 transition-colors"
+											>
+												<X size={12} />
+												{t('announcements.dismiss', 'Dismiss')}
+											</button>
+											<span className="text-xs text-neutral-600">
+												{expandedId === ann.id ? (
+													<ChevronDown size={14} className="text-neutral-500" />
+												) : (
+													<ChevronRight size={14} className="text-neutral-500" />
+												)}
+											</span>
+										</div>
 									</div>
 								</div>
 							</div>
-						</button>
+						</div>
 
 						{expandedId === ann.id && (
 							<div className="border-t border-neutral-100 px-5 py-4 bg-neutral-50">

@@ -189,7 +189,24 @@ export default function PointsPage() {
 				<Card
 					icon={<Shield className="w-5 h-5 text-purple-500" />}
 					label={t('points.riskScore')}
-					value={risk?.riskScore != null ? `${risk.riskScore}${t('points.scoreSuffix')}` : '-'}
+					/* UP-51：等级此前仅靠颜色传达（绿=低风险），色觉障碍用户丢失语义 —— 颜色+文字双通道。 */
+					value={
+						risk?.riskScore != null ? (
+							<>
+								{risk.riskScore}
+								{t('points.scoreSuffix')}
+								<span className="ml-1 text-xs font-normal">
+									{risk.riskLevel === 'high'
+										? t('privacyImpact.riskHigh')
+										: risk.riskLevel === 'medium'
+											? t('privacyImpact.riskMedium')
+											: t('privacyImpact.riskLow')}
+								</span>
+							</>
+						) : (
+							'-'
+						)
+					}
 					valueClassName={
 						risk?.riskLevel === 'high'
 							? 'text-danger'
@@ -292,7 +309,7 @@ function Card({
 }: {
 	icon: React.ReactNode;
 	label: string;
-	value: string;
+	value: React.ReactNode;
 	valueClassName?: string;
 }) {
 	return (

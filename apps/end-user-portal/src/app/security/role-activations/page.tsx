@@ -283,6 +283,7 @@ export default function RoleActivationsPage() {
 						</h3>
 						<button
 							onClick={() => setShowForm(false)}
+							aria-label={t('common.close', '关闭')}
 							className="text-neutral-600 hover:text-neutral-600"
 						>
 							<X size={20} />
@@ -291,7 +292,10 @@ export default function RoleActivationsPage() {
 
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							<label
+								htmlFor="role-activation-role"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('roleActivations.selectRole')}
 							</label>
 							{rolesError ? (
@@ -310,6 +314,7 @@ export default function RoleActivationsPage() {
 								<p className="mt-1 text-sm text-neutral-600">{t('roleActivations.rolesLoading')}</p>
 							) : roles && roles.length > 0 ? (
 								<select
+									id="role-activation-role"
 									value={form.role_id}
 									onChange={(e) => setForm({ ...form, role_id: e.target.value })}
 									className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
@@ -327,10 +332,14 @@ export default function RoleActivationsPage() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							<label
+								htmlFor="role-activation-duration"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('roleActivations.duration')}
 							</label>
 							<select
+								id="role-activation-duration"
 								value={form.duration}
 								onChange={(e) => setForm({ ...form, duration: e.target.value })}
 								className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
@@ -344,10 +353,14 @@ export default function RoleActivationsPage() {
 						</div>
 
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							<label
+								htmlFor="role-activation-justification"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('roleActivations.justification')}
 							</label>
 							<textarea
+								id="role-activation-justification"
 								value={form.justification}
 								onChange={(e) => setForm({ ...form, justification: e.target.value })}
 								rows={3}

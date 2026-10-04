@@ -183,6 +183,7 @@ export default function CommunicationHistoryPage() {
 					{channelOptions.map((ch) => (
 						<button
 							key={ch}
+							aria-pressed={channelFilter === ch}
 							onClick={() => {
 								setChannelFilter(ch);
 								setPage(1);

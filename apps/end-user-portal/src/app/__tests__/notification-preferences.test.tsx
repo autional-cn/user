@@ -131,6 +131,23 @@ describe('NotificationPreferencesPage（UP-74-A / AC-601, AC-602, AC-604, AC-605
 		expect(h.prefsPut).not.toHaveBeenCalled();
 	});
 
+	it('UP-76：开关可访问名=行标签（aria-labelledby 关联），全页零匿名 switch', async () => {
+		h.prefsGet.mockResolvedValue(initialPrefs);
+		renderPage();
+		await screen.findByText('通知偏好设置');
+
+		// 可访问名取自 aria-labelledby 引用的标签元素（短标签；长文案是描述行）
+		const typeSwitch = await screen.findByRole('switch', { name: '营销' });
+		expect(typeSwitch).toHaveAttribute('aria-checked', 'true');
+		const channelSwitch = screen.getByRole('switch', { name: '推送通知' });
+		expect(channelSwitch).toHaveAttribute('aria-checked', 'false');
+
+		// 零匿名开关：每一个 switch 都拿得到非空可访问名
+		for (const sw of screen.getAllByRole('switch')) {
+			expect(sw).toHaveAccessibleName();
+		}
+	});
+
 	it('AC-605：channels 往返（push 关→开）保存回读无回归，email 不受影响', async () => {
 		h.prefsGet.mockResolvedValue(initialPrefs);
 		const first = renderPage();

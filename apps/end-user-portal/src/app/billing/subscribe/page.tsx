@@ -191,15 +191,23 @@ export default function SubscribePage() {
 					return (
 						<div
 							key={plan.id || plan.plan}
-							onClick={() => setSelectedPlan(plan)}
-							className={`relative bg-white rounded-xl border-2 p-6 cursor-pointer transition-all ${
+							className={`relative bg-white rounded-xl border-2 p-6 transition-all ${
 								isSelected
 									? `ring-2 ${planActiveColors[plan.plan] || 'ring-[var(--color-brand)] bg-primary-50'}`
 									: planColors[plan.plan] || 'border-neutral-300'
 							} hover:shadow-lg`}
 						>
+							{/* UP-60：整卡选择此前是 div[onClick] —— 无键盘可达、无选中态语义。
+							    透明覆盖按钮承担指针+键盘交互（Enter/Space 可选卡）；卡内订阅按钮抬到 z-10 之上。 */}
+							<button
+								type="button"
+								aria-pressed={isSelected}
+								aria-label={plan.name || plan.plan}
+								onClick={() => setSelectedPlan(plan)}
+								className="absolute inset-0 cursor-pointer rounded-xl focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-brand)]"
+							/>
 							{isCurrent && (
-								<span className="absolute -top-2.5 right-3 px-3 py-0.5 rounded-full bg-success text-white text-xs font-bold">
+								<span className="pointer-events-none absolute -top-2.5 right-3 px-3 py-0.5 rounded-full bg-success text-white text-xs font-bold">
 									{t('billing.subscribe.currentBadge')}
 								</span>
 							)}
@@ -236,12 +244,9 @@ export default function SubscribePage() {
 
 								{isSelected && !isCurrent && (
 									<button
-										onClick={(e) => {
-											e.stopPropagation();
-											handleSubscribe();
-										}}
+										onClick={() => handleSubscribe()}
 										disabled={subscribeStatus === 'submitting'}
-										className="w-full py-2.5 rounded-lg bg-[var(--color-brand)] text-white font-medium hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 mt-2"
+										className="relative z-10 w-full py-2.5 rounded-lg bg-[var(--color-brand)] text-white font-medium hover:bg-primary-600 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 mt-2"
 									>
 										{subscribeStatus === 'submitting' ? (
 											<Loader2 className="w-4 h-4 animate-spin" />

@@ -14,6 +14,7 @@ import {
 	isReauthRequiredError,
 } from '@/hooks/queries/use-identifier-change';
 import { useToast } from '@/hooks/use-toast';
+import { Modal } from '@autional-cn/ui';
 
 type ChangeKind = 'phone' | 'email';
 type Step = 'submit' | 'reauth' | 'verify' | 'done';
@@ -158,167 +159,158 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 	const btnCls =
 		'rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 disabled:opacity-60';
 
+	// UP-06：手写覆盖层收敛到共享 Modal（X 关闭 / Escape / dialog 语义 / 焦点圈定与归还随之获得）。
 	return (
-		<div
-			className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-			onClick={onClose}
-		>
-			<div
-				className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
-				onClick={(e) => e.stopPropagation()}
-			>
-				<h3 className="text-lg font-semibold text-neutral-900">{t(`${tKey}.title`)}</h3>
+		<Modal open={open} onClose={onClose} title={t(`${tKey}.title`)} maxWidth="md">
+			{step === 'submit' && (
+				<div className="mt-4 space-y-4">
+					<div>
+						<label className="block text-sm font-medium text-neutral-700">
+							{t(`${tKey}.newValue`)}
+						</label>
+						<input
+							type={isPhone ? 'tel' : 'email'}
+							value={newValue}
+							onChange={(e) => setNewValue(e.target.value)}
+							className={inputCls}
+							placeholder={t(`${tKey}.newValuePlaceholder`)}
+						/>
+					</div>
+					<div>
+						<label className="block text-sm font-medium text-neutral-700">
+							{t('profile.identifierChange.password')}
+						</label>
+						<input
+							type="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							className={inputCls}
+						/>
+					</div>
+					<div className="flex justify-end gap-2">
+						<button
+							onClick={onClose}
+							className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+						>
+							{t('profile.cancel')}
+						</button>
+						<button
+							onClick={handleSubmit}
+							// UP-07：空值直发会被后端拒。前置禁用（新值 trim 后非空 + 密码非空才可提交）。
+							disabled={
+								changePhoneMut.isPending ||
+								changeEmailMut.isPending ||
+								!newValue.trim() ||
+								!password
+							}
+							className={btnCls}
+						>
+							{t('profile.identifierChange.sendCode')}
+						</button>
+					</div>
+				</div>
+			)}
 
-				{step === 'submit' && (
-					<div className="mt-4 space-y-4">
-						<div>
-							<label className="block text-sm font-medium text-neutral-700">
-								{t(`${tKey}.newValue`)}
-							</label>
-							<input
-								type={isPhone ? 'tel' : 'email'}
-								value={newValue}
-								onChange={(e) => setNewValue(e.target.value)}
-								className={inputCls}
-								placeholder={t(`${tKey}.newValuePlaceholder`)}
-							/>
-						</div>
-						<div>
-							<label className="block text-sm font-medium text-neutral-700">
-								{t('profile.identifierChange.password')}
-							</label>
-							<input
-								type="password"
-								value={password}
-								onChange={(e) => setPassword(e.target.value)}
-								className={inputCls}
-							/>
-						</div>
-						<div className="flex justify-end gap-2">
+			{step === 'reauth' && (
+				<div className="mt-4 space-y-4">
+					<p className="text-sm text-neutral-600">
+						{t('profile.identifierChange.reauthRequiredDesc')}
+					</p>
+					<div>
+						<label className="block text-sm font-medium text-neutral-700">
+							{t('profile.identifierChange.password')}
+						</label>
+						<input
+							type="password"
+							value={reauthPassword}
+							onChange={(e) => setReauthPassword(e.target.value)}
+							className={inputCls}
+						/>
+					</div>
+					<div className="flex justify-end gap-2">
+						<button
+							onClick={onClose}
+							className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+						>
+							{t('profile.cancel')}
+						</button>
+						<button onClick={handleReauth} disabled={reauthMut.isPending} className={btnCls}>
+							{t('profile.identifierChange.reauthSubmit')}
+						</button>
+					</div>
+				</div>
+			)}
+
+			{step === 'verify' && (
+				<div className="mt-4 space-y-4">
+					<p className="text-sm text-neutral-600">{t('profile.identifierChange.codeHint')}</p>
+					<div>
+						<input
+							type="text"
+							value={code}
+							onChange={(e) => setCode(e.target.value)}
+							className={inputCls}
+							placeholder={t('profile.identifierChange.codePlaceholder')}
+						/>
+					</div>
+					<div className="flex items-center justify-between">
+						<div className="flex gap-2">
 							<button
-								onClick={onClose}
-								className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+								onClick={handleCancelChange}
+								disabled={cancelEmailMut.isPending || cancelPhoneMut.isPending}
+								className="text-sm text-danger-text hover:underline disabled:text-neutral-600"
 							>
-								{t('profile.cancel')}
+								{t('profile.identifierChange.cancelChange')}
 							</button>
 							<button
-								onClick={handleSubmit}
-								// UP-07：空值直发会被后端拒。前置禁用（新值 trim 后非空 + 密码非空才可提交）。
-								disabled={
-									changePhoneMut.isPending ||
-									changeEmailMut.isPending ||
-									!newValue.trim() ||
-									!password
-								}
+								onClick={handleResend}
+								disabled={resendCooldown > 0}
+								className="text-sm text-primary-600 hover:underline disabled:text-neutral-600"
+							>
+								{resendCooldown > 0
+									? t('profile.identifierChange.resendCooldown', { seconds: resendCooldown })
+									: t('profile.identifierChange.resend')}
+							</button>
+						</div>
+						<div className="flex gap-2">
+							<button
+								onClick={() => setStep('submit')}
+								className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
+							>
+								{t('profile.identifierChange.back')}
+							</button>
+							<button
+								onClick={handleVerify}
+								disabled={verifyPhoneMut.isPending || verifyEmailMut.isPending}
 								className={btnCls}
 							>
-								{t('profile.identifierChange.sendCode')}
+								{t('profile.identifierChange.confirm')}
 							</button>
 						</div>
 					</div>
-				)}
+				</div>
+			)}
 
-				{step === 'reauth' && (
-					<div className="mt-4 space-y-4">
-						<p className="text-sm text-neutral-600">
-							{t('profile.identifierChange.reauthRequiredDesc')}
-						</p>
-						<div>
-							<label className="block text-sm font-medium text-neutral-700">
-								{t('profile.identifierChange.password')}
-							</label>
-							<input
-								type="password"
-								value={reauthPassword}
-								onChange={(e) => setReauthPassword(e.target.value)}
-								className={inputCls}
-							/>
-						</div>
-						<div className="flex justify-end gap-2">
-							<button
-								onClick={onClose}
-								className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
-							>
-								{t('profile.cancel')}
-							</button>
-							<button onClick={handleReauth} disabled={reauthMut.isPending} className={btnCls}>
-								{t('profile.identifierChange.reauthSubmit')}
-							</button>
-						</div>
+			{step === 'done' && (
+				<div className="mt-4 space-y-4">
+					<p className="text-sm text-success-text">{t('profile.identifierChange.changed')}</p>
+					<label className="flex items-center gap-2 text-sm text-neutral-700">
+						<input
+							type="checkbox"
+							checked={revokeOthers}
+							onChange={(e) => setRevokeOthers(e.target.checked)}
+							className="h-4 w-4 rounded border-neutral-300 text-primary-600"
+						/>
+						{t('profile.identifierChange.revokeOthers')}
+					</label>
+					<p className="text-xs text-neutral-600">{t('profile.identifierChange.revokeOthersDesc')}</p>
+					<div className="flex justify-end">
+						<button onClick={handleDone} className={btnCls}>
+							{t('profile.identifierChange.done')}
+						</button>
 					</div>
-				)}
-
-				{step === 'verify' && (
-					<div className="mt-4 space-y-4">
-						<p className="text-sm text-neutral-600">{t('profile.identifierChange.codeHint')}</p>
-						<div>
-							<input
-								type="text"
-								value={code}
-								onChange={(e) => setCode(e.target.value)}
-								className={inputCls}
-								placeholder={t('profile.identifierChange.codePlaceholder')}
-							/>
-						</div>
-						<div className="flex items-center justify-between">
-							<div className="flex gap-2">
-								<button
-									onClick={handleCancelChange}
-									disabled={cancelEmailMut.isPending || cancelPhoneMut.isPending}
-									className="text-sm text-danger-text hover:underline disabled:text-neutral-600"
-								>
-									{t('profile.identifierChange.cancelChange')}
-								</button>
-								<button
-									onClick={handleResend}
-									disabled={resendCooldown > 0}
-									className="text-sm text-primary-600 hover:underline disabled:text-neutral-600"
-								>
-									{resendCooldown > 0
-										? t('profile.identifierChange.resendCooldown', { seconds: resendCooldown })
-										: t('profile.identifierChange.resend')}
-								</button>
-							</div>
-							<div className="flex gap-2">
-								<button
-									onClick={() => setStep('submit')}
-									className="rounded-md border border-neutral-200 px-3 py-1.5 text-sm text-neutral-700 hover:bg-neutral-50"
-								>
-									{t('profile.identifierChange.back')}
-								</button>
-								<button
-									onClick={handleVerify}
-									disabled={verifyPhoneMut.isPending || verifyEmailMut.isPending}
-									className={btnCls}
-								>
-									{t('profile.identifierChange.confirm')}
-								</button>
-							</div>
-						</div>
-					</div>
-				)}
-
-				{step === 'done' && (
-					<div className="mt-4 space-y-4">
-						<p className="text-sm text-success-text">{t('profile.identifierChange.changed')}</p>
-						<label className="flex items-center gap-2 text-sm text-neutral-700">
-							<input
-								type="checkbox"
-								checked={revokeOthers}
-								onChange={(e) => setRevokeOthers(e.target.checked)}
-								className="h-4 w-4 rounded border-neutral-300 text-primary-600"
-							/>
-							{t('profile.identifierChange.revokeOthers')}
-						</label>
-						<p className="text-xs text-neutral-600">{t('profile.identifierChange.revokeOthersDesc')}</p>
-						<div className="flex justify-end">
-							<button onClick={handleDone} className={btnCls}>
-								{t('profile.identifierChange.done')}
-							</button>
-						</div>
-					</div>
-				)}
-			</div>
-		</div>
+				</div>
+			)}
+		</Modal>
 	);
 }

@@ -340,6 +340,7 @@ export default function StoragePage() {
 				{currentFolder !== 'root' && (
 					<button
 						onClick={() => refetch()}
+						aria-label={t('storage.refresh')}
 						className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
 						title={t('storage.refresh')}
 					>

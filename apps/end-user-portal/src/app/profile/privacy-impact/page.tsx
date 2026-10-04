@@ -258,7 +258,14 @@ export default function PrivacyImpactPage() {
 						</h3>
 						<div className="mt-2 flex items-center gap-3">
 							<div className="flex-1">
-								<div className="h-3 w-full rounded-full bg-neutral-200 overflow-hidden">
+								<div
+									role="progressbar"
+									aria-valuenow={riskScore}
+									aria-valuemin={0}
+									aria-valuemax={100}
+									aria-label={t('privacyImpact.riskScore')}
+									className="h-3 w-full rounded-full bg-neutral-200 overflow-hidden"
+								>
 									<div
 										className={`h-full rounded-full transition-all ${RISK_BAR_COLORS[riskLevel] || 'bg-neutral-400'}`}
 										style={{ width: `${getRiskBarWidth(riskScore)}%` }}

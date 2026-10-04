@@ -214,7 +214,15 @@ export default function AppLayout() {
 		);
 	}
 	return (
-		<AppShell
+		<>
+			{/* UP-09：skip link —— 键盘/读屏用户跳过侧栏直达主内容（全站首个可聚焦元素，聚焦时可见）。 */}
+			<a
+				href="#main-content"
+				className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-700 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:bg-neutral-800 dark:focus:text-primary-400"
+			>
+				{t('nav.skipToContent')}
+			</a>
+			<AppShell
 			brand={
 				<span className="truncate text-lg font-bold text-primary-700 dark:text-primary-400">
 					{t('dashboard.title')}
@@ -348,7 +356,11 @@ export default function AppLayout() {
 			closeLabel={t('nav.closeMenu')}
 		>
 			<Breadcrumb />
-			<Outlet />
+			{/* UP-09：skip link 落点 —— tabIndex=-1 使程序化/锚点聚焦可落于容器；outline-none 防聚焦描边闪现在整块内容上。 */}
+			<div id="main-content" tabIndex={-1} className="outline-none">
+				<Outlet />
+			</div>
 		</AppShell>
+		</>
 	);
 }

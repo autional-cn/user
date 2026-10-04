@@ -162,6 +162,9 @@ export default function ProfilePage() {
 			</div>
 			<button
 				onClick={onChange}
+				role="switch"
+				aria-checked={checked}
+				aria-label={label}
 				className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
 					checked ? 'bg-primary-600' : 'bg-neutral-300'
 				}`}
@@ -392,10 +395,14 @@ export default function ProfilePage() {
 					) : (
 						<div className="mt-4 space-y-4">
 							<div>
-								<label className="block text-sm font-medium text-neutral-700">
+								<label
+									htmlFor="profile-username"
+									className="block text-sm font-medium text-neutral-700"
+								>
 									{t('profile.username')}
 								</label>
 								<input
+									id="profile-username"
 									type="text"
 									value={form.username}
 									onChange={(e) => setForm({ ...form, username: e.target.value })}
@@ -442,11 +449,15 @@ export default function ProfilePage() {
 					<div className="mt-2 divide-y divide-neutral-100">
 						<div className="flex items-center justify-between py-4">
 							<div>
-								<p className="text-sm font-medium text-neutral-900">
+								<label
+									htmlFor="profile-language"
+									className="text-sm font-medium text-neutral-900"
+								>
 									{t('profile.preferences.language')}
-								</p>
+								</label>
 							</div>
 							<select
+								id="profile-language"
 								value={currentLang}
 								onChange={(e) => setLanguage(e.target.value as typeof currentLang)}
 								className="rounded-md border border-neutral-300 bg-white px-3 py-1.5 text-sm text-neutral-700 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
@@ -469,6 +480,9 @@ export default function ProfilePage() {
 							</div>
 							<button
 								onClick={toggleTheme}
+								role="switch"
+								aria-checked={isDark}
+								aria-label={t('profile.preferences.theme')}
 								className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
 									isDark ? 'bg-primary-600' : 'bg-neutral-300'
 								}`}

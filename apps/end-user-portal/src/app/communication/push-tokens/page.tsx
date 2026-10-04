@@ -125,10 +125,14 @@ export default function PushTokensPage() {
 					</h3>
 					<div className="mt-4 space-y-4">
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							<label
+								htmlFor="push-token-value"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('communication.pushTokens.token', 'Token')}
 							</label>
 							<input
+								id="push-token-value"
 								type="text"
 								value={newToken}
 								onChange={(e) => setNewToken(e.target.value)}
@@ -140,10 +144,14 @@ export default function PushTokensPage() {
 							/>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							<label
+								htmlFor="push-token-platform"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('communication.pushTokens.platform', 'Platform')}
 							</label>
 							<select
+								id="push-token-platform"
 								value={newPlatform}
 								onChange={(e) => setNewPlatform(e.target.value)}
 								className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
@@ -155,10 +163,14 @@ export default function PushTokensPage() {
 							</select>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							<label
+								htmlFor="push-token-device-id"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('communication.pushTokens.deviceId', 'Device ID')}
 							</label>
 							<input
+								id="push-token-device-id"
 								type="text"
 								value={newDeviceId}
 								onChange={(e) => setNewDeviceId(e.target.value)}
@@ -216,7 +228,9 @@ export default function PushTokensPage() {
 								<button
 									onClick={() => setDeleteTarget(token)}
 									disabled={deleteMutation.isPending}
-									className="rounded-md p-1.5 text-neutral-600 hover:bg-danger-soft hover:text-danger-text transition-colors disabled:opacity-40"
+									/* UP-85：icon-only 无 aria-label（title-only 触屏/读屏弱）+ 触达 ~28px 偏小 → 44px 且补名。 */
+									aria-label={t('communication.pushTokens.delete', 'Delete')}
+									className="rounded-md p-3.5 text-neutral-600 hover:bg-danger-soft hover:text-danger-text transition-colors disabled:opacity-40"
 									title={t('communication.pushTokens.delete', 'Delete')}
 								>
 									<Trash2 size={16} />

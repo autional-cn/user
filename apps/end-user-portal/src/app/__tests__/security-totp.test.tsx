@@ -158,4 +158,21 @@ describe('SecurityPage TOTP 二维码字段（UP-16 / AC-201, AC-202）', () => 
 		expect(screen.getByText('ONLY-SECRET-654321')).toBeInTheDocument();
 		expect(screen.getByText('开启 TOTP 验证')).toBeInTheDocument();
 	});
+
+	it('UP-19：开启流程验证码 input 有 label 关联（可访问名「输入 6 位验证码验证」）', async () => {
+		vi.mocked(useEnableTOTP).mockReturnValue({
+			mutateAsync: vi.fn().mockResolvedValue({
+				secret: 'LABEL-LOCK-SECRET',
+				qrCode:
+					'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+			}),
+			isPending: false,
+		} as never);
+
+		render(<SecurityPage />, { wrapper: TestWrapper });
+		fireEvent.click(totpCardAction());
+
+		const codeInput = await screen.findByLabelText('输入 6 位验证码验证');
+		expect(codeInput.tagName).toBe('INPUT');
+	});
 });

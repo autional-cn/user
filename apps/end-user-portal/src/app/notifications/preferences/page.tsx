@@ -166,7 +166,7 @@ export default function NotificationPreferencesPage() {
 							<div className="flex items-start gap-3">
 								<nt.icon size={18} className="mt-0.5 text-neutral-600" />
 								<div>
-									<p className="text-sm font-medium text-neutral-800">{t(nt.labelKey)}</p>
+									<p id={`ntype-label-${nt.key}`} className="text-sm font-medium text-neutral-800">{t(nt.labelKey)}</p>
 									<p className="text-xs text-neutral-600">{t(nt.descKey)}</p>
 								</div>
 							</div>
@@ -174,6 +174,7 @@ export default function NotificationPreferencesPage() {
 								type="button"
 								role="switch"
 								aria-checked={typeToggles[nt.key]}
+								aria-labelledby={`ntype-label-${nt.key}`}
 								onClick={() => setTypeToggles((prev) => ({ ...prev, [nt.key]: !prev[nt.key] }))}
 								className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
 									typeToggles[nt.key] ? 'bg-primary-600' : 'bg-neutral-200'
@@ -206,12 +207,13 @@ export default function NotificationPreferencesPage() {
 						>
 							<div className="flex items-center gap-3">
 								<ch.icon size={18} className="text-neutral-600" />
-								<p className="text-sm font-medium text-neutral-800">{t(ch.labelKey)}</p>
+								<p id={`nchannel-label-${ch.key}`} className="text-sm font-medium text-neutral-800">{t(ch.labelKey)}</p>
 							</div>
 							<button
 								type="button"
 								role="switch"
 								aria-checked={channelToggles[ch.key]}
+								aria-labelledby={`nchannel-label-${ch.key}`}
 								onClick={() => setChannelToggles((prev) => ({ ...prev, [ch.key]: !prev[ch.key] }))}
 								className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 ${
 									channelToggles[ch.key] ? 'bg-primary-600' : 'bg-neutral-200'

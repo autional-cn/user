@@ -123,4 +123,36 @@ describe('ProfilePage', () => {
 
 		expect(screen.getByText('编辑')).toBeInTheDocument();
 	});
+
+	it('UP-03：隐私开关 role=switch + aria-checked + 可访问名=行标签；编辑/偏好表单 label 关联', () => {
+		mockProfileLoaded();
+		const updatePrivacy = createMockMutation();
+		vi.mocked(useUpdatePrivacy).mockReturnValue(updatePrivacy as any);
+
+		render(<ProfilePage />, { wrapper: TestWrapper });
+
+		// 编辑态：用户名 label → input 程序化关联（htmlFor/id）
+		fireEvent.click(screen.getByText('编辑'));
+		const usernameInput = screen.getByLabelText('用户名');
+		expect(usernameInput.tagName).toBe('INPUT');
+		expect(usernameInput).toHaveValue('Alice');
+		fireEvent.click(screen.getByText('取消'));
+
+		// 隐私开关：可访问名 + 程序化选中态（此前裸 button 无 role/aria）
+		fireEvent.click(screen.getByRole('button', { name: '隐私设置' }));
+		const emailSw = screen.getByRole('switch', { name: '邮箱可见' });
+		expect(emailSw).toHaveAttribute('aria-checked', 'true');
+		expect(screen.getByRole('switch', { name: '手机号可见' })).toHaveAttribute(
+			'aria-checked',
+			'false',
+		);
+		// 点击 = 发变更（选中态翻转由服务端回读驱动；mock 固定数据下锁调用载荷）
+		fireEvent.click(emailSw);
+		expect(updatePrivacy.mutateAsync).toHaveBeenCalledWith({ showEmail: false });
+
+		// 偏好页：语言 select label 关联 + 主题开关语义
+		fireEvent.click(screen.getByRole('button', { name: '偏好设置' }));
+		expect(screen.getByLabelText('语言').tagName).toBe('SELECT');
+		expect(screen.getByRole('switch', { name: '主题' })).toHaveAttribute('aria-checked');
+	});
 });

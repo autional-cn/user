@@ -147,4 +147,21 @@ describe('PasskeyRegisterPage begin 身份字段（UP-91-A / AC-701, AC-702, AC-
 		expect(cred.response.attestation_object).toBe('BAUG');
 		expect(cred.response.client_data_json).toBe('BwgJ');
 	});
+
+	it('UP-93：password 步骤含隐藏 username 域（password manager/AT 输入目的识别，WCAG 1.3.5）', async () => {
+		h.user = { id: 'u1', username: 'alice', email: 'alice@example.com' };
+		render(<PasskeyRegisterPage />, { wrapper: TestWrapper });
+		fireEvent.click(screen.getByText('开始注册'));
+		await screen.findByPlaceholderText('请输入当前密码');
+
+		// 隐藏域走容器级查询（hidden 元素不参与可访问树 / role 查询）
+		const hiddenUser = document.querySelector(
+			'input[name="username"][autocomplete="username"]',
+		) as HTMLInputElement | null;
+		expect(hiddenUser).not.toBeNull();
+		expect(hiddenUser!.type).toBe('text');
+		expect(hiddenUser!.hidden).toBe(true);
+		// 取值与注册回退链同源（username 优先）
+		expect(hiddenUser!.value).toBe('alice');
+	});
 });

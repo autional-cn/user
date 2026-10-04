@@ -178,6 +178,8 @@ export default function RecoveryContactsPage() {
 							<button
 								onClick={() => handleDelete(contact.id)}
 								disabled={deletingId === contact.id}
+								/* UP-98：icon-only 两按钮补可访问名（本页关键操作对读屏不可辨识）。 */
+								aria-label={t('security.recoveryContacts.delete', '删除联系人')}
 								className="text-neutral-600 hover:text-danger-text transition-colors disabled:opacity-50"
 							>
 								{deletingId === contact.id ? (
@@ -212,6 +214,7 @@ export default function RecoveryContactsPage() {
 								setFormError('root', { message: '' });
 								reset({ type: 'email', value: '' });
 							}}
+							aria-label={t('security.recoveryContacts.closeForm', '关闭添加表单')}
 							className="text-neutral-600 hover:text-neutral-600"
 						>
 							<X size={18} />

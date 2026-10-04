@@ -958,10 +958,15 @@ export default function SecurityPage() {
 							</div>
 						</div>
 						<div>
-							<label className="block text-sm font-medium text-neutral-700">
+							{/* UP-19：验证码 input 补 label 关联（htmlFor/id），与弹窗 dialog 语义（shared Modal 组件级修复）同波收口。 */}
+							<label
+								htmlFor="totp-verify-code"
+								className="block text-sm font-medium text-neutral-700"
+							>
 								{t('security.totpEnterCode')}
 							</label>
 							<input
+								id="totp-verify-code"
 								type="text"
 								inputMode="numeric"
 								maxLength={6}

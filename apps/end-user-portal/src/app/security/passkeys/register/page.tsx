@@ -210,6 +210,16 @@ export default function PasskeyRegisterPage() {
 						}}
 						className="mt-4 space-y-4"
 					>
+						{/* UP-93：password 表单补（隐藏）username 域 —— 密码管理器/AT 的输入目的识别（WCAG 1.3.5）。
+						    取值与注册回退链同源（username→email），与 beginRegistration 的 userName 口径一致。 */}
+						<input
+							type="text"
+							name="username"
+							autoComplete="username"
+							value={user?.username || user?.email || ''}
+							readOnly
+							hidden
+						/>
 						<div>
 							<label
 								htmlFor="passkey-password"
