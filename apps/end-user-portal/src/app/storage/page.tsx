@@ -175,10 +175,9 @@ export default function StoragePage() {
 			if (!file) return;
 			try {
 				const uploadData = {
-					fileName: file.name,
-					folderId: currentFolder === 'root' ? undefined : currentFolder,
+					filename: file.name,
+					parentId: currentFolder === 'root' ? undefined : currentFolder,
 					contentType: file.type || 'application/octet-stream',
-					size: file.size,
 				};
 				const res = await Generated.filesUploadUrlPost(uploadData);
 				const uploadRes = res as { uploadUrl?: string; fileId?: string };
