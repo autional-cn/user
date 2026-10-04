@@ -6,7 +6,6 @@ import { useAuth, extractApiError } from '@autional-cn/shared';
 import {
 	authMeRoleActivations,
 	authMeRoleActivationsPost,
-	adminRoles,
 } from '@autional-cn/shared/generated/api';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
@@ -65,12 +64,13 @@ async function fetchRoleActivations(): Promise<RoleActivation[]> {
 }
 
 async function fetchAvailableRoles(): Promise<RoleItem[]> {
-	try {
-		const data = (await adminRoles({ page_size: 100 })) as any;
-		return data?.items || data?.data || [];
-	} catch {
-		return [];
-	}
+	// TODO: No generated function for GET /auth/me/role-activations/available-roles — missing from api.ts
+	// 同页 cancelActivation 先例：未生成端点走 apiClient 直连。admin 级 /rbac/api/v1/admin/roles 对
+	// 租户角色恒 403 entry_plane_forbidden（UP-20），且 catch 吞错会把失败渲染成空白下拉。
+	const { apiClient: api } = await import('@autional-cn/shared');
+	const res = await api.get('/identity/api/v1/auth/me/role-activations/available-roles'); // @generated-api-exempt
+	const data = res.data as RoleItem[];
+	return Array.isArray(data) ? data : [];
 }
 
 async function requestActivation(data: {
@@ -105,7 +105,12 @@ export default function RoleActivationsPage() {
 		retry: 1,
 	});
 
-	const { data: roles } = useQuery<RoleItem[], Error>({
+	const {
+		data: roles,
+		isLoading: rolesLoading,
+		error: rolesError,
+		refetch: refetchRoles,
+	} = useQuery<RoleItem[], Error>({
 		queryKey: ['available-roles'],
 		queryFn: fetchAvailableRoles,
 		retry: 1,
@@ -289,18 +294,36 @@ export default function RoleActivationsPage() {
 							<label className="block text-sm font-medium text-neutral-700">
 								{t('roleActivations.selectRole')}
 							</label>
-							<select
-								value={form.role_id}
-								onChange={(e) => setForm({ ...form, role_id: e.target.value })}
-								className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
-							>
-								<option value="">{t('roleActivations.selectRolePlaceholder')}</option>
-								{roles?.map((role) => (
-									<option key={role.id} value={role.id}>
-										{role.name || role.code} {role.description ? `(${role.description})` : ''}
-									</option>
-								))}
-							</select>
+							{rolesError ? (
+								// 显式失败态：不再把错误吞成空白下拉；保留重试入口。
+								<div className="mt-1 rounded-md border border-danger-soft bg-danger-soft p-3 text-sm text-danger-text">
+									<p>{t('roleActivations.rolesLoadError')}</p>
+									<button
+										type="button"
+										onClick={() => refetchRoles()}
+										className="mt-2 font-medium text-danger underline hover:no-underline"
+									>
+										{t('roleActivations.rolesRetry')}
+									</button>
+								</div>
+							) : rolesLoading ? (
+								<p className="mt-1 text-sm text-neutral-600">{t('roleActivations.rolesLoading')}</p>
+							) : roles && roles.length > 0 ? (
+								<select
+									value={form.role_id}
+									onChange={(e) => setForm({ ...form, role_id: e.target.value })}
+									className="mt-1 w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500"
+								>
+									<option value="">{t('roleActivations.selectRolePlaceholder')}</option>
+									{roles.map((role) => (
+										<option key={role.id} value={role.id}>
+											{role.name || role.code} {role.description ? `(${role.description})` : ''}
+										</option>
+									))}
+								</select>
+							) : (
+								<p className="mt-1 text-sm text-neutral-600">{t('roleActivations.rolesEmpty')}</p>
+							)}
 						</div>
 
 						<div>

@@ -109,6 +109,9 @@ export interface PointAccount {
 
 export interface OAuthConnectionItem {
 	id?: string;
+	// provider = 解析后的 provider 名（如 "github"，后端解绑按其匹配）；
+	// providerId = providers 表 ULID（存储值），仅供追溯。
+	provider?: string;
 	providerId?: string;
 	providerUserId?: string;
 	userId?: string;

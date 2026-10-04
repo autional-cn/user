@@ -18,7 +18,7 @@ import {
 	mfaMethodsByMethodsDelete,
 	authMeWebauthnCredentials,
 	authMeWebauthnCredentialsByWebauthnCredentialsDelete,
-	adminUsersOauthConnectionsByUsers,
+	authOauthAccounts,
 	authOauthUnbindPost,
 } from '@autional-cn/shared/generated/api';
 import type {
@@ -28,7 +28,6 @@ import type {
 	PasskeyCredential,
 	OAuthConnectionItem,
 } from './types';
-import type { PaginatedList } from './types';
 import { queryKeys } from './query-keys';
 
 export function useSessions(
@@ -186,17 +185,13 @@ export function useDeletePasskey(): UseMutationResult<unknown, Error, string> {
 	});
 }
 
-async function getOAuthConnections(userId: string): Promise<OAuthConnectionItem[]> {
-	try {
-		// 2026-08-17 修复：adminUsersOauthConnectionsByUsers 返回扁平列表 { items }（拦截器已解包），
-		// 原 `data?.data?.connections || data?.data` 全部 undefined → 连接恒空列表。
-		const data = (await adminUsersOauthConnectionsByUsers(userId)) as {
-			items?: OAuthConnectionItem[];
-		};
-		return data?.items || [];
-	} catch {
-		return [];
-	}
+async function getOAuthConnections(): Promise<OAuthConnectionItem[]> {
+	// UP-15：admin 级端点（/admin/users/{id}/oauth-connections）对 user 入口平面恒 403
+	// （网关 entry_plane_forbidden，含租户 admin 零豁免）；换自助端点 /auth/oauth/accounts
+	// （从 JWT context 取当前用户）。原 catch{return []} 吞错会把 403 渲染成「暂无绑定」假空态，
+	// 此处放行错误 → useOAuthConnections 的 error 态由页面显式呈现。
+	const data = (await authOauthAccounts()) as { accounts?: OAuthConnectionItem[] };
+	return data?.accounts || [];
 }
 
 async function unbindOAuthConnection(provider: string) {
@@ -207,7 +202,7 @@ export function useOAuthConnections(): UseQueryResult<OAuthConnectionItem[], Err
 	const { userId } = useAuth();
 	return useQuery<OAuthConnectionItem[], Error>({
 		queryKey: queryKeys.oauthConnections(userId || ''),
-		queryFn: () => getOAuthConnections(userId || ''),
+		queryFn: getOAuthConnections,
 		enabled: !!userId,
 		retry: 1,
 	});

@@ -1,7 +1,7 @@
 'use client';
 import { ROUTES } from '@/lib/routes';
 import { buildNavHref } from '@/lib/nav';
-import { useState, useEffect, type ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -26,9 +26,7 @@ import { Link } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import {
 	useAuthStore,
-	useAuth,
 	extractApiError,
-	logout,
 	getAUTH_PAGES_URL,
 	API_BASE_URL,
 	processPasswordForTransmission,
@@ -75,8 +73,6 @@ export default function SecurityPage() {
 
 	const { t } = useTranslation();
 	const toast = useToast();
-	const { user } = useAuth();
-	const userId = user?.id || '';
 
 	const {
 		data: mfaStatus,
@@ -209,49 +205,9 @@ export default function SecurityPage() {
 		window.location.href = `${getAUTH_PAGES_URL()}/mfa-setup`;
 	};
 
-	// Account deletion
-	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-	const [deleteConfirmText, setDeleteConfirmText] = useState('');
-	const [deleteLoading, setDeleteLoading] = useState(false);
 	// OAuth bind modal
 	const [bindModalOpen, setBindModalOpen] = useState(false);
 	const [bindLoading] = useState(false);
-
-	// Account deletion
-	const [deleteError, setDeleteError] = useState('');
-
-	const handleDeleteAccount = async () => {
-		setDeleteError('');
-		setDeleteLoading(true);
-		try {
-			const tenantId = useAuthStore.getState().currentTenantId || '';
-			// 2026-08-17 安全修复：禁止静默回退 plain，契约错误必须抛错暴露
-			const authConfig = await PublicAuthConfigByAuthConfig(tenantId);
-			const mode = authConfig?.passwordPolicy?.passwordTransmission;
-			if (mode === undefined || mode === '' || mode === null) {
-				throw new Error(
-					'password transmission mode is missing from tenant auth-config (contract error)',
-				);
-			}
-			const result = await processPasswordForTransmission(
-				deleteConfirmText,
-				mode,
-				tenantId,
-				undefined,
-			);
-			const { authMeDeleteAccountPost } = await import('@autional-cn/shared/generated/api');
-			await (authMeDeleteAccountPost as any)({
-				password: result.password,
-				password_transmission: result.passwordTransmission,
-			});
-			logout(`${getAUTH_PAGES_URL()}/login?account_deleted=true`);
-		} catch (err: any) {
-			setDeleteError(extractApiError(err, '账户删除失败，请稍后重试').message);
-			setDeleteModalOpen(false);
-		} finally {
-			setDeleteLoading(false);
-		}
-	};
 
 	const handleChangePassword = async (data: PasswordForm) => {
 		try {
@@ -402,7 +358,8 @@ export default function SecurityPage() {
 	const handleUnbind = async (connection: OAuthConnectionItem) => {
 		if (!confirm(t('security.oauth.unbindConfirm'))) return;
 		try {
-			await unbindMutation.mutateAsync(connection.id!);
+			// 后端按 provider 名（如 "github"）匹配解绑，传 connection.id/providerId（ULID）会静默不删还回 200
+			await unbindMutation.mutateAsync(connection.provider!);
 			toast.success(t('security.oauth.unbindSuccess'));
 		} catch (err: any) {
 			toast.error(extractApiError(err, t('security.oauth.unbindError')).message);
@@ -805,7 +762,8 @@ export default function SecurityPage() {
 				) : oauthConnections && oauthConnections.length > 0 ? (
 					<div className="mt-4 space-y-3">
 						{oauthConnections.map((conn) => {
-							const meta = getProviderMeta(conn.providerId);
+							// 名/icons 按解析后的 provider 名取（providerId 是 ULID，取不到 meta）
+							const meta = getProviderMeta(conn.provider);
 							const email =
 								conn.profileData &&
 								typeof conn.profileData === 'object' &&
@@ -909,85 +867,16 @@ export default function SecurityPage() {
 								'此操作将永久删除您的账户及所有相关数据。根据GDPR规定，您的数据将在30天内被永久删除。此操作不可撤销。',
 							)}
 						</p>
-						<button
-							onClick={() => setDeleteModalOpen(true)}
-							className="mt-3 rounded-md border border-danger bg-white px-4 py-1.5 text-sm font-medium text-danger hover:bg-danger hover:text-white transition-colors"
+						{/* UP-18：原有就地弹窗把确认文本当密码提交（假成功/死路），收敛到 /security/delete-account 单一路径 */}
+						<Link
+							to={buildNavHref(ROUTES.deleteAccount, tenantSlug)}
+							className="mt-3 inline-block rounded-md border border-danger bg-white px-4 py-1.5 text-sm font-medium text-danger hover:bg-danger hover:text-white transition-colors"
 						>
 							{t('security.deleteAccountTitle', '删除账户')}
-						</button>
+						</Link>
 					</div>
 				</div>
 			</div>
-
-			{/* Account Deletion Confirm Modal */}
-			<Modal
-				open={deleteModalOpen}
-				onClose={() => {
-					setDeleteModalOpen(false);
-					setDeleteConfirmText('');
-					setDeleteError('');
-				}}
-				title={t('security.deleteAccountConfirmTitle', '确认删除账户')}
-				maxWidth="md"
-				footer={
-					<>
-						<button
-							onClick={() => {
-								setDeleteModalOpen(false);
-								setDeleteConfirmText('');
-								setDeleteError('');
-							}}
-							disabled={deleteLoading}
-							className="rounded-md border border-neutral-200 px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
-						>
-							{t('security.cancel', '取消')}
-						</button>
-						<button
-							onClick={handleDeleteAccount}
-							disabled={deleteConfirmText !== 'DELETE' || deleteLoading}
-							className="rounded-md bg-danger px-4 py-2 text-sm font-medium text-white hover:bg-danger/90 disabled:opacity-50"
-						>
-							{deleteLoading ? (
-								<span className="flex items-center gap-1">
-									<Loader2 size={14} className="animate-spin" />{' '}
-									{t('security.deleting', '删除中...')}
-								</span>
-							) : (
-								t('security.confirmDelete', '永久删除')
-							)}
-						</button>
-					</>
-				}
-			>
-				<div className="rounded-md bg-danger-soft p-4 text-sm text-danger-text mb-4">
-					<p className="font-semibold">
-						{t('security.deleteWarningTitle', '警告：此操作不可逆')}
-					</p>
-					<ul className="mt-2 list-inside list-disc space-y-1">
-						<li>{t('security.deleteWarningItem1', '您的个人资料将被永久删除')}</li>
-						<li>{t('security.deleteWarningItem2', '所有历史记录和数据将被清除')}</li>
-						<li>{t('security.deleteWarningItem3', '您将无法再使用该账号登录任何服务')}</li>
-						<li>
-							{t('security.deleteWarningItem4', '根据GDPR规定，数据将在30天内被永久删除')}
-						</li>
-					</ul>
-				</div>
-
-				{deleteError && (
-					<div className="rounded-md bg-danger-soft p-3 text-sm text-danger mb-4">{deleteError}</div>
-				)}
-
-				<p className="text-sm text-neutral-600 mb-3">
-					{t('security.deleteConfirmPrompt', '请输入 DELETE 以确认删除：')}
-				</p>
-				<input
-					type="text"
-					value={deleteConfirmText}
-					onChange={(e) => setDeleteConfirmText(e.target.value)}
-					placeholder="DELETE"
-					className="w-full rounded-md border border-neutral-300 px-3 py-2 text-sm focus:border-danger focus:outline-none focus:ring-1 focus:ring-danger"
-				/>
-			</Modal>
 
 			{/* TOTP Setup Modal */}
 			<Modal
