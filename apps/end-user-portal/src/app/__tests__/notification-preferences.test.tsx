@@ -38,6 +38,7 @@ const ALL_TYPES = ['security', 'account', 'billing', 'marketing', 'system'];
 const initialPrefs = {
 	channels: {
 		email: { enabled: true, types: [...ALL_TYPES] },
+		sms: { enabled: true, types: [...ALL_TYPES] },
 		push: { enabled: false, types: [...ALL_TYPES] },
 		inApp: { enabled: true, types: [...ALL_TYPES] },
 	},
@@ -90,12 +91,18 @@ describe('NotificationPreferencesPage（UP-74-A / AC-601, AC-602, AC-604, AC-605
 
 		const [putUserId, body] = h.prefsPut.mock.calls[0] as [string, any];
 		expect(putUserId).toBe('u1');
-		// AC-602：请求载荷无死字段 typePrefs（键集恰为 emailEnabled/pushEnabled/channels/userId）
+		// AC-602：请求载荷无死字段 typePrefs（键集恰为 emailEnabled/smsEnabled/pushEnabled/channels/userId）
 		expect('typePrefs' in body).toBe(false);
-		expect(Object.keys(body).sort()).toEqual(['channels', 'emailEnabled', 'pushEnabled', 'userId']);
-		// 写侧三通道同集合（email 为权威源的前提），且 marketing 已剔除
+		expect(Object.keys(body).sort()).toEqual([
+			'channels',
+			'emailEnabled',
+			'pushEnabled',
+			'smsEnabled',
+			'userId',
+		]);
+		// 写侧四通道同集合（email 为权威源的前提），且 marketing 已剔除
 		const expected = ['security', 'account', 'billing', 'system'];
-		for (const ch of ['email', 'push', 'inApp']) {
+		for (const ch of ['email', 'sms', 'push', 'inApp']) {
 			expect([...body.channels[ch].types].sort()).toEqual([...expected].sort());
 		}
 		expect(body.channels.email.types).not.toContain('marketing');
@@ -174,5 +181,27 @@ describe('NotificationPreferencesPage（UP-74-A / AC-601, AC-602, AC-604, AC-605
 		const push2 = rowSwitch('推送通知');
 		await waitFor(() => expect(push2).toHaveAttribute('aria-checked', 'true'));
 		expect(rowSwitch('邮件通知')).toHaveAttribute('aria-checked', 'true');
+	});
+
+	it('UP-77：SMS 渠道可管理——顶部 smsEnabled 覆盖读值 → 关闭保存 → smsEnabled=false 且 channels.sms 同集合', async () => {
+		// 后端契约恒含 4 渠道；顶层 sms_enabled 为权威开关（channels.sms.enabled 同会话镜像）
+		h.prefsGet.mockResolvedValue({ ...initialPrefs, smsEnabled: true });
+		renderPage();
+		await screen.findByText('通知偏好设置');
+
+		const sms = rowSwitch('短信通知');
+		await waitFor(() => expect(sms).toHaveAttribute('aria-checked', 'true'));
+		fireEvent.click(sms);
+		expect(sms).toHaveAttribute('aria-checked', 'false');
+
+		fireEvent.click(screen.getByRole('button', { name: '保存偏好' }));
+		await waitFor(() => expect(h.prefsPut).toHaveBeenCalledTimes(1));
+		const [, body] = h.prefsPut.mock.calls[0] as [string, any];
+		expect(body.smsEnabled).toBe(false);
+		expect(body.channels.sms.enabled).toBe(false);
+		expect([...body.channels.sms.types].sort()).toEqual([...ALL_TYPES].sort());
+		// 其余渠道不受 SMS 关闭影响
+		expect(body.channels.email.enabled).toBe(true);
+		expect(body.channels.inApp.enabled).toBe(true);
 	});
 });

@@ -555,6 +555,7 @@
       "channelsTitle": "通知渠道",
       "channelsDesc": "选择通知的发送渠道",
       "channelEmail": "邮件通知",
+      "channelSms": "短信通知",
       "channelPush": "推送通知",
       "channelInApp": "应用内通知"
     }
@@ -1788,6 +1789,7 @@
   "notifications.prefs.channelsTitle": "通知渠道",
   "notifications.prefs.channelsDesc": "选择通知的发送渠道",
   "notifications.prefs.channelEmail": "邮件通知",
+  "notifications.prefs.channelSms": "短信通知",
   "notifications.prefs.channelPush": "推送通知",
   "notifications.prefs.channelInApp": "应用内通知",
   "notifications.prefs.atLeastOneType": "至少保留一种通知类型",

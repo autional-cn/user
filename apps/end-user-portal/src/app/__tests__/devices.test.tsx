@@ -92,8 +92,9 @@ describe('DevicesPage', () => {
 		render(<DevicesPage />, { wrapper: TestWrapper });
 
 		expect(screen.getByText('暂无已注册设备')).toBeInTheDocument();
+		// UP-43：空态仅保留卡片主按钮入口（头部右上配对入口隐藏，避免同屏两处）
 		const pairLinks = screen.getAllByText('配对设备');
-		expect(pairLinks).toHaveLength(2);
+		expect(pairLinks).toHaveLength(1);
 	});
 
 	it('shows error state on failure', () => {

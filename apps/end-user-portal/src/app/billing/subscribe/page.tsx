@@ -261,7 +261,8 @@ export default function SubscribePage() {
 								</div>
 								<div className="text-center">
 									<span className="text-3xl font-bold">¥{price}</span>
-									{billingCycle === 'yearly' && (
+									{/* UP-62：0 价套餐（Free）不参与折扣展示——「¥0.00 划线 + 8折」是纯噪音 */}
+									{billingCycle === 'yearly' && parseFloat(originalPrice) > 0 && (
 										<div>
 											<span className="text-sm text-neutral-600 line-through">¥{originalPrice}</span>
 											<span className="text-xs text-danger-text ml-1">

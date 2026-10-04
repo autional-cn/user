@@ -130,6 +130,7 @@ export function useDeleteNotification(): UseMutationResult<unknown, Error, strin
 
 interface NotificationPreferences {
 	emailEnabled?: boolean;
+	smsEnabled?: boolean;
 	pushEnabled?: boolean;
 	typePrefs?: Record<string, { enabled: boolean }>;
 	channels?: Record<string, { enabled: boolean; types?: string[] }>;

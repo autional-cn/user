@@ -555,6 +555,7 @@
       "channelsTitle": "Delivery Channels",
       "channelsDesc": "Choose how to receive notifications",
       "channelEmail": "Email",
+      "channelSms": "SMS",
       "channelPush": "Push",
       "channelInApp": "In-App"
     }
@@ -1788,6 +1789,7 @@
   "notifications.prefs.channelsTitle": "Delivery Channels",
   "notifications.prefs.channelsDesc": "Choose how to receive notifications",
   "notifications.prefs.channelEmail": "Email",
+  "notifications.prefs.channelSms": "SMS",
   "notifications.prefs.channelPush": "Push",
   "notifications.prefs.channelInApp": "In-App",
   "notifications.prefs.atLeastOneType": "Keep at least one notification type enabled",

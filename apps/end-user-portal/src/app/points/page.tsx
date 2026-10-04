@@ -71,7 +71,8 @@ export default function PointsPage() {
 		return (
 			<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
 				<SkeletonCard />
-				<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+				<div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+					<SkeletonCard />
 					<SkeletonCard />
 					<SkeletonCard />
 					<SkeletonCard />
@@ -170,7 +171,8 @@ export default function PointsPage() {
 		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
 			<h1 className="text-2xl font-bold">{t('points.title')}</h1>
 
-			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+			{/* UP-52：5 张卡与 4 列栅格错配致第 5 卡孤行换行；改 5 列消除孤卡 */}
+			<div className="grid grid-cols-1 md:grid-cols-5 gap-4">
 				<Card
 					icon={<Coins className="w-5 h-5 text-amber-500" />}
 					label={t('points.availablePoints')}

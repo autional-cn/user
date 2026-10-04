@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import {
 	Bell,
 	Mail,
+	MessageSquare,
 	Smartphone,
 	MonitorSmartphone,
 	ShieldCheck,
@@ -55,6 +56,9 @@ const NOTIFICATION_TYPES = [
 
 const CHANNELS = [
 	{ key: 'email', labelKey: 'notifications.prefs.channelEmail', icon: Mail },
+	// UP-77：后端契约恒含 4 渠道（in_app/email/sms/push），SMS 为 demo 活跃发送渠道——
+	// 此前 UI 只画 3 个，短信渠道用户不可管理；补齐对齐契约。
+	{ key: 'sms', labelKey: 'notifications.prefs.channelSms', icon: MessageSquare },
 	{ key: 'push', labelKey: 'notifications.prefs.channelPush', icon: Bell },
 	{ key: 'inApp', labelKey: 'notifications.prefs.channelInApp', icon: Smartphone },
 ];
@@ -85,11 +89,12 @@ export default function NotificationPreferencesPage() {
 
 			const channels: Record<string, boolean> = {};
 			for (const ch of CHANNELS) {
-				channels[ch.key] =
-					prefs.channels?.[ch.key]?.enabled ?? (ch.key === 'inApp' ? true : ch.key === 'email');
+				// UP-77：sms 并入本兜底（其余渠道口径不变：push 默认关、email/inApp/sms 默认开）
+				channels[ch.key] = prefs.channels?.[ch.key]?.enabled ?? ch.key !== 'push';
 			}
 			if (prefs.emailEnabled !== undefined) channels.email = prefs.emailEnabled;
 			if (prefs.pushEnabled !== undefined) channels.push = prefs.pushEnabled;
+			if (prefs.smsEnabled !== undefined) channels.sms = prefs.smsEnabled;
 			setChannelToggles(channels);
 		}
 	}, [prefs]);
@@ -104,27 +109,29 @@ export default function NotificationPreferencesPage() {
 			return;
 		}
 		try {
+			const enabledTypes = Object.entries(typeToggles)
+				.filter(([, v]) => v)
+				.map(([k]) => k);
 			await updateMutation.mutateAsync({
 				emailEnabled: channelToggles.email,
+				smsEnabled: channelToggles.sms,
 				pushEnabled: channelToggles.push,
 				channels: {
 					email: {
 						enabled: channelToggles.email,
-						types: Object.entries(typeToggles)
-							.filter(([, v]) => v)
-							.map(([k]) => k),
+						types: [...enabledTypes],
+					},
+					sms: {
+						enabled: channelToggles.sms,
+						types: [...enabledTypes],
 					},
 					push: {
 						enabled: channelToggles.push,
-						types: Object.entries(typeToggles)
-							.filter(([, v]) => v)
-							.map(([k]) => k),
+						types: [...enabledTypes],
 					},
 					inApp: {
 						enabled: channelToggles.inApp,
-						types: Object.entries(typeToggles)
-							.filter(([, v]) => v)
-							.map(([k]) => k),
+						types: [...enabledTypes],
 					},
 				},
 			});

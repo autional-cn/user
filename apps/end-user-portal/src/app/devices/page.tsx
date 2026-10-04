@@ -67,6 +67,8 @@ export default function DevicesPage() {
 		refetch: refetchThings,
 	} = useThingsList();
 
+	const items = thingsResult?.items || [];
+
 	if (thingsLoading)
 		return (
 			<div className="space-y-4 px-4 py-8">
@@ -82,15 +84,18 @@ export default function DevicesPage() {
 					<h2 className="text-xl font-bold text-neutral-900">{t('devices.title')}</h2>
 					<p className="mt-1 text-sm text-neutral-600">{t('devices.subtitle')}</p>
 				</div>
-				<div className="flex items-center gap-2">
-					<Link
-						to={buildNavHref(ROUTES.devicesPair, tenantSlug)}
-						className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-					>
-						<Plus size={14} />
-						{t('devices.things.pair')}
-					</Link>
-				</div>
+				{/* UP-43：空态已有卡片主按钮入口，右上入口隐藏，避免同屏两处「配对设备」 */}
+				{items.length > 0 && (
+					<div className="flex items-center gap-2">
+						<Link
+							to={buildNavHref(ROUTES.devicesPair, tenantSlug)}
+							className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+						>
+							<Plus size={14} />
+							{t('devices.things.pair')}
+						</Link>
+					</div>
+				)}
 			</div>
 
 			{thingsError ? (
@@ -101,7 +106,7 @@ export default function DevicesPage() {
 				/>
 			) : (
 				<div className="space-y-4">
-					{(thingsResult?.items || []).map((thing) => {
+					{items.map((thing) => {
 						const Icon = getThingIcon(thing.type || thing.deviceType);
 						const statusVariant = getThingStatusVariant(thing.status, thing.online);
 						const statusLabel = getThingStatusLabel(thing.status, thing.online, t);
@@ -174,7 +179,7 @@ export default function DevicesPage() {
 						);
 					})}
 
-					{(!thingsResult?.items || thingsResult.items.length === 0) && (
+					{items.length === 0 && (
 						<div className="flex flex-col items-center justify-center rounded-lg border border-neutral-200 bg-white py-12 text-center">
 							<Wifi size={40} className="text-neutral-300" />
 							<p className="mt-4 text-sm text-neutral-600">{t('devices.things.empty')}</p>

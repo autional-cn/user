@@ -324,7 +324,8 @@ export default function ProfilePage() {
 							<h3 className="text-lg font-semibold text-neutral-900">
 								{profile.username || profile.email}
 							</h3>
-							<p className="text-sm text-neutral-600">{profile.email}</p>
+							{/* UP-05：无 username 时 h3 已回落为邮箱，副行再写一次即双写 */}
+							{profile.username && <p className="text-sm text-neutral-600">{profile.email}</p>}
 						</div>
 					</div>
 
