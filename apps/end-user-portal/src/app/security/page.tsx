@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useTranslation } from 'react-i18next';
+import { formatTime } from '@/lib/format';
 import {
 	Lock,
 	KeyRound,
@@ -710,7 +711,7 @@ export default function SecurityPage() {
 											)}
 										</p>
 										<p className="text-xs text-[var(--color-text-secondary)]">
-											{t('security.passkeyRegisteredAt')} {pk.createdAt}
+											{t('security.passkeyRegisteredAt')} {formatTime(pk.createdAt)}
 											{pk.backupState && (
 												<span className="ml-2 text-amber-500">
 													· {t('security.passkeyCloudSynced')}
@@ -792,7 +793,7 @@ export default function SecurityPage() {
 												{email && <span>{email}</span>}
 												{conn.createdAt && (
 													<span>
-														{t('security.oauth.linkedAt')} {conn.createdAt}
+														{t('security.oauth.linkedAt')} {formatTime(conn.createdAt)}
 													</span>
 												)}
 											</div>

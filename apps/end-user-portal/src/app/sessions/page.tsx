@@ -14,6 +14,7 @@ import {
 	Filter,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { formatTime } from '@/lib/format';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError } from '@autional-cn/shared';
 import {
@@ -244,7 +245,8 @@ export default function SessionsPage() {
 										</span>
 										<span className="flex items-center gap-1">
 											<Clock size={14} />
-											{t('sessions.lastActive')}: {session.lastActiveAt || session.createdAt}
+											{t('sessions.lastActive')}:{' '}
+											{formatTime(session.lastActiveAt || session.createdAt)}
 										</span>
 									</div>
 								</div>
