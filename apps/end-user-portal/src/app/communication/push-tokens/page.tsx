@@ -11,7 +11,7 @@ import {
 } from '@/hooks/queries';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { LoadingScreen, ErrorState, ConfirmDialog } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, ErrorState, ConfirmDialog } from '@autional-cn/ui';
 import { Link } from 'react-router';
 import { Smartphone, Monitor, Globe, Laptop, Plus, Trash2, ChevronLeft } from 'lucide-react';
 
@@ -86,37 +86,31 @@ export default function PushTokensPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-4">
-					<Link
-						to={buildNavHref(ROUTES.communication, tenantSlug)}
-						className="flex items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+			<Link
+				to={buildNavHref(ROUTES.communication, tenantSlug)}
+				className="flex w-fit items-center gap-1 rounded-md border border-neutral-200 px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+			>
+				<ChevronLeft size={14} />
+				{t('communication.backToHistory', 'History')}
+			</Link>
+			<ConsolePageHeader
+				title={t('communication.pushTokens.title', 'Push Tokens')}
+				description={t(
+					'communication.pushTokens.description',
+					'Manage your device push notification tokens',
+				)}
+				actions={
+					<button
+						onClick={() => setShowForm(!showForm)}
+						className="flex items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
 					>
-						<ChevronLeft size={14} />
-						{t('communication.backToHistory', 'History')}
-					</Link>
-					<div>
-						<h2 className="text-xl font-bold text-neutral-900">
-							{t('communication.pushTokens.title', 'Push Tokens')}
-						</h2>
-						<p className="mt-1 text-sm text-neutral-600">
-							{t(
-								'communication.pushTokens.description',
-								'Manage your device push notification tokens',
-							)}
-						</p>
-					</div>
-				</div>
-				<button
-					onClick={() => setShowForm(!showForm)}
-					className="flex items-center gap-2 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
-				>
-					<Plus size={16} />
-					{showForm
-						? t('common.cancel', 'Cancel')
-						: t('communication.pushTokens.register', 'Register Token')}
-				</button>
-			</div>
+						<Plus size={16} />
+						{showForm
+							? t('common.cancel', 'Cancel')
+							: t('communication.pushTokens.register', 'Register Token')}
+					</button>
+				}
+			/>
 
 			{showForm && (
 				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm max-w-lg">

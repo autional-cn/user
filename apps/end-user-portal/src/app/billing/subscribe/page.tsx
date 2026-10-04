@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@autional-cn/shared';
-import { ErrorState } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useTenant } from '@/hooks/use-tenant';
 import {
@@ -174,10 +174,7 @@ export default function SubscribePage() {
 
 	return (
 		<div className="max-w-4xl mx-auto space-y-6">
-			<div className="text-center space-y-2">
-				<h1 className="text-3xl font-bold">{t('billing.subscribe.title')}</h1>
-				<p className="text-neutral-600">{t('billing.subscribe.subtitle')}</p>
-			</div>
+			<ConsolePageHeader title={t('billing.subscribe.title')} description={t('billing.subscribe.subtitle')} />
 
 			{currentSub?.plan && (
 				<div className="text-center">

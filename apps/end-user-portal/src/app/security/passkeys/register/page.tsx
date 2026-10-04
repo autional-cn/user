@@ -19,7 +19,7 @@ import {
 	authWebauthnRegisterCompletePost,
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
-import { Button } from '@autional-cn/ui';
+import { ConsolePageHeader, Button } from '@autional-cn/ui';
 
 export default function PasskeyRegisterPage() {
 	const tenantSlug = useTenantSlug();
@@ -146,22 +146,16 @@ export default function PasskeyRegisterPage() {
 
 	return (
 		<div className="max-w-lg mx-auto space-y-6">
-			<div className="flex items-center gap-3">
-				<Link
-					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-600 hover:text-neutral-600 transition-colors"
-				>
-					<ChevronLeft size={20} />
-				</Link>
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">
-						{t('security.passkeys.register.title')}
-					</h2>
-					<p className="mt-1 text-sm text-neutral-600">
-						{t('security.passkeys.register.subtitle')}
-					</p>
-				</div>
-			</div>
+			<Link
+				to={buildNavHref(ROUTES.security, tenantSlug)}
+				className="text-neutral-600 hover:text-neutral-600 transition-colors"
+			>
+				<ChevronLeft size={20} />
+			</Link>
+			<ConsolePageHeader
+				title={t('security.passkeys.register.title')}
+				description={t('security.passkeys.register.subtitle')}
+			/>
 
 			{step === 'idle' && (
 				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm text-center">

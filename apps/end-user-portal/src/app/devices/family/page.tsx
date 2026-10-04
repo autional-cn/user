@@ -14,7 +14,7 @@ import {
 	useThingsList,
 	type FamilyMember,
 } from '@/hooks/queries';
-import {
+import { ConsolePageHeader,
 	ErrorState,
 	Button,
 	Input,
@@ -152,21 +152,23 @@ export default function FamilyAccessPage() {
 				{t('devices.family.back')}
 			</button>
 
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('devices.family.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('devices.family.subtitle')}</p>
-				</div>
-				{!showForm && (
-					<button
-						onClick={() => setShowForm(true)}
-						className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
-					>
-						<UserPlus size={14} />
-						{t('devices.family.addMember')}
-					</button>
-				)}
-			</div>
+			<ConsolePageHeader
+				title={t('devices.family.title')}
+				description={t('devices.family.subtitle')}
+				actions={
+					<>
+						{!showForm && (
+							<button
+								onClick={() => setShowForm(true)}
+								className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+							>
+								<UserPlus size={14} />
+								{t('devices.family.addMember')}
+							</button>
+						)}
+					</>
+				}
+			/>
 
 			{showForm && (
 				<SectionCard padding="md">

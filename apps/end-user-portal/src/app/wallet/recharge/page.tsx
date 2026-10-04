@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth, useTenantSlug } from '@autional-cn/shared';
 import { paymentsByPayments } from '@autional-cn/shared/generated/api';
-import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { useTranslation } from 'react-i18next';
 import { Wallet, CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';
@@ -149,7 +149,7 @@ export default function WalletRechargePage() {
 
 	return (
 		<div className="max-w-2xl mx-auto space-y-6">
-			<h1 className="text-2xl font-bold">{t('wallet.recharge.title')}</h1>
+			<ConsolePageHeader title={t('wallet.recharge.title')} />
 
 			<div className="bg-white rounded-lg border p-6 flex items-center gap-4">
 				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-success-soft">

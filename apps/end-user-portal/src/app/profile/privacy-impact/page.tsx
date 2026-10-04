@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { useAuth, useTenantSlug } from '@autional-cn/shared';
 import { profilesPrivacyImpactByProfiles } from '@autional-cn/shared/generated/api';
-import { LoadingScreen } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
@@ -258,10 +258,10 @@ export default function PrivacyImpactPage() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h2 className="text-xl font-bold text-neutral-900">{t('privacyImpact.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-600">{t('privacyImpact.subtitle')}</p>
-			</div>
+			<ConsolePageHeader
+				title={t('privacyImpact.title')}
+				description={t('privacyImpact.subtitle')}
+			/>
 
 			{/* Risk Score Card */}
 			<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm">

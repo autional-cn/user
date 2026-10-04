@@ -28,7 +28,7 @@ import {
 } from '@/hooks/queries';
 import { useLanguage } from '@/hooks/use-language';
 import { useTheme } from '@/hooks/use-theme';
-import { ErrorState } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 import { IdentifierChangeDialog } from '@/components/profile/IdentifierChangeDialog';
 
@@ -195,36 +195,40 @@ export default function ProfilePage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<h2 className="text-xl font-bold text-neutral-900">{t('profile.title')}</h2>
-				{activeTab === 'basic' && !editing ? (
-					<button
-						onClick={startEdit}
-						className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-					>
-						<Edit2 size={14} />
-						{t('profile.edit')}
-					</button>
-				) : activeTab === 'basic' && editing ? (
-					<div className="flex items-center gap-2">
-						<button
-							onClick={() => setEditing(false)}
-							className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-						>
-							<X size={14} />
-							{t('profile.cancel')}
-						</button>
-						<button
-							onClick={handleSave}
-							disabled={updateMutation.isPending}
-							className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-60"
-						>
-							<Save size={14} />
-							{updateMutation.isPending ? t('profile.saving') : t('profile.save')}
-						</button>
-					</div>
-				) : null}
-			</div>
+			<ConsolePageHeader
+				title={t('profile.title')}
+				actions={
+					<>
+						{activeTab === 'basic' && !editing ? (
+							<button
+								onClick={startEdit}
+								className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+							>
+								<Edit2 size={14} />
+								{t('profile.edit')}
+							</button>
+						) : activeTab === 'basic' && editing ? (
+							<div className="flex items-center gap-2">
+								<button
+									onClick={() => setEditing(false)}
+									className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+								>
+									<X size={14} />
+									{t('profile.cancel')}
+								</button>
+								<button
+									onClick={handleSave}
+									disabled={updateMutation.isPending}
+									className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors disabled:opacity-60"
+								>
+									<Save size={14} />
+									{updateMutation.isPending ? t('profile.saving') : t('profile.save')}
+								</button>
+							</div>
+						) : null}
+					</>
+				}
+			/>
 
 			{/* Privacy Impact Link */}
 			<Link

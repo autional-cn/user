@@ -19,7 +19,7 @@ import {
 	useMarkNotificationRead,
 	useMarkAllNotificationsRead,
 } from '@/hooks/queries';
-import { ErrorState, EmptyState } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 export default function NotificationsPage() {
@@ -125,27 +125,31 @@ export default function NotificationsPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('notifications.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">
+			<ConsolePageHeader
+				title={t('notifications.title')}
+				description={
+					<>
 						{unreadCount > 0
 							? t('notifications.unreadCount', { count: unreadCount })
 							: t('notifications.noUnread')}
 						{total > 0 && ` · ${t('notifications.totalCount', { total })}`}
-					</p>
-				</div>
-				{unreadCount > 0 && (
-					<button
-						onClick={handleMarkAllRead}
-						disabled={markAllMutation.isPending}
-						className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
-					>
-						<CheckCheck size={14} />
-						{markAllMutation.isPending ? t('common.loading') : t('notifications.markAllRead')}
-					</button>
-				)}
-			</div>
+					</>
+				}
+				actions={
+					<>
+						{unreadCount > 0 && (
+							<button
+								onClick={handleMarkAllRead}
+								disabled={markAllMutation.isPending}
+								className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+							>
+								<CheckCheck size={14} />
+								{markAllMutation.isPending ? t('common.loading') : t('notifications.markAllRead')}
+							</button>
+						)}
+					</>
+				}
+			/>
 
 			<div className="space-y-3">
 				{list.map((n) => {

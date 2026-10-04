@@ -9,7 +9,7 @@ import {
 } from '@autional-cn/shared/generated/api';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { LoadingScreen } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
@@ -260,19 +260,19 @@ export default function RoleActivationsPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('roleActivations.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('roleActivations.subtitle')}</p>
-				</div>
-				<button
-					onClick={() => setShowForm(!showForm)}
-					className="flex items-center gap-1.5 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
-				>
-					<Plus size={16} />
-					{t('roleActivations.requestButton')}
-				</button>
-			</div>
+			<ConsolePageHeader
+				title={t('roleActivations.title')}
+				description={t('roleActivations.subtitle')}
+				actions={
+					<button
+						onClick={() => setShowForm(!showForm)}
+						className="flex items-center gap-1.5 rounded-md bg-primary-600 px-4 py-2 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+					>
+						<Plus size={16} />
+						{t('roleActivations.requestButton')}
+					</button>
+				}
+			/>
 
 			{/* Request Form */}
 			{showForm && (

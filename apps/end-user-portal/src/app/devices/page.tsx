@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useThingsList } from '@/hooks/queries';
-import { ErrorState } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 
 const thingIcons: Record<string, typeof Smartphone> = {
@@ -79,24 +79,24 @@ export default function DevicesPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('devices.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('devices.subtitle')}</p>
-				</div>
-				{/* UP-43：空态已有卡片主按钮入口，右上入口隐藏，避免同屏两处「配对设备」 */}
-				{items.length > 0 && (
-					<div className="flex items-center gap-2">
-						<Link
-							to={buildNavHref(ROUTES.devicesPair, tenantSlug)}
-							className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
-						>
-							<Plus size={14} />
-							{t('devices.things.pair')}
-						</Link>
-					</div>
-				)}
-			</div>
+			<ConsolePageHeader
+				title={t('devices.title')}
+				description={t('devices.subtitle')}
+				actions={
+					/* UP-43：空态已有卡片主按钮入口，右上入口隐藏，避免同屏两处「配对设备」 */
+					items.length > 0 && (
+						<div className="flex items-center gap-2">
+							<Link
+								to={buildNavHref(ROUTES.devicesPair, tenantSlug)}
+								className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors"
+							>
+								<Plus size={14} />
+								{t('devices.things.pair')}
+							</Link>
+						</div>
+					)
+				}
+			/>
 
 			{thingsError ? (
 				<ErrorState

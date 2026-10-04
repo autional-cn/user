@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommunicationLogs } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
-import { ErrorState, StatusBadge } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -159,18 +159,12 @@ export default function CommunicationHistoryPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">
-						{t('communication.historyTitle', 'Communication History')}
-					</h2>
-					<p className="mt-1 text-sm text-neutral-600">
-						{total > 0
-							? t('communication.totalLogs', { total })
-							: t('communication.noLogs', 'No communication logs found')}
-					</p>
-				</div>
-			</div>
+			<ConsolePageHeader
+				title={t('communication.historyTitle', 'Communication History')}
+				description={total > 0
+					? t('communication.totalLogs', { total })
+					: t('communication.noLogs', 'No communication logs found')}
+			/>
 
 			<div className="flex items-center gap-3">
 				<div className="flex items-center gap-2">

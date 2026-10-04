@@ -10,7 +10,7 @@ import {
 	useUnreadNotifications,
 	useMFAStatus,
 } from '@/hooks/queries';
-import { ErrorState } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { ROUTES } from '@/lib/routes';
 import { buildNavHref } from '@/lib/nav';
@@ -86,13 +86,17 @@ export default function DashboardPage() {
 
 	return (
 		<div className="space-y-8">
-			{/* Welcome header */}
-			<div className="flex items-center gap-4">
-				<div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary-100 text-xl font-bold text-primary-700">
-					{userInitial}
-				</div>
-				<div>
-					<h2 className="text-2xl font-bold text-neutral-900">
+			{/* Welcome header —— 头像留在标题里（aria-hidden，不进可访问名），
+			    问候语优先 displayName（UP-08）。 */}
+			<ConsolePageHeader
+				title={
+					<span className="flex items-center gap-3">
+						<span
+							aria-hidden="true"
+							className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-100 text-base font-bold text-primary-700"
+						>
+							{userInitial}
+						</span>
 						{t('dashboard.greeting', {
 							name:
 								user?.displayName?.trim() ||
@@ -101,10 +105,10 @@ export default function DashboardPage() {
 								user?.email ||
 								t('common.userFallback'),
 						})}
-					</h2>
-					<p className="mt-1 text-neutral-600">{t('dashboard.welcome')}</p>
-				</div>
-			</div>
+					</span>
+				}
+				description={t('dashboard.welcome')}
+			/>
 
 			{/* Quick stats row */}
 			{isStatsLoading ? (

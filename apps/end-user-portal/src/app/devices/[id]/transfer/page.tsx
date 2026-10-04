@@ -6,7 +6,7 @@ import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftRight, ArrowLeft, Mail, Smartphone, UserCheck } from 'lucide-react';
-import { LoadingScreen, ErrorState, SectionCard } from '@autional-cn/ui';
+import { ConsolePageHeader, Button, Label, SectionCard, LoadingScreen, ErrorState } from '@autional-cn/ui';
 
 // B2 待复核 #1 裁定：假成功面消除——转让链未接线（后端 POST /iots/:id/transfer 需
 // new_owner_id，缺 email→owner 解析与接收方确认链），页面不再模拟提交，改如实占位。
@@ -34,10 +34,10 @@ export default function DeviceTransferPage() {
 				{t('devices.transfer.back')}
 			</button>
 
-			<div>
-				<h2 className="text-xl font-bold text-neutral-900">{t('devices.transfer.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-600">{t('devices.transfer.subtitle')}</p>
-			</div>
+			<ConsolePageHeader
+				title={t('devices.transfer.title')}
+				description={t('devices.transfer.subtitle')}
+			/>
 
 			{deviceId && (
 				<div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4">

@@ -23,7 +23,7 @@ import {
 	Banknote,
 	Shield,
 } from 'lucide-react';
-import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -169,7 +169,7 @@ export default function PointsPage() {
 
 	return (
 		<div className="max-w-4xl mx-auto space-y-6">
-			<h1 className="text-2xl font-bold">{t('points.title')}</h1>
+			<ConsolePageHeader title={t('points.title')} />
 
 			{/* UP-52：5 张卡与 4 列栅格错配致第 5 卡孤行换行；改 5 列消除孤卡 */}
 			<div className="grid grid-cols-1 md:grid-cols-5 gap-4">

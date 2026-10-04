@@ -5,7 +5,7 @@ import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem } from '@/hooks/queries';
 import { auditStatusKind, formatTime } from '@/lib/format';
 import { parseUserAgent } from '@/lib/user-agent';
-import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable, DateRangeFilter } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -244,10 +244,7 @@ export default function ActivityPage() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h2 className="text-2xl font-bold text-neutral-900">{t('activity.title')}</h2>
-				<p className="mt-2 text-neutral-600">{t('activity.description')}</p>
-			</div>
+			<ConsolePageHeader title={t('activity.title')} description={t('activity.description')} />
 
 			<div className="flex flex-wrap items-center gap-3">
 				<select

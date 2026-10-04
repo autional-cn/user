@@ -19,7 +19,7 @@ import {
 	RotateCcw,
 } from 'lucide-react';
 import { useMFAStatus, useProfile, useDevices, useNotificationPreferences } from '@/hooks/queries';
-import { LoadingScreen } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 
 const STORAGE_KEY = 'autional_onboarding_completed';
 const STEPS_KEY = 'autional_onboarding_steps';
@@ -167,18 +167,15 @@ export default function OnboardingPage() {
 
 	return (
 		<div className="mx-auto max-w-2xl space-y-8">
-			{/* Header */}
-			<div className="text-center">
-				<div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary-50">
-					<Compass size={28} className="text-primary-600" />
-				</div>
-				<h1 className="text-2xl font-bold text-neutral-900">
-					{t('onboarding.title', '欢迎来到 Autional！')}
-				</h1>
-				<p className="mt-2 text-neutral-600">
-					{t('onboarding.subtitle', '完成以下步骤以开始使用')}
-				</p>
-			</div>
+			<ConsolePageHeader
+				title={
+					<span className="flex items-center gap-2">
+						<Compass className="h-5 w-5 text-primary-600" />
+						{t('onboarding.title', '欢迎来到 Autional！')}
+					</span>
+				}
+				description={t('onboarding.subtitle', '完成以下步骤以开始使用')}
+			/>
 
 			{/* Progress bar */}
 			<div className="rounded-lg border border-neutral-200 bg-white p-5 shadow-sm">

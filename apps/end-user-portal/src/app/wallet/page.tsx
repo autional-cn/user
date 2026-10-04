@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@autional-cn/shared';
-import { ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -243,7 +243,7 @@ export default function WalletPage() {
 
 	return (
 		<div className="max-w-4xl mx-auto space-y-6">
-			<h1 className="text-2xl font-bold">{t('wallet.title')}</h1>
+			<ConsolePageHeader title={t('wallet.title')} />
 
 			<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
 				<Card

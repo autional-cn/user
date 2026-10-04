@@ -20,7 +20,7 @@ import {
 	authMeDeleteAccountPost,
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
-import { Button } from '@autional-cn/ui';
+import { ConsolePageHeader, Button } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { deleteSchema, type DeleteFormData } from '@/lib/validators';
 
@@ -84,22 +84,16 @@ export default function DeleteAccountPage() {
 
 	return (
 		<div className="max-w-lg mx-auto space-y-6">
-			<div className="flex items-center gap-3">
-				<Link
-					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-600 hover:text-neutral-600 transition-colors"
-				>
-					<ChevronLeft size={20} />
-				</Link>
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">
-						{t('security.deleteAccount.pageTitle')}
-					</h2>
-					<p className="mt-1 text-sm text-neutral-600">
-						{t('security.deleteAccount.pageSubtitle')}
-					</p>
-				</div>
-			</div>
+			<Link
+				to={buildNavHref(ROUTES.security, tenantSlug)}
+				className="text-neutral-600 hover:text-neutral-600 transition-colors"
+			>
+				<ChevronLeft size={20} />
+			</Link>
+			<ConsolePageHeader
+				title={t('security.deleteAccount.pageTitle')}
+				description={t('security.deleteAccount.pageSubtitle')}
+			/>
 
 			<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm">
 				<div className="flex items-start gap-4">

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '@autional-cn/shared';
 import { useAnnouncements } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
-import { LoadingScreen } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { Megaphone, ChevronDown, ChevronRight, ChevronLeft, Eye, X } from 'lucide-react';
 
@@ -66,14 +66,10 @@ export default function AnnouncementsPage() {
 
 	return (
 		<div className="space-y-6">
-			<div>
-				<h2 className="text-xl font-bold text-neutral-900">
-					{t('announcements.title', 'Announcements')}
-				</h2>
-				<p className="mt-1 text-sm text-neutral-600">
-					{t('announcements.description', 'Stay updated with the latest news and updates')}
-				</p>
-			</div>
+			<ConsolePageHeader
+				title={t('announcements.title', 'Announcements')}
+				description={t('announcements.description', 'Stay updated with the latest news and updates')}
+			/>
 
 			<div className="space-y-3">
 				{visibleList.map((ann: any) => (

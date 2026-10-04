@@ -7,7 +7,7 @@ import type { AuditLogItem, AuditLogsParams } from '@/hooks/queries';
 import { authMeAuditLogs } from '@autional-cn/shared/generated/api';
 import { auditStatusKind, formatTime } from '@/lib/format';
 import { parseUserAgent } from '@/lib/user-agent';
-import { LoadingScreen } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
@@ -225,20 +225,20 @@ export default function LoginHistoryPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('loginHistory.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('loginHistory.subtitle')}</p>
-				</div>
-				<button
-					onClick={handleExportCSV}
-					disabled={total === 0 || exporting}
-					className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
-				>
-					<Download size={14} />
-					{t('loginHistory.export')}
-				</button>
-			</div>
+			<ConsolePageHeader
+				title={t('loginHistory.title')}
+				description={t('loginHistory.subtitle')}
+				actions={
+					<button
+						onClick={handleExportCSV}
+						disabled={total === 0 || exporting}
+						className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
+					>
+						<Download size={14} />
+						{t('loginHistory.export')}
+					</button>
+				}
+			/>
 
 			{/* Filters */}
 			<div className="flex flex-wrap items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4">

@@ -7,7 +7,7 @@ import { ROUTES } from '@/lib/routes';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Smartphone, ArrowLeft, CheckCircle2 } from 'lucide-react';
-import { Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { ConsolePageHeader, Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DevicePairingPage() {
@@ -56,10 +56,10 @@ export default function DevicePairingPage() {
 				{t('devices.pair.back')}
 			</button>
 
-			<div>
-				<h2 className="text-xl font-bold text-neutral-900">{t('devices.pair.title')}</h2>
-				<p className="mt-1 text-sm text-neutral-600">{t('devices.pair.subtitle')}</p>
-			</div>
+			<ConsolePageHeader
+				title={t('devices.pair.title')}
+				description={t('devices.pair.subtitle')}
+			/>
 
 			{success ? (
 				<div className="rounded-lg border border-success-soft bg-success-soft p-8 text-center shadow-sm">

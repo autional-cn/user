@@ -15,7 +15,7 @@ import { Link } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import { extractApiError, useTenantSlug } from '@autional-cn/shared';
 import { authMeExportDataPost } from '@autional-cn/shared/generated/api';
-import { Button, ConfirmDialog } from '@autional-cn/ui';
+import { ConsolePageHeader, Button, ConfirmDialog } from '@autional-cn/ui';
 
 export default function ExportDataPage() {
 	const tenantSlug = useTenantSlug();
@@ -66,18 +66,16 @@ export default function ExportDataPage() {
 
 	return (
 		<div className="max-w-lg mx-auto space-y-6">
-			<div className="flex items-center gap-3">
-				<Link
-					to={buildNavHref(ROUTES.profile, tenantSlug)}
-					className="text-neutral-600 hover:text-neutral-600 transition-colors"
-				>
-					<ChevronLeft size={20} />
-				</Link>
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('privacy.exportData.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('privacy.exportData.subtitle')}</p>
-				</div>
-			</div>
+			<Link
+				to={buildNavHref(ROUTES.profile, tenantSlug)}
+				className="text-neutral-600 hover:text-neutral-600 transition-colors"
+			>
+				<ChevronLeft size={20} />
+			</Link>
+			<ConsolePageHeader
+				title={t('privacy.exportData.title')}
+				description={t('privacy.exportData.subtitle')}
+			/>
 
 			{step === 'idle' && (
 				<div className="rounded-lg border border-neutral-200 bg-white p-6 shadow-sm text-center">

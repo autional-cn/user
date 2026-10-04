@@ -14,7 +14,7 @@ import {
 	authMeRecoveryContactsPost,
 	authMeRecoveryContactsByRecoveryContactsDelete,
 } from '@autional-cn/shared/generated/api';
-import { LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { addContactSchema, type AddContactFormData } from '@/lib/validators';
 
@@ -106,20 +106,16 @@ export default function RecoveryContactsPage() {
 
 	return (
 		<div className="max-w-lg mx-auto space-y-6">
-			<div className="flex items-center gap-3">
-				<Link
-					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-600 hover:text-neutral-600 transition-colors"
-				>
-					<ChevronLeft size={20} />
-				</Link>
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">
-						{t('security.recoveryContacts.title')}
-					</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('security.recoveryContacts.subtitle')}</p>
-				</div>
-			</div>
+			<Link
+				to={buildNavHref(ROUTES.security, tenantSlug)}
+				className="text-neutral-600 hover:text-neutral-600 transition-colors"
+			>
+				<ChevronLeft size={20} />
+			</Link>
+			<ConsolePageHeader
+				title={t('security.recoveryContacts.title')}
+				description={t('security.recoveryContacts.subtitle')}
+			/>
 
 			<div className="rounded-lg border border-info-soft bg-info-soft p-4">
 				<div className="flex items-start gap-3">

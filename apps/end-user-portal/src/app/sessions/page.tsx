@@ -23,7 +23,7 @@ import {
 	CURRENT_SESSION_UNRESOLVABLE,
 } from '@/hooks/queries';
 import type { SessionInfo } from '@/hooks/queries';
-import { ErrorState, EmptyState, ConfirmDialog } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState, EmptyState, ConfirmDialog } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 function parseUserAgent(ua?: string): { browser: string; os: string } {
@@ -149,36 +149,36 @@ export default function SessionsPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('sessions.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('sessions.subtitle')}</p>
-				</div>
-				<div className="flex items-center gap-3">
-					<button
-						onClick={() => setHighRiskOnly((v) => !v)}
-						className={`flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
-							highRiskOnly
-								? 'border-danger-soft bg-danger-soft text-danger'
-								: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
-						}`}
-					>
-						<Filter size={14} />
-						{highRiskOnly
-							? t('sessions.showingHighRisk', '仅高风险')
-							: t('sessions.filterHighRisk', '仅显示高风险会话')}
-					</button>
-					{rawList.length > 1 && (
+			<ConsolePageHeader
+				title={t('sessions.title')}
+				description={t('sessions.subtitle')}
+				actions={
+					<div className="flex items-center gap-3">
 						<button
-							onClick={() => setRevokeAllOpen(true)}
-							disabled={revokeAllMutation.isPending}
-							className="rounded-md border border-danger/20 bg-danger/5 px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
+							onClick={() => setHighRiskOnly((v) => !v)}
+							className={`flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors ${
+								highRiskOnly
+									? 'border-danger-soft bg-danger-soft text-danger'
+									: 'border-neutral-200 bg-white text-neutral-600 hover:bg-neutral-50'
+							}`}
 						>
-							{revokeAllMutation.isPending ? t('common.loading') : t('sessions.revokeAll')}
+							<Filter size={14} />
+							{highRiskOnly
+								? t('sessions.showingHighRisk', '仅高风险')
+								: t('sessions.filterHighRisk', '仅显示高风险会话')}
 						</button>
-					)}
-				</div>
-			</div>
+						{rawList.length > 1 && (
+							<button
+								onClick={() => setRevokeAllOpen(true)}
+								disabled={revokeAllMutation.isPending}
+								className="rounded-md border border-danger/20 bg-danger/5 px-3 py-1.5 text-sm font-medium text-danger hover:bg-danger/10 transition-colors disabled:opacity-50"
+							>
+								{revokeAllMutation.isPending ? t('common.loading') : t('sessions.revokeAll')}
+							</button>
+						)}
+					</div>
+				}
+			/>
 
 			{highRiskOnly && (
 				<div className="rounded-md border border-danger-soft bg-danger-soft p-3 text-sm text-danger-text">

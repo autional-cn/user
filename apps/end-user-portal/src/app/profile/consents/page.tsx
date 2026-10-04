@@ -9,7 +9,7 @@ import {
 	profilesConsentsByProfilesByConsentsDelete,
 } from '@autional-cn/shared/generated/api';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { LoadingScreen, Modal } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
 import { ErrorState, EmptyState } from '@autional-cn/ui';
 import { showToast } from '@autional-cn/ui';
 import { isNotFoundError } from '@/lib/api-error';
@@ -167,21 +167,23 @@ export default function ConsentsPage() {
 
 	return (
 		<div className="space-y-6">
-			<div className="flex items-center justify-between">
-				<div>
-					<h2 className="text-xl font-bold text-neutral-900">{t('consents.title')}</h2>
-					<p className="mt-1 text-sm text-neutral-600">{t('consents.subtitle')}</p>
-				</div>
-				{availableFields.length > 0 && (
-					<button
-						onClick={() => setShowModal(true)}
-						className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
-					>
-						<Plus size={14} />
-						{t('consents.grantNew')}
-					</button>
-				)}
-			</div>
+			<ConsolePageHeader
+				title={t('consents.title')}
+				description={t('consents.subtitle')}
+				actions={
+					<>
+						{availableFields.length > 0 && (
+							<button
+								onClick={() => setShowModal(true)}
+								className="flex items-center gap-1.5 rounded-md bg-primary-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"
+							>
+								<Plus size={14} />
+								{t('consents.grantNew')}
+							</button>
+						)}
+					</>
+				}
+			/>
 
 			{/* Active Consents */}
 			<div className="rounded-lg border border-neutral-200 bg-white shadow-sm">

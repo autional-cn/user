@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@autional-cn/shared';
-import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -201,7 +201,7 @@ export default function WithdrawalsPage() {
 
 	return (
 		<div className="max-w-4xl mx-auto space-y-6">
-			<h1 className="text-2xl font-bold">{t('wallet.withdrawals.title')}</h1>
+			<ConsolePageHeader title={t('wallet.withdrawals.title')} />
 
 			<div className="bg-white rounded-lg border p-6 flex items-center gap-4">
 				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-success-soft">

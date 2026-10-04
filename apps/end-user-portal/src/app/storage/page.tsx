@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth, extractApiErrorMessage, apiClient } from '@autional-cn/shared';
 import * as Generated from '@autional-cn/shared/generated/api';
 import type { FileMetadataResponse, FolderMetadataResponse } from '@autional-cn/shared/generated/types';
-import { LoadingScreen, ErrorState, EmptyState, Modal } from '@autional-cn/ui';
+import { ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Modal } from '@autional-cn/ui';
 import { useToast } from '@/hooks/use-toast';
 import { isNotFoundError } from '@/lib/api-error';
 import {
@@ -280,7 +280,7 @@ export default function StoragePage() {
 
 	return (
 		<div className="max-w-6xl mx-auto space-y-4" onClick={() => setContextMenu(null)}>
-			<h1 className="text-2xl font-bold">{t('storage.title')}</h1>
+			<ConsolePageHeader title={t('storage.title')} />
 
 			{/* Quota Bar */}
 			{quotaData && (

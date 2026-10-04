@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ErrorState, EmptyState } from '@autional-cn/ui';
+import { ConsolePageHeader, ErrorState, EmptyState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { ShieldCheck, Award, FileSearch, ChevronRight } from 'lucide-react';
 import { extractApiError } from '@autional-cn/shared';
@@ -83,15 +83,15 @@ export default function CompliancePage() {
 
 	return (
 		<div className="max-w-3xl mx-auto">
-			<div className="mb-8">
-				<h1 className="text-2xl font-bold flex items-center gap-2">
-					<ShieldCheck className="w-7 h-7 text-[var(--color-brand)]" />
-					{t('compliance.title', '组织合规状态')}
-				</h1>
-				<p className="text-muted-foreground mt-1">
-					{t('compliance.subtitle', '了解您所在组织的合规标准遵守情况和评分')}
-				</p>
-			</div>
+			<ConsolePageHeader
+				title={
+					<span className="flex items-center gap-2">
+						<ShieldCheck className="h-5 w-5 text-[var(--color-brand)]" />
+						{t('compliance.title', '组织合规状态')}
+					</span>
+				}
+				description={t('compliance.subtitle', '了解您所在组织的合规标准遵守情况和评分')}
+			/>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
 				<div className="rounded-lg border bg-card p-6">
