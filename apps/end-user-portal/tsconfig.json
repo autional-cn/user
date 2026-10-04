@@ -18,7 +18,10 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      // 钉扎 zod 解析：@hookform/resolvers@3.10 的 d.ts 无 zod 依赖边（走位解析到 pnpm hoist 存储），
+      // 若 hoist 存储被其它包的 zod@4 占据，resolvers 的 z.Schema 会展开为 v4 形状，5 处 zodResolver 调用点报 TS2345。
+      "zod": ["./node_modules/zod"]
     }
   },
   "include": ["src"],
