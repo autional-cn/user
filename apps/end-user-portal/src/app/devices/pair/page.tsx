@@ -7,7 +7,7 @@ import { ROUTES } from '@/lib/routes';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { Smartphone, ArrowLeft } from 'lucide-react';
-import { Result, SectionCard, ConsolePageHeader, Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { Alert, Result, SectionCard, ConsolePageHeader, Button, Input, Label, LoadingScreen, ErrorState } from '@autional-cn/ui';
 import { useToast } from '@/hooks/use-toast';
 
 export default function DevicePairingPage() {
@@ -72,10 +72,9 @@ export default function DevicePairingPage() {
 				<ErrorState message={t('devices.pair.errorRetry')} className="min-h-[40vh]" />
 			) : (
 				<SectionCard>
-					<div className="mb-6 flex items-start gap-3 rounded-md bg-primary-50 p-4">
-						<Smartphone size={20} className="mt-0.5 shrink-0 text-primary-600" />
-						<p className="text-sm text-primary-800">{t('devices.pair.instructions')}</p>
-					</div>
+					<Alert variant="info" className="mb-6" icon={<Smartphone className="h-4 w-4" />}>
+						{t('devices.pair.instructions')}
+					</Alert>
 
 					<form onSubmit={handleSubmit} className="space-y-4">
 						<div className="space-y-2">
