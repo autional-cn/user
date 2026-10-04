@@ -23,7 +23,7 @@ import {
 	CURRENT_SESSION_UNRESOLVABLE,
 } from '@/hooks/queries';
 import type { SessionInfo } from '@/hooks/queries';
-import { ConsolePageHeader, ErrorState, EmptyState, ConfirmDialog } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader, ErrorState, EmptyState, ConfirmDialog } from '@autional-cn/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 function parseUserAgent(ua?: string): { browser: string; os: string } {
@@ -181,9 +181,12 @@ export default function SessionsPage() {
 			/>
 
 			{highRiskOnly && (
-				<div className="rounded-md border border-danger-soft bg-danger-soft p-3 text-sm text-danger-text">
+				<Alert
+					variant="danger"
+					className="text-sm"
+				>
 					{t('sessions.highRiskFilterActive', '已启用高风险过滤：仅显示信任分数低于 50 的会话')}
-				</div>
+				</Alert>
 			)}
 
 			<div className="space-y-4">

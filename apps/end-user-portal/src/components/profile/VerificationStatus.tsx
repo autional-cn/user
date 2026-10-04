@@ -1,10 +1,18 @@
 'use client';
-import { useState, useEffect } from 'react';
+import {
+	useState,
+	useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { extractApiErrorMessage } from '@autional-cn/shared';
-import { SectionCard, Button, StatusBadge, showToast } from '@autional-cn/ui';
-import { ShieldCheck, AlertTriangle, Clock, Loader2, ExternalLink } from 'lucide-react';
+import { Alert,
+	SectionCard,
+	Button,
+	StatusBadge,
+	showToast } from '@autional-cn/ui';
+import { ShieldCheck,
+	ExternalLink
+} from 'lucide-react';
 
 interface VerificationInfo {
 	status: string;
@@ -133,10 +141,12 @@ export function VerificationStatus() {
 			</div>
 
 			{isProcessing && (
-				<div className="mt-4 flex items-center gap-2 rounded-md bg-amber-50 p-3 text-sm text-amber-700">
-					<Loader2 size={16} className="animate-spin" />
+				<Alert
+					variant="warning"
+					className="mt-4 text-sm"
+				>
 					<span>{t('verification.pending')}</span>
-				</div>
+				</Alert>
 			)}
 
 			{(info.status === 'verified' || info.status === 'verified_minor') && (
@@ -154,16 +164,21 @@ export function VerificationStatus() {
 			)}
 
 			{info.status === 'verified_minor' && (
-				<div className="mt-4 rounded-md bg-info-soft p-3 text-sm text-info-text">
-					<AlertTriangle size={16} className="inline mr-1" />
+				<Alert
+					variant="info"
+					className="mt-4 text-sm"
+				>
 					<span>
 						{t('verification.ageGroup')}: {info.ageGroup || '--'}
 					</span>
-				</div>
+				</Alert>
 			)}
 
 			{info.status === 'rejected' && (
-				<div className="mt-4 rounded-md bg-danger-soft p-3">
+				<Alert
+					variant="danger"
+					className="mt-4"
+				>
 					<p className="text-sm font-medium text-danger-text">{t('verification.rejected')}</p>
 					{info.reason && (
 						<p className="mt-1 text-xs text-danger-text">
@@ -173,18 +188,21 @@ export function VerificationStatus() {
 					<p className="mt-1 text-xs text-danger-text">
 						{t('verification.retryCount')}: {info.retryCount} / {info.maxRetries}
 					</p>
-				</div>
+				</Alert>
 			)}
 
 			{info.status === 'expired' && (
-				<div className="mt-4 rounded-md bg-amber-50 p-3">
+				<Alert
+					variant="warning"
+					className="mt-4"
+				>
 					<p className="text-sm font-medium text-amber-700">{t('verification.expired')}</p>
 					{info.expiresAt && (
 						<p className="mt-1 text-xs text-amber-600">
 							{t('verification.expiresAt')}: {info.expiresAt}
 						</p>
 					)}
-				</div>
+				</Alert>
 			)}
 		</SectionCard>
 	);

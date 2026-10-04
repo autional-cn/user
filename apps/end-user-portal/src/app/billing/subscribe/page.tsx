@@ -1,9 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import {
+	useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@autional-cn/shared';
-import { ConsolePageHeader, ErrorState } from '@autional-cn/ui';
+import { Alert,
+	ConsolePageHeader,
+	ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useTenant } from '@/hooks/use-tenant';
 import {
@@ -12,9 +15,7 @@ import {
 	Building2,
 	Check,
 	Loader2,
-	XCircle,
-	CheckCircle,
-	ArrowRight,
+	ArrowRight
 } from 'lucide-react';
 import {
 	usePublicPlans,
@@ -302,15 +303,19 @@ export default function SubscribePage() {
 			</div>
 
 			{subscribeStatus === 'success' && (
-				<div className="flex items-center gap-2 p-4 rounded-lg bg-success-soft text-success-text max-w-md mx-auto">
-					<CheckCircle className="w-5 h-5" />
+				<Alert
+					variant="success"
+					className="max-w-md mx-auto"
+				>
 					<span className="font-medium">{resultMsg}</span>
-				</div>
+				</Alert>
 			)}
 
 			{subscribeStatus === 'error' && (
-				<div className="flex items-center gap-2 p-4 rounded-lg bg-danger-soft text-danger-text max-w-md mx-auto">
-					<XCircle className="w-5 h-5" />
+				<Alert
+					variant="danger"
+					className="max-w-md mx-auto"
+				>
 					<span className="font-medium">{resultMsg}</span>
 					<button
 						onClick={() => setSubscribeStatus('idle')}
@@ -318,7 +323,7 @@ export default function SubscribePage() {
 					>
 						{t('common.retry')}
 					</button>
-				</div>
+				</Alert>
 			)}
 		</div>
 	);

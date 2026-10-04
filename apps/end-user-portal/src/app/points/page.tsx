@@ -23,7 +23,7 @@ import {
 	Banknote,
 	Shield,
 } from 'lucide-react';
-import { SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -253,10 +253,10 @@ export default function PointsPage() {
 			)}
 
 			{expiringData && (expiringData.expiringPoints ?? []).length > 0 && (
-				<div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-					<h2 className="text-sm font-semibold text-amber-800 mb-2">
-						{t('points.expiringPointsTitle')}
-					</h2>
+				<Alert
+					variant="warning"
+					title={t('points.expiringPointsTitle')}
+				>
 					<div className="space-y-2">
 						{(expiringData.expiringPoints ?? []).slice(0, 5).map((ep, i) => (
 							<div key={i} className="flex justify-between text-sm text-amber-700">
@@ -268,7 +268,7 @@ export default function PointsPage() {
 							</div>
 						))}
 					</div>
-				</div>
+				</Alert>
 			)}
 
 			<div>

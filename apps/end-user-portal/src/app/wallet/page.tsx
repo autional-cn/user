@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAuth } from '@autional-cn/shared';
-import { SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
@@ -344,14 +344,20 @@ export default function WalletPage() {
 						</button>
 					</div>
 					{redeemQ.isSuccess && (
-						<div className="mb-3 p-3 bg-success-soft border border-success-soft rounded-md text-sm text-success-text">
+						<Alert
+							variant="success"
+							className="mb-3 text-sm"
+						>
 							{t('wallet.redeemSuccess')}
-						</div>
+						</Alert>
 					)}
 					{redeemQ.isError && (
-						<div className="mb-3 p-3 bg-danger-soft border border-danger-soft rounded-md text-sm text-danger-text">
+						<Alert
+							variant="danger"
+							className="mb-3 text-sm"
+						>
 							{t('wallet.redeemError')}
-						</div>
+						</Alert>
 					)}
 					{(coupons.items ?? []).length > 0 ? (
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">

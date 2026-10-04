@@ -14,7 +14,7 @@ import {
 	authMeRecoveryContactsPost,
 	authMeRecoveryContactsByRecoveryContactsDelete,
 } from '@autional-cn/shared/generated/api';
-import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Button } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { addContactSchema, type AddContactFormData } from '@/lib/validators';
 
@@ -117,12 +117,12 @@ export default function RecoveryContactsPage() {
 				description={t('security.recoveryContacts.subtitle')}
 			/>
 
-			<div className="rounded-lg border border-info-soft bg-info-soft p-4">
+			<Alert variant="info">
 				<div className="flex items-start gap-3">
 					<Shield size={18} className="mt-0.5 text-info shrink-0" />
 					<p className="text-sm text-info-text">{t('security.recoveryContacts.info')}</p>
 				</div>
-			</div>
+			</Alert>
 
 			{loading ? (
 				<LoadingScreen message={t('security.recoveryContacts.loading')} />

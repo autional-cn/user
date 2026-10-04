@@ -6,7 +6,7 @@ import { useAuth, extractApiError } from '@autional-cn/shared';
 import { authMeSamlLinks, authMeSamlLinksBySamlLinksDelete } from '@autional-cn/shared/generated/api';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { SectionCard, ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, LoadingScreen, Modal } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { Link2, Unlink, Loader2, ExternalLink, Info } from 'lucide-react';
 
@@ -95,7 +95,7 @@ export default function LinkedAccountsPage() {
 			/>
 
 			{/* Info banner */}
-			<div className="rounded-lg border border-info-soft bg-info-soft p-4">
+			<Alert variant="info">
 				<div className="flex items-start gap-3">
 					<Info size={20} className="text-info shrink-0 mt-0.5" />
 					<div>
@@ -103,7 +103,7 @@ export default function LinkedAccountsPage() {
 						<p className="mt-1 text-sm text-info-text">{t('linkedAccounts.infoDesc')}</p>
 					</div>
 				</div>
-			</div>
+			</Alert>
 
 			{/* Accounts List */}
 			<SectionCard padding="none">
@@ -206,9 +206,12 @@ export default function LinkedAccountsPage() {
 					</>
 				}
 			>
-				<div className="rounded-md bg-amber-50 p-4 text-sm text-amber-800 mb-4">
+				<Alert
+					variant="warning"
+					className="text-sm mb-4"
+				>
 					<p>{t('linkedAccounts.unlinkWarning')}</p>
-				</div>
+				</Alert>
 
 				<p className="text-sm text-neutral-600 mb-4">{t('linkedAccounts.unlinkConfirmText')}</p>
 			</Modal>

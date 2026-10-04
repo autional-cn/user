@@ -19,7 +19,7 @@ import {
 	RotateCcw,
 } from 'lucide-react';
 import { useMFAStatus, useProfile, useDevices, useNotificationPreferences } from '@/hooks/queries';
-import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 
 const STORAGE_KEY = 'autional_onboarding_completed';
 const STEPS_KEY = 'autional_onboarding_steps';
@@ -242,7 +242,7 @@ export default function OnboardingPage() {
 
 			{/* Dismiss banner - "不再显示" */}
 			{!dismissed && !allDone && (
-				<div className="rounded-lg border border-amber-200 bg-amber-50 p-4 flex items-center justify-between">
+				<Alert variant="warning">
 					<p className="text-sm text-amber-700">
 						{t('onboarding.dismissHint', '完成入驻设置后可不再显示此引导')}
 					</p>
@@ -253,7 +253,7 @@ export default function OnboardingPage() {
 						<EyeOff size={14} />
 						{t('onboarding.dismiss', '不再显示')}
 					</button>
-				</div>
+				</Alert>
 			)}
 
 			{/* Reset - "重新开始入驻" */}

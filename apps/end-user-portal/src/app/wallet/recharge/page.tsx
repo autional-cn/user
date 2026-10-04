@@ -1,12 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import {
+	useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth, useTenantSlug } from '@autional-cn/shared';
+import { useAuth,
+	useTenantSlug } from '@autional-cn/shared';
 import { paymentsByPayments } from '@autional-cn/shared/generated/api';
-import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
+import { Alert,
+	SectionCard,
+	ConsolePageHeader,
+	LoadingScreen,
+	ErrorState,
+	EmptyState } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { useTranslation } from 'react-i18next';
 import { Wallet, CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';
@@ -245,8 +252,7 @@ export default function WalletRechargePage() {
 				</button>
 
 				{status === 'success' && (
-					<div className="flex items-center gap-2 p-4 rounded-lg bg-success-soft text-success-text">
-						<CheckCircle className="w-5 h-5" />
+					<Alert variant="success">
 						<span className="font-medium">
 							{resultAmount ? t(resultKey, { amount: resultAmount }) : t(resultKey)}
 						</span>
@@ -257,12 +263,11 @@ export default function WalletRechargePage() {
 						>
 							{t('wallet.recharge.viewPaymentRecords')}
 						</button>
-					</div>
+					</Alert>
 				)}
 
 				{status === 'error' && (
-					<div className="flex items-center gap-2 p-4 rounded-lg bg-danger-soft text-danger-text">
-						<XCircle className="w-5 h-5" />
+					<Alert variant="danger">
 						<span className="font-medium">{t(resultKey)}</span>
 						<button
 							type="button"
@@ -271,7 +276,7 @@ export default function WalletRechargePage() {
 						>
 							{t('wallet.recharge.retry')}
 						</button>
-					</div>
+					</Alert>
 				)}
 			</form>
 		</div>

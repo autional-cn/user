@@ -47,7 +47,7 @@ import {
 	useUnbindOAuth,
 } from '@/hooks/queries';
 import type { OAuthConnectionItem } from '@/hooks/queries';
-import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 
 // message 一律用完整扁平 ns 键：i18n keySeparator:false，消费处 t(message) 才可解析（UP-14）。
@@ -656,7 +656,10 @@ export default function SecurityPage() {
 					/>
 				</div>
 				{totpPendingDetected && (
-					<div className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-4">
+					<Alert
+						variant="warning"
+						className="mt-4"
+					>
 						<div className="flex items-start gap-3">
 							<AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-600" />
 							<div className="flex-1">
@@ -670,7 +673,7 @@ export default function SecurityPage() {
 								</button>
 							</div>
 						</div>
-					</div>
+					</Alert>
 				)}
 				</>
 			)}
@@ -977,7 +980,7 @@ export default function SecurityPage() {
 				{totpStep === 3 && (
 					<div className="space-y-4">
 						<p className="text-sm text-neutral-600">{t('security.totpBackupPrompt')}</p>
-						<div className="rounded-md border border-amber-200 bg-amber-50 p-4">
+						<Alert variant="warning">
 							<div className="grid grid-cols-2 gap-2">
 								{backupCodes.map((code, idx) => (
 									<code
@@ -994,7 +997,7 @@ export default function SecurityPage() {
 							>
 								<Copy size={14} /> {t('security.totpCopyBackupCodes')}
 							</button>
-						</div>
+						</Alert>
 					</div>
 				)}
 			</Modal>

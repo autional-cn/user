@@ -9,7 +9,7 @@ import {
 } from '@autional-cn/shared/generated/api';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
@@ -397,7 +397,7 @@ export default function RoleActivationsPage() {
 			)}
 
 			{/* Info banner */}
-			<div className="rounded-lg border border-info-soft bg-info-soft p-4">
+			<Alert variant="info">
 				<div className="flex items-start gap-3">
 					<AlertCircle size={20} className="text-info shrink-0 mt-0.5" />
 					<div>
@@ -405,7 +405,7 @@ export default function RoleActivationsPage() {
 						<p className="mt-1 text-sm text-info-text">{t('roleActivations.infoDesc')}</p>
 					</div>
 				</div>
-			</div>
+			</Alert>
 
 			{/* Activations List */}
 			{/* 列定义只描述「这一页有哪些列」；表头 / 悬浮态 / 边框 / 行高由设计系统的组件级令牌下发。 */}

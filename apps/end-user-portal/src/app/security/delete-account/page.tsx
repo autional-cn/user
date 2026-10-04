@@ -20,7 +20,7 @@ import {
 	authMeDeleteAccountPost,
 	PublicAuthConfigByAuthConfig,
 } from '@autional-cn/shared/generated/api';
-import { ConsolePageHeader, Button } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader, Button } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { deleteSchema, type DeleteFormData } from '@/lib/validators';
 
@@ -110,7 +110,10 @@ export default function DeleteAccountPage() {
 					</div>
 				</div>
 
-				<div className="mt-4 rounded-md bg-danger-soft p-4">
+				<Alert
+					variant="danger"
+					className="mt-4"
+				>
 					<div className="flex items-start gap-2">
 						<AlertTriangle size={16} className="mt-0.5 text-danger shrink-0" />
 						<div className="text-sm text-danger-text">
@@ -123,7 +126,7 @@ export default function DeleteAccountPage() {
 							</ul>
 						</div>
 					</div>
-				</div>
+				</Alert>
 
 				{apiError && (
 					<div className="mt-4 rounded-md bg-danger-soft p-3 text-sm text-danger-text">{apiError}</div>
