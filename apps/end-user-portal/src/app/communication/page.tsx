@@ -21,12 +21,19 @@ const channelOptions = ['', 'sms', 'email', 'push'];
 
 // 状态 → 设计系统徽标档位。**只做映射，不做样式**。
 // 原来这里是裸色阶拼的文字色（delivered 用 emerald、sent 用 blue、failed 用 red），
-// pending 干脆没有颜色、落到默认灰 —— 现在四档语义一次讲清，配色归设计系统。
+// pending 干脆没有颜色、落到默认灰 —— 现在档位一次讲清，配色归设计系统。
+// 值域与后端 domain.MessageStatus 全量对齐（9 值，UP-80）：
+// cancelled/skipped 是主动取消/有意不发送（非失败），档位 neutral。
 const STATUS_VARIANTS: Record<string, StatusVariant> = {
 	delivered: 'success',
+	opened: 'success',
 	sent: 'info',
+	scheduled: 'info',
 	pending: 'warning',
+	partial: 'warning',
 	failed: 'danger',
+	cancelled: 'neutral',
+	skipped: 'neutral',
 };
 
 export default function CommunicationHistoryPage() {
@@ -64,8 +71,19 @@ export default function CommunicationHistoryPage() {
 				return t('communication.status.failed');
 			case 'pending':
 				return t('communication.status.pending');
+			case 'cancelled':
+				return t('communication.status.cancelled');
+			case 'scheduled':
+				return t('communication.status.scheduled');
+			case 'partial':
+				return t('communication.status.partial');
+			case 'opened':
+				return t('communication.status.opened');
+			case 'skipped':
+				return t('communication.status.skipped');
 			default:
-				return s || '--';
+				// 未收录/空值不再裸出内部标识（UP-80 同族 T2：未知值中性兜底，勿误标）。
+				return t('communication.status.unknown', '未知');
 		}
 	};
 

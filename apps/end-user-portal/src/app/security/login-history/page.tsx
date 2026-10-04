@@ -38,6 +38,9 @@ export default function LoginHistoryPage() {
 	const pageSize = 10;
 
 	const params: Record<string, unknown> = { page, pageSize };
+	// UP-27：本页只呈现登录类事件（服务端按 action 枚举过滤，含成功/失败登录）。
+	// 全量操作流由「活动日志」页承担，避免用户按「登录历史」心智误读审计流水。
+	params.action = 'login';
 	if (startDate) params.startDate = startDate;
 	if (endDate) params.endDate = endDate;
 
@@ -57,9 +60,8 @@ export default function LoginHistoryPage() {
 
 	const items = useMemo(() => {
 		if (statusFilter === 'all') return allItems;
-		return allItems.filter((item) =>
-			statusFilter === 'success' ? item.status !== 'failed' : item.status === 'failed',
-		);
+		// 三态判定与表格/CSV 同一点（auditStatusKind）：'' 既不归成功也不归失败（UP-25）。
+		return allItems.filter((item) => auditStatusKind(item.status) === statusFilter);
 	}, [allItems, statusFilter]);
 
 	const parseUserAgent = (ua?: string): { browser: string; os: string } => {
@@ -109,7 +111,8 @@ export default function LoginHistoryPage() {
 						: statusKind === 'failed'
 							? t('loginHistory.statusFailed')
 							: '—',
-					item.reason || (item.status !== 'success' ? t('loginHistory.unknownReason') : ''),
+					// 仅失败行给原因（与表格列同一判定），未知态不给失败归因（UP-25）。
+					statusKind === 'failed' ? item.reason || t('loginHistory.unknownReason') : '',
 				];
 			});
 			const bom = '\uFEFF';
@@ -208,7 +211,9 @@ export default function LoginHistoryPage() {
 			key: 'reason',
 			render: (v: string | undefined, item: AuditLogItem) => (
 				<span className="text-xs">
-					{item.status !== 'failed' ? '-' : v || t('loginHistory.unknownReason')}
+					{auditStatusKind(item.status) === 'failed'
+						? v || t('loginHistory.unknownReason')
+						: '-'}
 				</span>
 			),
 		},

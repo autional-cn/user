@@ -96,8 +96,9 @@ export function usePairDevice(): UseMutationResult<unknown, Error, { user_code: 
 
 async function getFamilyMembers(deviceId: string): Promise<FamilyMember[]> {
 	const { iotsFamilyAccessByIots } = await import('@autional-cn/shared/generated/api');
-	const data = await iotsFamilyAccessByIots(deviceId);
-	return data?.items || data?.data || data || [];
+	// 后端 ListResponse → 拦截器解包后顶层即 items（勿再读 data?.data，双解包恒 undefined）。
+	const data = (await iotsFamilyAccessByIots(deviceId)) as { items?: FamilyMember[] } | undefined;
+	return data?.items || [];
 }
 
 async function addFamilyMember(

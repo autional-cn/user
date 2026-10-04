@@ -22,8 +22,9 @@ interface SammLinkedAccount {
 }
 
 async function fetchSammLinkedAccounts(): Promise<SammLinkedAccount[]> {
+	// 后端 ListResponse → 拦截器解包后顶层即 items（勿再读 data?.data，双解包恒 undefined）。
 	const data = (await authMeSamlLinks()) as any;
-	return data?.data || data?.items || [];
+	return data?.items || [];
 }
 
 async function unlinkSammAccount(linkId: string): Promise<void> {

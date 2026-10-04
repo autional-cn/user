@@ -51,8 +51,10 @@ const AVAILABLE_FIELDS: ConsentFieldMetadata[] = [
 ];
 
 async function fetchConsents(userId: string): Promise<ConsentField[]> {
+	// 后端响应 {code, data: {fields: [...]}}：apiClient 解包 data 后顶层即 fields。
+	// 勿再读 data?.data（双解包恒 undefined，先前靠第二读兜住，属侥幸存活）。
 	const data = (await profilesConsentsByProfiles(userId)) as any;
-	return data?.data?.fields || data?.fields || [];
+	return data?.fields || [];
 }
 
 async function grantConsents(userId: string, fieldKeys: string[]): Promise<void> {

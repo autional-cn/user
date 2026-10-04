@@ -33,8 +33,9 @@ interface PrivacyImpactResponse {
 }
 
 async function fetchPrivacyImpact(userId: string): Promise<PrivacyImpactResponse> {
-	const res = (await profilesPrivacyImpactByProfiles(userId)) as any;
-	return res?.data || res || {};
+	// 拦截器已解包信封，返回值即 payload（响应键已 camelCase）。
+	const res = (await profilesPrivacyImpactByProfiles(userId)) as PrivacyImpactResponse | null;
+	return res || {};
 }
 
 interface FieldExposure {
@@ -66,6 +67,14 @@ const RISK_BAR_COLORS = {
 	medium: 'bg-amber-500',
 	high: 'bg-danger',
 };
+
+// 服务端风险等级值域为 low_risk/medium_risk/high_risk（service-profile），历史接口为裸等级。
+// 统一归一后再查配色与文案表，未知值落中性档（UP-10）。
+function normalizeRiskLevel(level?: string): 'low' | 'medium' | 'high' | 'unknown' {
+	const v = (level || '').trim().toLowerCase().replace(/_risk$/, '');
+	if (v === 'low' || v === 'medium' || v === 'high') return v;
+	return 'unknown';
+}
 
 // 风险等级 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
 // 表格里的风险徽标原来是 emerald/amber/rose 三套裸色阶拼出来的圆角 span：配色写在业务侧，
@@ -146,7 +155,7 @@ export default function PrivacyImpactPage() {
 			medium: t('privacyImpact.riskMedium'),
 			high: t('privacyImpact.riskHigh'),
 		};
-		return map[level || ''] || level || '--';
+		return map[normalizeRiskLevel(level)] || t('privacyImpact.riskUnknown', '未知风险');
 	};
 
 	// P1-5：userId 未就绪时不等 query（避免无限 loading）
@@ -175,7 +184,8 @@ export default function PrivacyImpactPage() {
 	}
 
 	const riskScore = impact?.riskScore ?? 0;
-	const riskLevel = impact?.riskLevel ?? 'low';
+	// 字段缺失维持原有「按 low 呈现」行为；值域内但未识别的枚举落中性档。
+	const riskLevel = impact?.riskLevel ? normalizeRiskLevel(impact.riskLevel) : 'low';
 
 	// 列定义：只描述**这一页有哪些列**。表头底色 / 悬浮态 / 边框 / 行高，
 	// 由设计系统下发的组件级令牌决定 —— 与其它 portal 的数据表吃的是同一份令牌。

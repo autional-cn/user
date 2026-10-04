@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useAuth, extractApiErrorMessage } from '@autional-cn/shared';
+import { useAuth, extractApiErrorMessage, apiClient } from '@autional-cn/shared';
 import * as Generated from '@autional-cn/shared/generated/api';
 import type { FileMetadataResponse, FolderMetadataResponse } from '@autional-cn/shared/generated/types';
 import { LoadingScreen, ErrorState, EmptyState, Modal } from '@autional-cn/ui';
@@ -66,8 +66,7 @@ export default function StoragePage() {
 		queryKey: ['storage', 'quota'],
 		queryFn: async () => {
 			const res = await Generated.storageQuota();
-			return (res as { data?: { usedBytes?: number; quotaBytes?: number; usagePercent?: number } })
-				.data;
+			return res as { usedBytes?: number; quotaBytes?: number; usagePercent?: number };
 		},
 		staleTime: 30_000,
 	});
@@ -89,9 +88,10 @@ export default function StoragePage() {
 				};
 			}
 			const res = await Generated.storageFoldersByFolders(currentFolder);
-			return (
-				res as { data?: { folder?: FolderMetadataResponse; contents?: FileMetadataResponse[] } }
-			).data;
+			return res as {
+				folder?: FolderMetadataResponse;
+				contents?: FileMetadataResponse[];
+			};
 		},
 		enabled: !!currentFolder,
 	});
@@ -140,7 +140,7 @@ export default function StoragePage() {
 	const shareMut = useMutation({
 		mutationFn: (fileId: string) => Generated.filesShareByFilesPost(fileId, {}),
 		onSuccess: (data: unknown) => {
-			const shareUrl = (data as { data?: { shareUrl?: string } })?.data?.shareUrl;
+			const shareUrl = (data as { shareUrl?: string })?.shareUrl;
 			if (shareUrl) {
 				navigator.clipboard.writeText(shareUrl);
 				toast.success(t('storage.linkCopied'));
@@ -151,12 +151,22 @@ export default function StoragePage() {
 
 	const downloadMut = useMutation({
 		mutationFn: async (entry: Entry) => {
-			if (entry._type === 'file') {
-				const res = await Generated.filesDownloadByFiles(entry.fileId!);
-				const url = (res as { data?: { downloadUrl?: string } })?.data?.downloadUrl;
-				if (url) window.open(url, '_blank');
-			}
+			if (entry._type !== 'file' || !entry.fileId) return;
+			// 下载端点是二进制流（Content-Disposition: attachment），不存在 downloadUrl 字段；
+			// 走带鉴权头的 apiClient 取 blob 再本地落盘（裸链接不带 Bearer，必 401）。
+			const res = await apiClient.get(`/storage/api/v1/files/${entry.fileId}/download`, {
+				responseType: 'blob',
+			});
+			const url = URL.createObjectURL(res.data as Blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = entry.name || 'download';
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			URL.revokeObjectURL(url);
 		},
+		onError: (e: unknown) => toast.error(extractApiErrorMessage(e, t('storage.downloadError'))),
 	});
 
 	const handleUpload = useCallback(
@@ -171,14 +181,14 @@ export default function StoragePage() {
 					size: file.size,
 				};
 				const res = await Generated.filesUploadUrlPost(uploadData);
-				const uploadUrl = (res as { data?: { uploadUrl?: string; fileId?: string } })?.data;
-				if (uploadUrl?.uploadUrl && uploadUrl?.fileId) {
-					await fetch(uploadUrl.uploadUrl, {
+				const uploadRes = res as { uploadUrl?: string; fileId?: string };
+				if (uploadRes?.uploadUrl && uploadRes?.fileId) {
+					await fetch(uploadRes.uploadUrl, {
 						method: 'PUT',
 						body: file,
 						headers: { 'Content-Type': file.type || 'application/octet-stream' },
 					});
-					await Generated.filesUploadCompleteByFilesPost(uploadUrl.fileId);
+					await Generated.filesUploadCompleteByFilesPost(uploadRes.fileId);
 					qc.invalidateQueries({ queryKey: ['storage', 'folder', currentFolder] });
 					qc.invalidateQueries({ queryKey: ['storage', 'quota'] });
 					toast.success(t('storage.uploadSuccess'));

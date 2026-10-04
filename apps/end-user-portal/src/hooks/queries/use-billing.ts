@@ -15,7 +15,13 @@ import {
 	billingRecordsByRecords,
 	billingInvoiceByInvoice,
 } from '@autional-cn/shared/generated/api';
-import type { SubscriptionInfo, PublicPlanResponse, BillingRecord, InvoiceInfo } from './types';
+import type {
+	SubscriptionInfo,
+	PublicPlanResponse,
+	BillingRecord,
+	InvoiceInfo,
+	InvoiceLineItem,
+} from './types';
 import type { PaginatedList } from './types';
 import { queryKeys } from './query-keys';
 import { isNotFoundError } from '@/lib/api-error';
@@ -57,7 +63,8 @@ export function useBillingSubscription(tenantId: string, enabled?: boolean) {
 export interface BillingRecordItem {
 	recordId?: string;
 	invoiceNumber?: string;
-	amount?: number;
+	// 后端 decimal 序列化可能为字符串（如 "499"）：类型放宽，页面渲染前统一 Number() 归一（UP-56）。
+	amount?: number | string;
 	currency?: string;
 	type: string;
 	status?: string;
@@ -161,12 +168,12 @@ async function getPublicPlans(): Promise<PaginatedList<PublicPlanResponse>> {
 	// 页面按 PaginatedList 读取 items —— 这里统一解包为 { items }。
 	// 后端 plans 字段为 plan_id/price_monthly/price_yearly → camelCaseKeys → planId/priceMonthly/priceYearly，
 	// 页面读 plan/monthlyPrice/yearlyPrice —— 这里映射兼容字段（缺失时落回默认值，避免 undefined 污染）。
+	// 注：apiClient 响应拦截器已把 data 解包到顶层，勿再读 res.data（双解包恒 undefined）。
 	const res = (await billingPlans()) as unknown as {
 		plans?: PublicPlanResponse[];
-		data?: { plans?: PublicPlanResponse[] };
 		items?: PublicPlanResponse[];
 	};
-	const rawPlans = res?.items || res?.plans || res?.data?.plans || [];
+	const rawPlans = res?.items || res?.plans || [];
 	const plans = rawPlans.map((p) => ({
 		...p,
 		id: p.id ?? p.planId ?? '',
@@ -266,7 +273,17 @@ export function useInvoices(
 }
 
 async function getInvoice(invoiceNumber: string): Promise<InvoiceInfo> {
-	return billingInvoiceByInvoice(invoiceNumber) as Promise<InvoiceInfo>;
+	const raw = (await billingInvoiceByInvoice(invoiceNumber)) as unknown as InvoiceInfo & {
+		issuedAt?: string;
+		lineItems?: InvoiceLineItem[];
+	};
+	// 后端契约（invoice 详情）：issued_at=计费周期开始、line_items=行项目、plan/billing_cycle=订阅展示字段。
+	// 页面读 createdAt/items —— 统一在此映射（UP-64）；缺失时保留原值，不再依赖页面各自兜底。
+	return {
+		...raw,
+		createdAt: raw.createdAt ?? raw.issuedAt,
+		items: raw.items ?? raw.lineItems ?? [],
+	};
 }
 
 export function useInvoice(invoiceNumber: string): UseQueryResult<InvoiceInfo, Error> {

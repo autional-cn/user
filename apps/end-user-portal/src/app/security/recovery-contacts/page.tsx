@@ -60,11 +60,9 @@ export default function RecoveryContactsPage() {
 		setLoading(true);
 		setError('');
 		try {
-			const data = (await authMeRecoveryContacts()) as {
-				data?: RecoveryContact[];
-				items?: RecoveryContact[];
-			};
-			setContacts(data?.data || data?.items || []);
+			// 后端 ListResponse → 拦截器解包后顶层即 items（勿再读 data?.data，双解包恒 undefined）。
+			const data = (await authMeRecoveryContacts()) as { items?: RecoveryContact[] };
+			setContacts(data?.items || []);
 		} catch (err: any) {
 			const msg = extractApiError(err, t('security.recoveryContacts.loadError')).message;
 			setError(msg);

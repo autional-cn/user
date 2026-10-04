@@ -85,7 +85,7 @@ describe('useRevokeAllSessions exceptCurrent 防自毁守卫（U353）', () => {
 				{ id: 'o2', isCurrentSession: false },
 			],
 		});
-		vi.mocked(authMeSessionsBySessionsDelete).mockResolvedValue({});
+		vi.mocked(authMeSessionsBySessionsDelete).mockResolvedValue(undefined);
 
 		const { result } = makeHook();
 
@@ -98,7 +98,7 @@ describe('useRevokeAllSessions exceptCurrent 防自毁守卫（U353）', () => {
 	});
 
 	it('普通全注销路径（无 exceptCurrent）→ 直调 authMeSessionsDelete，行为不变', async () => {
-		vi.mocked(authMeSessionsDelete).mockResolvedValue({});
+		vi.mocked(authMeSessionsDelete).mockResolvedValue(undefined);
 
 		const { result } = makeHook();
 

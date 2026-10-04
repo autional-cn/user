@@ -33,8 +33,9 @@ export function VerificationStatus() {
 	const loadStatus = async () => {
 		try {
 			const { verificationMe } = await import('@autional-cn/shared/generated/api');
+			// 后端 DataResponse → 拦截器解包后顶层即 VerificationStatusResponse（勿再读 res?.data）。
 			const res: any = await verificationMe();
-			setInfo(res?.data || res || null);
+			setInfo(res || null);
 		} catch {
 			setInfo(null);
 		} finally {

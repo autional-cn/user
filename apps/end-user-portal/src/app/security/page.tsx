@@ -105,7 +105,8 @@ export default function SecurityPage() {
 		import('@autional-cn/shared/generated/api').then(({ PublicAuthConfigByAuthConfig }) => {
 			PublicAuthConfigByAuthConfig(tenantId)
 				.then((res: any) => {
-					const providers = res?.oauth_providers || (res?.data && res.data.oauth_providers);
+					// 拦截器已解包信封：顶层即 auth-config 对象（勿再读 res?.data）。
+					const providers = res?.oauth_providers;
 					if (providers && providers.length > 0) {
 						setAvailableOAuthProviders(providers);
 					} else {

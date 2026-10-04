@@ -8,6 +8,7 @@ import {
 	CreditCard,
 	Info,
 	AlertTriangle,
+	Megaphone,
 	ChevronLeft,
 	ChevronRight,
 } from 'lucide-react';
@@ -77,6 +78,20 @@ export default function NotificationsPage() {
 				bg: 'bg-pink-50',
 				label: t('notifications.type.marketing'),
 			},
+			// 公告类通知：服务端发布公告时创建的通知 type = "announcement"（announcement_service.go）。
+			announcement: {
+				icon: Megaphone,
+				color: 'text-info',
+				bg: 'bg-info-soft',
+				label: t('notifications.type.announcement'),
+			},
+			// 未知 type 的中性兜底：原来是回退到 system（把公告类误标成「系统」）。
+			other: {
+				icon: Info,
+				color: 'text-neutral-600',
+				bg: 'bg-neutral-100',
+				label: t('notifications.type.other'),
+			},
 		};
 
 	const handleMarkRead = async (id: string) => {
@@ -134,7 +149,8 @@ export default function NotificationsPage() {
 
 			<div className="space-y-3">
 				{list.map((n) => {
-					const meta = typeMeta[n.type || ''] || typeMeta.system;
+					// 未知 type 走中性兜底（other），不再误标为「系统」（UP-72）。
+					const meta = typeMeta[n.type || ''] || typeMeta.other;
 					const Icon = meta.icon;
 
 					return (

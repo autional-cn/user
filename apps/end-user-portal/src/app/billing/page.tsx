@@ -122,9 +122,14 @@ export default function BillingPage() {
 			dataIndex: 'amount',
 			key: 'amount',
 			align: 'right',
-			render: (v: number | undefined) => (
+			render: (v: number | string | undefined) => (
 				<span className="font-mono">
-					¥{(v ?? 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+					{/* v 可能是字符串（后端 decimal 序列化）：String.toLocaleString 会忽略选项参数、
+						千分位/两位小数全部落空（UP-56）。先 Number() 归一，并显式封顶两位小数。 */}
+					¥{Number(v ?? 0).toLocaleString(undefined, {
+						minimumFractionDigits: 2,
+						maximumFractionDigits: 2,
+					})}
 				</span>
 			),
 		},

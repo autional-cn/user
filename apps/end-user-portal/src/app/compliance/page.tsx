@@ -24,8 +24,12 @@ export default function CompliancePage() {
 		setNotFound(false);
 		try {
 			const [profRes, scoreRes] = await Promise.all([complianceProfile(), complianceStatus()]);
-			setProfile((profRes as any)?.data || null);
-			setScore((scoreRes as any)?.data?.overallScore || (scoreRes as any)?.data?.score || null);
+			// apiClient 已解包 {code,data} 信封（再读取 .data 恒 undefined，UP-68 同族）：
+			// profile 顶层即 ComplianceProfileResponse（enabledFrameworks/selectedStandards…）。
+			setProfile((profRes as any) || null);
+			// compliance/status 契约无 score 字段（overall_status/各合规位/计数），保持空态「—」；
+			// 分数来源（dashboard metrics）无用户面路由，不越权调用管理面。
+			setScore((scoreRes as any)?.overallScore ?? (scoreRes as any)?.score ?? null);
 		} catch (err) {
 			// P2-1: 404（资源不存在）→ 空态
 			if (isNotFoundError(err)) {

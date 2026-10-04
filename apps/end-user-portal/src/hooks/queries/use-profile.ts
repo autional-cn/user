@@ -90,16 +90,33 @@ interface PrivacySettings {
 }
 
 async function getPrivacy(userId: string): Promise<PrivacySettings> {
-	const data = (await profilesPrivacyByProfiles(userId)) as { data?: PrivacySettings };
-	return data?.data || { showEmail: true, showPhone: false, profileVisibility: 'private' };
+	// 后端响应 {code, data: {privacy: {...}}}：apiClient 解包 data 后顶层是 { privacy }，
+	// 再经 camelCaseKeys。此前读 data?.data 恒 undefined → 隐私开关永远显示本地默认值。
+	const res = (await profilesPrivacyByProfiles(userId)) as
+		| { privacy?: Partial<PrivacySettings> }
+		| undefined;
+	const p = res?.privacy;
+	return {
+		showEmail: p?.showEmail ?? true,
+		showPhone: p?.showPhone ?? false,
+		profileVisibility: p?.profileVisibility ?? 'private',
+	};
 }
 
 async function updatePrivacy(
 	userId: string,
 	settings: Partial<PrivacySettings>,
 ): Promise<PrivacySettings> {
-	const res = (await profilesPrivacyByProfilesPut(userId, settings)) as { data?: PrivacySettings };
-	return res?.data || ({} as PrivacySettings);
+	// 同上（PUT 响应同构 {privacy: {...}}）；响应缺字段时回显入参，保证调用方拿到完整对象。
+	const res = (await profilesPrivacyByProfilesPut(userId, settings)) as
+		| { privacy?: Partial<PrivacySettings> }
+		| undefined;
+	const p = res?.privacy;
+	return {
+		showEmail: p?.showEmail ?? settings.showEmail ?? true,
+		showPhone: p?.showPhone ?? settings.showPhone ?? false,
+		profileVisibility: p?.profileVisibility ?? settings.profileVisibility ?? 'private',
+	};
 }
 
 export function usePrivacy(): UseQueryResult<PrivacySettings, Error> {

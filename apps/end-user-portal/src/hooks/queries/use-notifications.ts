@@ -55,11 +55,9 @@ async function getUnreadNotifications(_params?: { userId?: string }): Promise<No
 		const res = await apiClient.get('/notification/api/v1/notifications/unread', { // @generated-api-exempt
 			params: { page: 1, page_size: 20 },
 		});
-		const data = res.data as {
-			items?: NotificationItem[];
-			data?: NotificationItem[];
-		};
-		return data?.items || data?.data || [];
+		// 后端 ListResponse {code,items,total,...}：拦截器解包后 res.data 顶层即 items。
+		const data = res.data as { items?: NotificationItem[] };
+		return data?.items || [];
 	} catch {
 		return [];
 	}

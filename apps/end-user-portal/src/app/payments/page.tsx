@@ -13,13 +13,18 @@ import { usePayments, useReceipt, type PaymentInfo, type ReceiptInfo } from '@/h
 // 状态 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
 // 原来这里是 7 条裸色阶（bg-amber-100 text-amber-700 之类）：配色散在业务侧，而且那套色阶
 // 每一档的底色/文字都各写各的，没有一对做过对比度验证，而且裸色阶没有 dark: 变体——深色模式下底色照样是浅的。
+// 值域与 service-pay 对齐（created/processing/succeeded/failed/expired，UP-65；
+// 其余为历史/兼容档，保留映射不误标）。
 const STATUS_VARIANTS: Record<string, StatusVariant> = {
+	created: 'warning',
 	pending: 'warning',
 	processing: 'info',
+	succeeded: 'success',
 	completed: 'success',
 	paid: 'success',
 	failed: 'danger',
 	cancelled: 'neutral',
+	expired: 'neutral',
 	refunded: 'info',
 };
 
@@ -39,15 +44,19 @@ export default function PaymentsPage() {
 
 	const getStatusLabel = (status: string) => {
 		const labels: Record<string, string> = {
+			created: t('payments.status.created'),
 			pending: t('payments.status.pending'),
 			processing: t('payments.status.processing'),
+			succeeded: t('payments.status.succeeded'),
 			completed: t('payments.status.completed'),
 			paid: t('payments.status.paid'),
 			failed: t('payments.status.failed'),
 			cancelled: t('payments.status.cancelled'),
+			expired: t('payments.status.expired'),
 			refunded: t('payments.status.refunded'),
 		};
-		return labels[status] || status;
+		// 未收录/空值中性兜底，不再裸出内部标识（UP-65 同族 T2）。
+		return labels[status] || t('payments.status.unknown', '未知');
 	};
 
 	const getChannelLabel = (channel: string) => {
@@ -55,8 +64,9 @@ export default function PaymentsPage() {
 			wechat: t('payments.channel.wechat'),
 			alipay: t('payments.channel.alipay'),
 			stripe: t('payments.channel.stripe'),
+			mock: t('payments.channel.mock'),
 		};
-		return labels[channel] || channel;
+		return labels[channel] || t('payments.channel.unknown', '未知');
 	};
 
 	if (isLoading)
