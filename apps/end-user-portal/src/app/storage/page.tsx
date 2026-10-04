@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useAuth, extractApiErrorMessage, extractList, apiClient } from '@autional-cn/shared';
@@ -247,12 +247,17 @@ export default function StoragePage() {
 			: []),
 	];
 
-	const entries: Entry[] = [
-		...(folderData?.folder && currentFolder !== 'root'
-			? [{ ...folderData.folder, _type: 'folder' as const }]
-			: []),
-		...(folderData?.contents?.map((f) => ({ ...f, _type: 'file' as const }) as Entry) || []),
-	];
+	// 条目对象须跨渲染保持引用稳定：菜单开合走 contextMenu?.entry === entry 引用比较，
+	// 若此处每次渲染重建对象，setContextMenu 触发的重渲染立即失配 → 菜单永不显示（卡片操作全死）
+	const entries: Entry[] = useMemo(
+		() => [
+			...(folderData?.folder && currentFolder !== 'root'
+				? [{ ...folderData.folder, _type: 'folder' as const }]
+				: []),
+			...(folderData?.contents?.map((f) => ({ ...f, _type: 'file' as const }) as Entry) || []),
+		],
+		[folderData, currentFolder],
+	);
 	// Deduplicate by id
 	const seen = new Set<string>();
 	const uniqueEntries = entries.filter((e) => {
