@@ -2003,6 +2003,8 @@
   "wallet.withdrawals.methodLabels.balanceWithdraw": "余额提现",
   "wallet.empty": "暂无钱包数据",
   "wallet.emptyDesc": "您的钱包余额与交易记录将显示在这里",
+  "wallet.createWallet": "开通钱包",
+  "wallet.creatingWallet": "正在开通…",
   "billing.title": "账单与用量",
   "billing.currentSubscription": "当前订阅",
   "billing.status": "状态",

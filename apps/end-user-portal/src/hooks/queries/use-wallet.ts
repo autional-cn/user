@@ -8,6 +8,7 @@ import {
 import { useAuth } from '@autional-cn/shared';
 import {
 	walletsBalanceByWallets,
+	walletsPost,
 	walletsTransactionsByWallets,
 	walletsStatsByWallets,
 	walletsCouponsByWallets,
@@ -30,6 +31,22 @@ export function useWalletBalance(): UseQueryResult<WalletBalance, Error> {
 		queryFn: () => getWalletBalance(userId || ''),
 		enabled: !!userId,
 		retry: 1,
+	});
+}
+
+async function createWallet(userId: string): Promise<WalletBalance> {
+	// 首次接线 walletsPost：body.userId 必须是当前登录用户（服务端同体校验，凭证零自定义）。
+	return walletsPost({ userId, currency: 'CNY' }) as Promise<WalletBalance>;
+}
+
+/** 开通钱包：成功后 invalidate 钱包查询，由消费页重拉（UF2-19/20 的「开通即重拉」口径）。 */
+export function useCreateWallet(): UseMutationResult<WalletBalance, Error, { userId: string }> {
+	const qc = useQueryClient();
+	return useMutation<WalletBalance, Error, { userId: string }>({
+		mutationFn: ({ userId }) => createWallet(userId),
+		onSuccess: (_data, vars) => {
+			qc.invalidateQueries({ queryKey: queryKeys.wallet(vars.userId) });
+		},
 	});
 }
 

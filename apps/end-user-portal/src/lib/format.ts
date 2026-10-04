@@ -21,6 +21,18 @@ export function formatTime(iso: string | undefined | null, locale?: string): str
 	}
 }
 
+export type AuditStatusKind = 'success' | 'failed' | 'unknown';
+
+/**
+ * 审计日志状态三态判定：登录历史表格/CSV 与 activity CSV 共用的唯一判定点（AC-02-3）。
+ * 只有明确的 'success' / 'failed' 才落成功/失败档；''、undefined 及其他值一律 unknown → 显示「—」。
+ */
+export function auditStatusKind(status: string | undefined | null): AuditStatusKind {
+	if (status === 'success') return 'success';
+	if (status === 'failed') return 'failed';
+	return 'unknown';
+}
+
 export function formatDate(iso: string | undefined | null, locale?: string): string {
 	if (!iso) return '--';
 	try {

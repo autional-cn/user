@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem } from '@/hooks/queries';
-import { formatTime } from '@/lib/format';
+import { auditStatusKind, formatTime } from '@/lib/format';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
 import { StatusBadge } from '@autional-cn/ui';
@@ -96,14 +96,19 @@ export default function LoginHistoryPage() {
 			];
 			const rows = items.map((item) => {
 				const ua = parseUserAgent(item.userAgent);
+				const statusKind = auditStatusKind(item.status);
 				return [
 					item.timestamp || item.createdAt || '',
 					item.ip || '',
 					`${ua.browser} ${ua.os}`.trim(),
-					item.location || t('loginHistory.unknownLocation'),
-					item.status === 'success'
+					// 空值（''/undefined）与表格同显「—」（AC-02-2/3）。
+					item.location || '—',
+					// 三态：'' 既不算成功也不算失败（与表格同一判定点）。
+					statusKind === 'success'
 						? t('loginHistory.statusSuccess')
-						: t('loginHistory.statusFailed'),
+						: statusKind === 'failed'
+							? t('loginHistory.statusFailed')
+							: '—',
 					item.reason || (item.status !== 'success' ? t('loginHistory.unknownReason') : ''),
 				];
 			});
@@ -176,15 +181,19 @@ export default function LoginHistoryPage() {
 			),
 			dataIndex: 'location',
 			key: 'location',
-			render: (v: string | undefined) => v || t('loginHistory.unknownLocation'),
+			render: (v: string | undefined) => v || '—',
 		},
 		{
 			title: t('loginHistory.status'),
 			dataIndex: 'status',
 			key: 'status',
 			render: (v: string | undefined) => {
-				// 原表的判定是「非 failed 一律算成功」，判定与徽标文案都要原样保留。
-				const isSuccess = v !== 'failed';
+				const kind = auditStatusKind(v);
+				// 空值三态：'' / undefined 既不算成功也不算失败 → 中性「—」（与 CSV 同一判定点）。
+				if (kind === 'unknown') {
+					return <span className="text-xs text-neutral-600">—</span>;
+				}
+				const isSuccess = kind === 'success';
 				return (
 					<StatusBadge variant={STATUS_VARIANTS[isSuccess ? 'success' : 'failed']}>
 						{isSuccess ? <CheckCircle2 size={12} /> : <XCircle size={12} />}

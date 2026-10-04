@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@autional-cn/shared';
 import {
 	usePointAccount,
 	usePointTransactions,
@@ -9,6 +10,7 @@ import {
 	usePointStats,
 	usePointValue,
 	usePointRiskScore,
+	useCreateWallet,
 } from '@/hooks/queries';
 // 行的形状只有一份（由 hooks 导出），见 billing 页同处注释。
 import type { PointTransactionResponse } from '@/hooks/queries';
@@ -26,7 +28,7 @@ import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
-import { isNotFoundError } from '@/lib/api-error';
+import { isWalletNotCreatedError } from '@/lib/api-error';
 
 // 交易类型 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
 // 原来这里是一张 typeBadges 表，8 种类型各配一对裸色阶（text-success bg-success-soft …）：
@@ -44,6 +46,9 @@ const STATUS_VARIANTS: Record<string, StatusVariant> = {
 
 export default function PointsPage() {
 	const { t } = useTranslation();
+	const { userId } = useAuth();
+	// 开通钱包（点账户依赖钱包）：成功后重拉积分账户。
+	const createWallet = useCreateWallet();
 	const {
 		data: account,
 		isLoading: accountLoading,
@@ -78,12 +83,29 @@ export default function PointsPage() {
 			</div>
 		);
 	if (accountError) {
-		if (isNotFoundError(accountError)) {
+		// 404 细分：仅 61060101（钱包未开通）走「空态 + 开通钱包 CTA」；其他 404/错误保持错误态。
+		if (isWalletNotCreatedError(accountError)) {
 			return (
-				<EmptyState
-					title={t('points.empty', '暂无积分数据')}
-					description={t('points.emptyDesc', '当前账户尚未开通积分账户')}
-				/>
+				<div className="max-w-4xl mx-auto px-4 py-8 space-y-4">
+					<EmptyState
+						title={t('points.empty', '暂无积分数据')}
+						description={t('points.emptyDesc', '当前账户尚未开通积分账户')}
+					/>
+					<div className="flex justify-center">
+						<button
+							type="button"
+							onClick={() =>
+								userId && createWallet.mutate({ userId }, { onSuccess: () => refetchAccount() })
+							}
+							disabled={!userId || createWallet.isPending}
+							className="rounded-lg bg-[var(--color-brand)] px-6 py-3 font-semibold text-white hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						>
+							{createWallet.isPending
+								? t('wallet.creatingWallet', '正在开通…')
+								: t('wallet.createWallet', '开通钱包')}
+						</button>
+					</div>
+				</div>
 			);
 		}
 		return (

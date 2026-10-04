@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem } from '@/hooks/queries';
-import { formatTime } from '@/lib/format';
+import { auditStatusKind, formatTime } from '@/lib/format';
 import { LoadingScreen, ErrorState, EmptyState, StatusBadge } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable, DateRangeFilter } from '@autional-cn/ui/antd';
@@ -84,14 +84,23 @@ export default function ActivityPage() {
 			t('activity.table.location'),
 			t('activity.table.result'),
 		];
-		const rows = items.map((log) => [
-			log.timestamp ? formatTime(log.timestamp) : '',
-			getActionLabel(log.action),
-			log.ip || '',
-			log.userAgent || '',
-			log.location || '',
-			log.status === 'success' ? t('activity.status.success') : t('activity.status.failed'),
-		]);
+		const rows = items.map((log) => {
+			const resultKind = auditStatusKind(log.status);
+			return [
+				log.timestamp ? formatTime(log.timestamp) : '',
+				getActionLabel(log.action),
+				log.ip || '',
+				log.userAgent || '',
+				// 空值同显「—」（与登录历史表/CSV 同族判定，AC-02-2/3）。
+				log.location || '—',
+				// 三态：'' 既不算成功也不算失败（与表格列同一语义）。
+				resultKind === 'success'
+					? t('activity.status.success')
+					: resultKind === 'failed'
+						? t('activity.status.failed')
+						: '—',
+			];
+		});
 		const csvContent = [
 			headers.join(','),
 			...rows.map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')),

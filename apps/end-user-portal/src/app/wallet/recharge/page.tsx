@@ -10,11 +10,11 @@ import { LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { useTranslation } from 'react-i18next';
 import { Wallet, CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';
-import { useWalletBalance, useRechargeWallet } from '@/hooks/queries';
+import { useWalletBalance, useRechargeWallet, useCreateWallet } from '@/hooks/queries';
 import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { rechargeSchema, type RechargeFormData } from '@/lib/validators';
-import { isNotFoundError } from '@/lib/api-error';
+import { isWalletNotCreatedError } from '@/lib/api-error';
 
 const PRESET_AMOUNTS = [100, 500, 1000];
 
@@ -31,6 +31,8 @@ export default function WalletRechargePage() {
 		refetch: refetchBalance,
 	} = useWalletBalance();
 	const recharge = useRechargeWallet();
+	// 开通钱包：成功后 hook 失效钱包查询 → useWalletBalance 自动重拉，充值表单可达。
+	const createWallet = useCreateWallet();
 
 	const channels = [
 		{ code: 'wechat', label: t('wallet.recharge.channels.wechat'), icon: '💬' },
@@ -110,12 +112,27 @@ export default function WalletRechargePage() {
 	if (balanceLoading) return <LoadingScreen message={t('wallet.loadingBalance', '正在加载钱包余额…')} />;
 
 	if (balanceError) {
-		if (isNotFoundError(balanceError)) {
+		// 404 细分：仅 61060101 走「空态 + 开通钱包 CTA」；其他 404/错误保持错误态。
+		if (isWalletNotCreatedError(balanceError)) {
 			return (
-				<EmptyState
-					title={t('wallet.empty', '暂无钱包数据')}
-					description={t('wallet.emptyDesc', '当前账户尚未开通钱包，完成充值后即可使用')}
-				/>
+				<div className="max-w-2xl mx-auto px-4 py-8 space-y-4">
+					<EmptyState
+						title={t('wallet.empty', '暂无钱包数据')}
+						description={t('wallet.emptyDesc', '当前账户尚未开通钱包，完成充值后即可使用')}
+					/>
+					<div className="flex justify-center">
+						<button
+							type="button"
+							onClick={() => userId && createWallet.mutate({ userId })}
+							disabled={!userId || createWallet.isPending}
+							className="rounded-lg bg-[var(--color-brand)] px-6 py-3 font-semibold text-white hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						>
+							{createWallet.isPending
+								? t('wallet.creatingWallet', '正在开通…')
+								: t('wallet.createWallet', '开通钱包')}
+						</button>
+					</div>
+				</div>
 			);
 		}
 		return (

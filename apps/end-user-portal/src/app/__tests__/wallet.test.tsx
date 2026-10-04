@@ -1,10 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestWrapper } from '@/test/wrapper';
 import WalletPage from '@/app/wallet/page';
 import { useQueries } from '@tanstack/react-query';
-import { useWalletTransactions, useRedeemCoupon } from '@/hooks/queries';
+import { useWalletTransactions, useRedeemCoupon, useCreateWallet } from '@/hooks/queries';
 
 vi.mock('@/components/ui/Skeleton', () => ({
 	SkeletonCard: () =>
@@ -39,6 +39,7 @@ vi.mock('@tanstack/react-query', async () => {
 vi.mock('@/hooks/queries', () => ({
 	useWalletTransactions: vi.fn(),
 	useRedeemCoupon: vi.fn(),
+	useCreateWallet: vi.fn(),
 	queryKeys: {
 		wallet: vi.fn(() => ['wallet']),
 		walletStats: vi.fn(() => ['walletStats']),
@@ -148,6 +149,7 @@ describe('WalletPage', () => {
 			error: null,
 		} as any);
 		vi.mocked(useRedeemCoupon).mockReturnValue(createMockMutation() as any);
+		vi.mocked(useCreateWallet).mockReturnValue(createMockMutation() as any);
 	});
 
 	it('renders loading state when balance is loading', () => {
@@ -180,6 +182,66 @@ describe('WalletPage', () => {
 		render(<WalletPage />, { wrapper: TestWrapper });
 
 		expect(screen.getByText('钱包信息加载失败')).toBeInTheDocument();
+	});
+
+	it('renders create-wallet CTA only for 404 with code 61060101', () => {
+		vi.mocked(useQueries).mockReturnValue([
+			{
+				data: undefined,
+				isLoading: false,
+				error: { response: { status: 404, data: { code: 61060101 } } },
+				refetch: vi.fn(),
+			},
+			emptyQueryResult(),
+			emptyQueryResult(),
+			emptyQueryResult(),
+		]);
+
+		render(<WalletPage />, { wrapper: TestWrapper });
+
+		expect(screen.getByText('暂无钱包数据')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: '开通钱包' })).toBeInTheDocument();
+		expect(screen.queryByText('钱包信息加载失败')).not.toBeInTheDocument();
+	});
+
+	it('keeps error state for other 404 codes (no CTA)', () => {
+		vi.mocked(useQueries).mockReturnValue([
+			{
+				data: undefined,
+				isLoading: false,
+				error: { response: { status: 404, data: { code: 999999 } } },
+				refetch: vi.fn(),
+			},
+			emptyQueryResult(),
+			emptyQueryResult(),
+			emptyQueryResult(),
+		]);
+
+		render(<WalletPage />, { wrapper: TestWrapper });
+
+		expect(screen.getByText('钱包信息加载失败')).toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: '开通钱包' })).not.toBeInTheDocument();
+	});
+
+	it('clicking CTA creates the wallet for the current user', () => {
+		vi.mocked(useQueries).mockReturnValue([
+			{
+				data: undefined,
+				isLoading: false,
+				error: { response: { status: 404, data: { code: 61060101 } } },
+				refetch: vi.fn(),
+			},
+			emptyQueryResult(),
+			emptyQueryResult(),
+			emptyQueryResult(),
+		]);
+		const mutate = vi.fn();
+		vi.mocked(useCreateWallet).mockReturnValue({ ...createMockMutation(), mutate } as any);
+
+		render(<WalletPage />, { wrapper: TestWrapper });
+		fireEvent.click(screen.getByRole('button', { name: '开通钱包' }));
+
+		expect(mutate).toHaveBeenCalledWith({ userId: 'u1' });
 	});
 
 	it('renders wallet balance card with available balance, frozen, currency, and coupon count', () => {

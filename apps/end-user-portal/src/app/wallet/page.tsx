@@ -8,11 +8,12 @@ import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { SkeletonCard, SkeletonRow } from '@/components/ui/Skeleton';
 import { useTranslation } from 'react-i18next';
-import { isNotFoundError } from '@/lib/api-error';
+import { isWalletNotCreatedError } from '@/lib/api-error';
 import { useQueries } from '@tanstack/react-query';
 import {
 	useWalletTransactions,
 	useRedeemCoupon,
+	useCreateWallet,
 	queryKeys,
 	getWalletBalance,
 	getWalletStats,
@@ -81,6 +82,8 @@ export default function WalletPage() {
 	const [couponCode, setCouponCode] = useState('');
 	const { data: txs } = useWalletTransactions(userId || '', { page, pageSize: 20 }, !!userId);
 	const redeemQ = useRedeemCoupon();
+	// 开通钱包：成功后 hook 失效钱包查询 → useQueries 余额查询自动重拉，页面转为正常态。
+	const createWallet = useCreateWallet();
 
 	if (balanceLoading)
 		return (
@@ -101,12 +104,27 @@ export default function WalletPage() {
 		);
 
 	if (balanceError) {
-		if (isNotFoundError(balanceError)) {
+		// 404 细分（AC-05-2/05-3）：仅 61060101 走「空态 + 开通钱包 CTA」；其他 404/错误保持错误态。
+		if (isWalletNotCreatedError(balanceError)) {
 			return (
-				<EmptyState
-					title={t('wallet.empty', '暂无钱包数据')}
-					description={t('wallet.emptyDesc', '当前账户尚未开通钱包，完成充值后即可使用')}
-				/>
+				<div className="max-w-4xl mx-auto px-4 py-8 space-y-4">
+					<EmptyState
+						title={t('wallet.empty', '暂无钱包数据')}
+						description={t('wallet.emptyDesc', '当前账户尚未开通钱包，完成充值后即可使用')}
+					/>
+					<div className="flex justify-center">
+						<button
+							type="button"
+							onClick={() => userId && createWallet.mutate({ userId })}
+							disabled={!userId || createWallet.isPending}
+							className="rounded-lg bg-[var(--color-brand)] px-6 py-3 font-semibold text-white hover:bg-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+						>
+							{createWallet.isPending
+								? t('wallet.creatingWallet', '正在开通…')
+								: t('wallet.createWallet', '开通钱包')}
+						</button>
+					</div>
+				</div>
 			);
 		}
 		return (

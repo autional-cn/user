@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TestWrapper } from '@/test/wrapper';
@@ -10,6 +10,7 @@ import {
 	usePointStats,
 	usePointValue,
 	usePointRiskScore,
+	useCreateWallet,
 } from '@/hooks/queries';
 
 vi.mock('@/components/ui/Skeleton', () => ({
@@ -31,6 +32,7 @@ vi.mock('@/hooks/use-toast', () => ({
 }));
 
 vi.mock('@autional-cn/shared', () => ({
+	useAuth: vi.fn(() => ({ userId: 'user1' })),
 	useAuthStore: vi.fn(() => ({
 		user: { id: 'user1', name: 'Test User' },
 		getAccessToken: vi.fn(() => 'mock-token'),
@@ -45,7 +47,18 @@ vi.mock('@/hooks/queries', () => ({
 	usePointStats: vi.fn(),
 	usePointValue: vi.fn(),
 	usePointRiskScore: vi.fn(),
+	useCreateWallet: vi.fn(),
 }));
+
+function createMockMutation() {
+	return {
+		mutate: vi.fn(),
+		mutateAsync: vi.fn().mockResolvedValue({}),
+		isPending: false,
+		isSuccess: false,
+		isError: false,
+	};
+}
 
 const mockAccount = {
 	userId: 'user1',
@@ -123,6 +136,7 @@ describe('PointsPage', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		defaultMocks();
+		vi.mocked(useCreateWallet).mockReturnValue(createMockMutation() as any);
 	});
 
 	it('renders loading state', () => {
@@ -191,6 +205,39 @@ describe('PointsPage', () => {
 		render(<PointsPage />, { wrapper: TestWrapper });
 
 		expect(screen.getByText('积分信息加载失败')).toBeInTheDocument();
+	});
+
+	it('renders create-wallet CTA for 404 with code 61060101 and calls it with current user', () => {
+		const mutate = vi.fn();
+		vi.mocked(useCreateWallet).mockReturnValue({ ...createMockMutation(), mutate } as any);
+		vi.mocked(usePointAccount).mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			error: { response: { status: 404, data: { code: 61060101 } } },
+			refetch: vi.fn(),
+		} as any);
+
+		render(<PointsPage />, { wrapper: TestWrapper });
+
+		expect(screen.getByText('暂无积分数据')).toBeInTheDocument();
+		const cta = screen.getByRole('button', { name: '开通钱包' });
+		fireEvent.click(cta);
+
+		expect(mutate).toHaveBeenCalledWith({ userId: 'user1' }, expect.objectContaining({ onSuccess: expect.any(Function) }));
+	});
+
+	it('keeps error state for other 404 codes (no CTA)', () => {
+		vi.mocked(usePointAccount).mockReturnValue({
+			data: undefined,
+			isLoading: false,
+			error: { response: { status: 404, data: { code: 999999 } } },
+			refetch: vi.fn(),
+		} as any);
+
+		render(<PointsPage />, { wrapper: TestWrapper });
+
+		expect(screen.getByText('积分信息加载失败')).toBeInTheDocument();
+		expect(screen.queryByRole('button', { name: '开通钱包' })).not.toBeInTheDocument();
 	});
 
 	it('renders expiring points section when expiring points exist', () => {

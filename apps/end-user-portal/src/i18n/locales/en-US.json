@@ -2003,6 +2003,8 @@
   "wallet.withdrawals.methodLabels.balanceWithdraw": "Balance Withdrawal",
   "wallet.empty": "No wallet data yet",
   "wallet.emptyDesc": "Your wallet balance and transaction records will appear here",
+  "wallet.createWallet": "Create Wallet",
+  "wallet.creatingWallet": "Creating…",
   "billing.title": "Billing & Usage",
   "billing.currentSubscription": "Current Subscription",
   "billing.status": "Status",
