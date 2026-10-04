@@ -275,10 +275,7 @@ export default function PasskeyRegisterPage() {
 			)}
 
 			{step === 'error' && (
-				<SectionCard
-					title={t('security.passkeys.register.errorTitle')}
-					className="text-center"
-				>
+				<div className="rounded-lg border border-danger-soft bg-white p-6 shadow-sm text-center">
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-danger-soft text-danger-text">
 						<AlertTriangle size={32} />
 					</div>
@@ -294,14 +291,11 @@ export default function PasskeyRegisterPage() {
 							{t('common.retry')}
 						</Button>
 					</div>
-				</SectionCard>
+				</div>
 			)}
 
 			{step === 'success' && (
-				<SectionCard
-					title={t('security.passkeys.register.successTitle')}
-					className="text-center"
-				>
+				<div className="rounded-lg border border-success-soft bg-white p-6 shadow-sm text-center">
 					<div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success-soft text-success-text">
 						<CheckCircle2 size={32} />
 					</div>
@@ -314,7 +308,7 @@ export default function PasskeyRegisterPage() {
 					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.redirecting')}
 					</p>
-				</SectionCard>
+				</div>
 			)}
 		</div>
 	);
