@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, Download } from 'lucide-react';
+import { Eye, Download, Loader2 } from 'lucide-react';
 import { ErrorState, EmptyState, StatusBadge, Modal } from '@autional-cn/ui';
 import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
@@ -11,6 +11,8 @@ import { SkeletonRow } from '@/components/ui/Skeleton';
 import { useTenant } from '@/hooks/use-tenant';
 import { useInvoices, useInvoice } from '@/hooks/queries';
 import type { BillingRecord, InvoiceLineItem } from '@/hooks/queries';
+import { apiClient, extractApiErrorMessage } from '@autional-cn/shared';
+import { useToast } from '@/hooks/use-toast';
 
 // 状态 → 设计系统徽标档位。这里**只做映射，不做样式**。
 // 此前每个状态各写一套裸色阶（bg-success-soft text-success-text / bg-amber-100 …）：
@@ -30,10 +32,36 @@ const fmtDate = (v: string | undefined) => (v ? new Date(v).toLocaleDateString()
 
 export default function InvoicesPage() {
 	const { t } = useTranslation();
+	const toast = useToast();
 	const { currentTenantId } = useTenant();
 	const tenantId = currentTenantId || '';
 	const [page, setPage] = useState(1);
 	const [selectedInvoice, setSelectedInvoice] = useState<string | null>(null);
+	const [exportingPdf, setExportingPdf] = useState(false);
+
+	// UP-63：原裸链 href 缺 /bff 前缀与租户 slug（user 域 SPA 404）；改带鉴权头的 apiClient 取 blob。
+	const handleExportPdf = async () => {
+		if (!selectedInvoice) return;
+		setExportingPdf(true);
+		try {
+			const res = await apiClient.get(
+				`/billing/api/v1/billing/invoice/${encodeURIComponent(selectedInvoice)}/pdf`,
+				{ responseType: 'blob' },
+			);
+			const url = URL.createObjectURL(res.data as Blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = `invoice-${selectedInvoice}.pdf`;
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			toast.error(extractApiErrorMessage(err, t('billing.invoices.exportError')));
+		} finally {
+			setExportingPdf(false);
+		}
+	};
 	const {
 		data: invoicesData,
 		isLoading,
@@ -247,14 +275,18 @@ export default function InvoicesPage() {
 						)}
 
 						{selectedInvoice && (
-							<a
-								href={'/billing/api/v1/billing/invoice/' + selectedInvoice + '/export'}
-								target="_blank"
-								className="inline-flex items-center gap-2 text-sm text-[var(--color-brand)] hover:text-primary-600 font-medium"
+							<button
+								onClick={handleExportPdf}
+								disabled={exportingPdf}
+								className="inline-flex items-center gap-2 text-sm text-[var(--color-brand)] hover:text-primary-600 font-medium disabled:opacity-60"
 							>
-								<Download className="w-4 h-4" />
+								{exportingPdf ? (
+									<Loader2 className="w-4 h-4 animate-spin" />
+								) : (
+									<Download className="w-4 h-4" />
+								)}
 								{t('billing.invoices.exportPdf')}
-							</a>
+							</button>
 						)}
 					</div>
 				)}

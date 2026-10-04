@@ -55,6 +55,10 @@ import {
 	Radio,
 	Megaphone,
 	FileCheck,
+	BadgeCheck,
+	Download,
+	Compass,
+	Mail,
 } from 'lucide-react';
 
 export default function AppLayout() {
@@ -123,10 +127,15 @@ export default function AppLayout() {
 				{ to: ROUTES.dashboard, label: t('nav.overview'), icon: LayoutDashboard },
 				{ to: ROUTES.profile, label: t('nav.profile'), icon: UserCircle },
 				{ to: ROUTES.privacyImpact, label: t('nav.privacyImpact'), icon: Eye },
+				// UP-90：孤儿页补入口 —— 数据导出（隐私）/ 合规状态（账户）。
+				{ to: ROUTES.exportData, label: t('nav.exportData'), icon: Download },
+				{ to: ROUTES.compliance, label: t('nav.compliance'), icon: BadgeCheck },
 				{ to: ROUTES.security, label: t('nav.security'), icon: ShieldCheck },
 				{ to: ROUTES.roleActivations, label: t('nav.roleActivations'), icon: KeyRound },
 				{ to: ROUTES.linkedAccounts, label: t('nav.linkedAccounts'), icon: Link2 },
 				{ to: ROUTES.consents, label: t('nav.consents'), icon: FileCheck },
+				// UP-90：引导向导入口（新用户激活链；页内自带跳过/重开）。
+				{ to: ROUTES.onboarding, label: t('nav.onboarding'), icon: Compass },
 			],
 		},
 		{
@@ -134,6 +143,8 @@ export default function AppLayout() {
 			items: [
 				{ to: ROUTES.loginHistory, label: t('nav.loginHistory'), icon: Clock },
 				{ to: ROUTES.activity, label: t('nav.activityLog'), icon: History },
+				// UP-90：恢复联系人归安全活动组。
+				{ to: ROUTES.recoveryContacts, label: t('nav.recoveryContacts'), icon: Mail },
 				// NHI 开启时设备入口归「我的设备」组，此处不再重复（曾同目标双入口同时高亮）
 				...(nhiEnabled
 					? []

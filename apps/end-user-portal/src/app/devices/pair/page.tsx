@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useTenantSlug } from '@autional-cn/shared';
+import { useTenantSlug, extractApiErrorMessage } from '@autional-cn/shared';
 import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useMutation } from '@tanstack/react-query';
@@ -38,9 +38,9 @@ export default function DevicePairingPage() {
 			setSuccess(true);
 			toast.success(t('devices.pair.success'));
 			setTimeout(() => navigate(buildNavHref(ROUTES.devices, tenantSlug)), 1500);
-		} catch (err: any) {
-			const message = err?.response?.data?.message || err?.message || t('devices.pair.error');
-			toast.error(message);
+		} catch (err) {
+			// UP-92：Problem DTO 无 message（title/detail 承载），一律走共享提取链。
+			toast.error(extractApiErrorMessage(err, t('devices.pair.error')));
 		}
 	};
 

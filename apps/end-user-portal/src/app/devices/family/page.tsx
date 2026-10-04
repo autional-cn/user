@@ -1,16 +1,17 @@
 'use client';
 import { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router';
-import { useTenantSlug } from '@autional-cn/shared';
+import { useSearchParams, useNavigate, Link } from 'react-router';
+import { useTenantSlug, extractApiErrorMessage } from '@autional-cn/shared';
 import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useTranslation } from 'react-i18next';
-import { Users, ArrowLeft, Trash2, UserPlus, Crown, ShieldCheck, Eye } from 'lucide-react';
+import { Users, ArrowLeft, Trash2, UserPlus, Crown, ShieldCheck, Eye, Smartphone, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
 	useFamilyMembers,
 	useAddFamilyMember,
 	useRemoveFamilyMember,
+	useThingsList,
 	type FamilyMember,
 } from '@/hooks/queries';
 import {
@@ -52,6 +53,7 @@ export default function FamilyAccessPage() {
 	const { data: members = [], isLoading, error, refetch } = useFamilyMembers(deviceId);
 	const addMutation = useAddFamilyMember();
 	const removeMutation = useRemoveFamilyMember();
+	const { data: thingsResult, isLoading: thingsLoading } = useThingsList();
 
 	const [showForm, setShowForm] = useState(false);
 	const [email, setEmail] = useState('');
@@ -71,8 +73,9 @@ export default function FamilyAccessPage() {
 			setEmail('');
 			setRole('guest_viewer');
 			setShowForm(false);
-		} catch (err: any) {
-			toast.error(err?.message || t('devices.family.addError'));
+		} catch (err) {
+			// UP-92：Problem DTO 无 message（title/detail 承载），一律走共享提取链。
+			toast.error(extractApiErrorMessage(err, t('devices.family.addError')));
 		}
 	};
 
@@ -82,22 +85,55 @@ export default function FamilyAccessPage() {
 			await removeMutation.mutateAsync({ deviceId, memberId: removeTarget.id });
 			toast.success(t('devices.family.removeSuccess'));
 			setRemoveTarget(null);
-		} catch (err: any) {
-			toast.error(err?.message || t('devices.family.removeError'));
+		} catch (err) {
+			toast.error(extractApiErrorMessage(err, t('devices.family.removeError')));
 		}
 	};
 
 	if (!deviceId) {
+		// UP-44：原为死胡同（仅提示「未指定设备 ID」+返回按钮）；改为设备选择器，选中带 ?deviceId= 进入。
+		const things = thingsResult?.items || [];
 		return (
-			<div className="flex flex-col items-center justify-center py-20">
-				<Users size={48} className="text-neutral-300" />
-				<p className="mt-4 text-sm text-neutral-600">{t('devices.family.noDevice')}</p>
-				<button
-					onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-					className="mt-4 text-sm text-primary-600 hover:text-primary-700"
-				>
-					{t('devices.family.backToDevices')}
-				</button>
+			<div className="space-y-6">
+				<div>
+					<h2 className="text-xl font-bold text-neutral-900">{t('devices.family.title')}</h2>
+					<p className="mt-1 text-sm text-neutral-600">{t('devices.family.subtitle')}</p>
+				</div>
+				{thingsLoading ? (
+					<LoadingScreen message={t('devices.family.loading')} />
+				) : things.length === 0 ? (
+					<div className="flex flex-col items-center justify-center py-20">
+						<Users size={48} className="text-neutral-300" />
+						<p className="mt-4 text-sm text-neutral-600">{t('devices.family.noDevices')}</p>
+						<button
+							onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
+							className="mt-4 text-sm text-primary-600 hover:text-primary-700"
+						>
+							{t('devices.family.back')}
+						</button>
+					</div>
+				) : (
+					<div className="space-y-3">
+						<p className="text-sm text-neutral-600">{t('devices.family.selectDevice')}</p>
+						{things.map((thing) => (
+							<Link
+								key={thing.id}
+								to={`${buildNavHref(ROUTES.devicesFamily, tenantSlug)}?deviceId=${thing.identityId || thing.id}`}
+								className="flex items-center justify-between rounded-lg border border-neutral-200 bg-white p-4 shadow-sm hover:bg-neutral-50 transition-colors"
+							>
+								<span className="flex items-center gap-3">
+									<span className="flex h-9 w-9 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
+										<Smartphone size={18} />
+									</span>
+									<span className="text-sm font-medium text-neutral-900">
+										{thing.name || t('devices.things.unknownDevice')}
+									</span>
+								</span>
+								<ChevronRight size={16} className="text-neutral-400" />
+							</Link>
+						))}
+					</div>
+				)}
 			</div>
 		);
 	}

@@ -22,7 +22,7 @@ import {
 	Unlink,
 	AlertTriangle,
 } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useToast } from '@/hooks/use-toast';
 import {
 	useAuthStore,
@@ -50,14 +50,15 @@ import type { OAuthConnectionItem } from '@/hooks/queries';
 import { LoadingScreen, ErrorState, Modal } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 
+// message 一律用完整扁平 ns 键：i18n keySeparator:false，消费处 t(message) 才可解析（UP-14）。
 const passwordSchema = z
 	.object({
-		oldPassword: z.string().min(1, { message: 'oldPasswordRequired' }),
-		newPassword: z.string().min(6, { message: 'newPasswordRequired' }),
-		confirmPassword: z.string().min(1, { message: 'confirmRequired' }),
+		oldPassword: z.string().min(1, { message: 'security.oldPasswordRequired' }),
+		newPassword: z.string().min(6, { message: 'security.newPasswordRequired' }),
+		confirmPassword: z.string().min(1, { message: 'security.confirmRequired' }),
 	})
 	.refine((data) => data.newPassword === data.confirmPassword, {
-		message: 'passwordMismatch',
+		message: 'security.passwordMismatch',
 		path: ['confirmPassword'],
 	});
 
@@ -70,6 +71,7 @@ function toQrImageSrc(qrCode: string): string {
 
 export default function SecurityPage() {
 	const tenantSlug = useTenantSlug();
+	const navigate = useNavigate();
 
 	const { t } = useTranslation();
 	const toast = useToast();
@@ -651,7 +653,11 @@ export default function SecurityPage() {
 						status={hasPasskey ? 'enabled' : 'disabled'}
 						statusText={hasPasskey ? t('security.enabled') : t('security.disabled')}
 						action={t('security.enable')}
-						onClick={() => window.open(`${getAUTH_PAGES_URL()}/passkey?mode=register`, '_blank')}
+						// UP-90：收敛到门户内注册页（auth 站 /passkey 自述「注册已移至账户中心」，
+						// 外跳只会弹回本门户 /security 多一跳）。
+						onClick={() =>
+							navigate(buildNavHref(ROUTES.passkeyRegister, tenantSlug))
+						}
 					/>
 				</div>
 				{totpPendingDetected && (

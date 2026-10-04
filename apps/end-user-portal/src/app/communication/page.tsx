@@ -129,14 +129,21 @@ export default function CommunicationHistoryPage() {
 			dataIndex: 'status',
 			key: 'status',
 			render: (v: string | undefined, log: CommunicationLogItem) => (
-				<>
+				<div className="flex flex-col items-start gap-1">
 					<StatusBadge variant={STATUS_VARIANTS[v ?? ''] ?? 'neutral'}>{statusLabel(v)}</StatusBadge>
 					{log.error && (
-						<span className="ml-2 text-xs text-danger-text" title={log.error}>
-							{t('communication.errorHint', 'Details')}
+						// UP-81：失败原因原为 hover-only「详情」（title 提示，触屏/键盘均不可达）；
+						// 改为可见截断文本 + 可聚焦（tabIndex）+ 全文题注（title / aria-label）。
+						<span
+							className="max-w-[220px] truncate text-xs text-danger-text"
+							title={log.error}
+							aria-label={log.error}
+							tabIndex={0}
+						>
+							{log.error}
 						</span>
 					)}
-				</>
+				</div>
 			),
 		},
 		{

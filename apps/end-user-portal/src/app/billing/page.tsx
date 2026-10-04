@@ -18,6 +18,10 @@ import {
 // 后端的字段一改就会有一边跟不上（而类型检查不会报——两边各自成立）。
 import type { BillingRecordItem } from '@/hooks/queries';
 import { useTenant } from '@/hooks/use-tenant';
+import { Link } from 'react-router';
+import { useTenantSlug } from '@autional-cn/shared';
+import { ROUTES } from '@/lib/routes';
+import { buildNavHref } from '@/lib/nav';
 
 import {
 	CreditCard,
@@ -26,6 +30,10 @@ import {
 	Users,
 	Activity,
 	Calendar,
+	ShoppingBag,
+	FileText,
+	Receipt,
+	ChevronRight,
 } from 'lucide-react';
 
 
@@ -33,6 +41,7 @@ export default function BillingPage() {
 	const { t } = useTranslation();
 	const { currentTenantId } = useTenant();
 	const tenantId = currentTenantId || '';
+	const tenantSlug = useTenantSlug();
 
 	const {
 		data: sub,
@@ -166,6 +175,25 @@ export default function BillingPage() {
 	return (
 		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
 			<h1 className="text-2xl font-bold">{t('billing.title')}</h1>
+
+			{/* UP-57：订阅 / 发票 / 支付三路由原零站内入口，账单页补快速入口。 */}
+			<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+				<EntryLink
+					to={buildNavHref(ROUTES.billingSubscribe, tenantSlug)}
+					icon={ShoppingBag}
+					label={t('billing.subscribe.title')}
+				/>
+				<EntryLink
+					to={buildNavHref(ROUTES.billingInvoices, tenantSlug)}
+					icon={FileText}
+					label={t('billing.invoices.title')}
+				/>
+				<EntryLink
+					to={buildNavHref(ROUTES.payments, tenantSlug)}
+					icon={Receipt}
+					label={t('payments.title')}
+				/>
+			</div>
 
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 				<div className="bg-white rounded-lg border p-5">
@@ -318,6 +346,29 @@ export default function BillingPage() {
 				/>
 			</div>
 		</div>
+	);
+}
+
+function EntryLink({
+	to,
+	icon: Icon,
+	label,
+}: {
+	to: string;
+	icon: typeof CreditCard;
+	label: string;
+}) {
+	return (
+		<Link
+			to={to}
+			className="flex items-center gap-3 rounded-lg border bg-white p-4 hover:bg-neutral-50 transition-colors"
+		>
+			<span className="flex h-9 w-9 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
+				<Icon size={18} />
+			</span>
+			<span className="flex-1 text-sm font-medium">{label}</span>
+			<ChevronRight size={16} className="text-neutral-400" />
+		</Link>
 	);
 }
 

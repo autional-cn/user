@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { useTenantSlug } from '@autional-cn/shared';
+import { useTenantSlug, extractApiErrorMessage } from '@autional-cn/shared';
 import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useTranslation } from 'react-i18next';
@@ -43,9 +43,9 @@ export default function DeviceTransferPage() {
 			// TODO: wire to actual API
 			await new Promise((r) => setTimeout(r, 1200));
 			setStatus('success');
-		} catch (err: any) {
+		} catch (err) {
 			setStatus('error');
-			setErrorMsg(err?.message || t('devices.transfer.submitError'));
+			setErrorMsg(extractApiErrorMessage(err, t('devices.transfer.submitError')));
 		}
 	};
 

@@ -1,7 +1,7 @@
 'use client';
 import { ROUTES } from '@/lib/routes';
 import { buildNavHref } from '@/lib/nav';
-import { useTenantSlug } from '@autional-cn/shared';
+import { useTenantSlug, extractApiErrorMessage } from '@autional-cn/shared';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -129,8 +129,9 @@ export default function NotificationPreferencesPage() {
 				},
 			});
 			toast.success(t('notifications.prefs.saved', '偏好设置已保存'));
-		} catch (err: any) {
-			toast.error(err?.message || t('common.error'));
+		} catch (err) {
+			// UP-92：Problem DTO 无 message（title/detail 承载），一律走共享提取链。
+			toast.error(extractApiErrorMessage(err, t('common.error')));
 		}
 	};
 	if (isLoading) return <LoadingScreen message={t('common.loading')} />;

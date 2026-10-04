@@ -226,7 +226,8 @@ export default function RecoveryContactsPage() {
 							<div className="mt-1 flex gap-2">
 								<button
 									type="button"
-									onClick={() => setValue('type', 'email')}
+									// UP-97：切类型后立即按新模式重校验 value（错误文案不滞后于当前模式）。
+									onClick={() => setValue('type', 'email', { shouldValidate: true })}
 									className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
 										addType === 'email'
 											? 'border-primary-500 bg-primary-50 text-primary-700'
@@ -238,7 +239,7 @@ export default function RecoveryContactsPage() {
 								</button>
 								<button
 									type="button"
-									onClick={() => setValue('type', 'phone')}
+									onClick={() => setValue('type', 'phone', { shouldValidate: true })}
 									className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium transition-colors ${
 										addType === 'phone'
 											? 'border-primary-500 bg-primary-50 text-primary-700'
@@ -262,9 +263,8 @@ export default function RecoveryContactsPage() {
 										: t('security.recoveryContacts.phoneNumber')
 								}
 								placeholder={addType === 'email' ? 'name@example.com' : '+8613800138000'}
-								// 今天这一行渲染的就是 zod 的原始 message（required / invalidEmail / invalidPhone），
-								// 照抄同一条以免换掉用户看到的字；它没走 t() 是既有问题，不在本次收敛范围内。
-								error={errors.value ? errors.value.message : undefined}
+								// zod message 为完整扁平 ns 键（UP-96），t() 解析为当前语言文案。
+								error={errors.value ? t(errors.value.message || '') : undefined}
 							/>
 						</div>
 
