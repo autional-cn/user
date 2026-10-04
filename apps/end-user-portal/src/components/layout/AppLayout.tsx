@@ -86,7 +86,11 @@ export default function AppLayout() {
 	useEffect(() => {
 		if (!authExpired) return;
 		refreshAccessToken().catch(() => {
-			logout(`${getAUTH_PAGES_URL()}/login?session_expired=true`);
+			// U350 接通后复查落点：裸 /login 是 auth 入口路由（正会话落 dashboard、无会话落 brand，
+			// 旗标即丢）；改走 auth 站既有「会话过期」页（倒计时 → 带回程重登，原路返回本页）。
+			logout(
+				`${getAUTH_PAGES_URL()}/error?type=session_expired&redirect=${encodeURIComponent(window.location.href)}`,
+			);
 		});
 	}, [authExpired]);
 

@@ -67,7 +67,13 @@ export default function DeleteAccountPage() {
 			});
 			toast.success(t('security.deleteAccount.success'));
 			setTimeout(() => {
-				logout(`${getAUTH_PAGES_URL()}/login?account_deleted=true`);
+				// U350 接通后复查落点：auth 站裸 /login 是入口路由（无会话落 brand、有会话落 dashboard，
+				// 旗标即丢）；迁 slug 直连 /<slug>/login（LoginPage 消费 account_deleted 横幅）。
+				logout(
+					tenantSlug
+						? `${getAUTH_PAGES_URL()}/${tenantSlug}/login?account_deleted=true`
+						: `${getAUTH_PAGES_URL()}/login?account_deleted=true`,
+				);
 			}, 1500);
 		} catch (err: any) {
 			const msg = extractApiError(err, t('security.deleteAccount.error')).message;

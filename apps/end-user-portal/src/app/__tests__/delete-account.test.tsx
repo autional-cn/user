@@ -190,7 +190,8 @@ describe('DeleteAccountPage', () => {
 		await vi.runAllTimersAsync();
 
 		expect(mockToastSuccess).toHaveBeenCalledWith('账户已成功删除');
-		expect(mockLogout).toHaveBeenCalledWith('/auth/login?account_deleted=true');
+		// U350 复查：带租户 slug 直连 auth 站登录页（裸 /login 经入口路由会剥旗标）
+		expect(mockLogout).toHaveBeenCalledWith('/auth/acme-corp/login?account_deleted=true');
 
 		vi.useRealTimers();
 	});
