@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TestWrapper } from '@/test/wrapper';
 import LoginHistoryPage from '@/app/security/login-history/page';
 import { useAuditLogs } from '@/hooks/queries';
+import { authMeAuditLogs } from '@autional-cn/shared/generated/api';
 
 vi.mock('@/hooks/use-toast', () => ({
 	useToast: vi.fn(() => ({ success: vi.fn(), error: vi.fn(), info: vi.fn() })),
@@ -11,6 +12,14 @@ vi.mock('@/hooks/use-toast', () => ({
 vi.mock('@/hooks/queries', () => ({
 	useAuditLogs: vi.fn(),
 }));
+
+// UP-29：导出改为逐页直连 authMeAuditLogs（全量跨页），不再是列表数据的内存映射。
+vi.mock('@autional-cn/shared/generated/api', async () => {
+	const actual = await vi.importActual<typeof import('@autional-cn/shared/generated/api')>(
+		'@autional-cn/shared/generated/api',
+	);
+	return { ...actual, authMeAuditLogs: vi.fn() };
+});
 
 // 三态覆盖：空值（''）/ failed / success 各一行。
 const AUDIT_ITEMS = [
@@ -50,6 +59,11 @@ describe('LoginHistoryPage — UP-25 空值三态（AC-02-2/02-3）+ UP-100 位�
 			data: { items: AUDIT_ITEMS, total: AUDIT_ITEMS.length },
 			isLoading: false,
 			error: null,
+		} as any);
+		// 导出全量循环的数据源：默认与列表同数据（不足一页即收尾）。
+		vi.mocked(authMeAuditLogs).mockResolvedValue({
+			items: AUDIT_ITEMS,
+			total: AUDIT_ITEMS.length,
 		} as any);
 	});
 
@@ -140,5 +154,125 @@ describe('LoginHistoryPage — UP-25 空值三态（AC-02-2/02-3）+ UP-100 位�
 			});
 		});
 		expect(vi.mocked(useAuditLogs).mock.calls.length).toBeGreaterThan(callsBefore);
+	});
+});
+
+// W3g（UP-28/UP-29）回归锁：分页尺寸控件与全量导出 —— 旧实现两者都是「欺骗性控件」。
+describe('LoginHistoryPage — UP-28 分页尺寸 / UP-29 全量导出', () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		vi.mocked(useAuditLogs).mockReturnValue({
+			data: { items: AUDIT_ITEMS, total: AUDIT_ITEMS.length },
+			isLoading: false,
+			error: null,
+		} as any);
+		vi.mocked(authMeAuditLogs).mockResolvedValue({
+			items: AUDIT_ITEMS,
+			total: AUDIT_ITEMS.length,
+		} as any);
+	});
+
+	it('UP-28：尺寸切换（20 条/页）真实生效 → 查询参数 pageSize=20', async () => {
+		// total>50 时 antd 才显示尺寸切换；给 60 条让控件出现。
+		vi.mocked(useAuditLogs).mockReturnValue({
+			data: { items: AUDIT_ITEMS, total: 60 },
+			isLoading: false,
+			error: null,
+		} as any);
+
+		render(<LoginHistoryPage />, { wrapper: TestWrapper });
+		expect(vi.mocked(useAuditLogs).mock.calls.at(-1)?.[0]).toMatchObject({ page: 1, pageSize: 10 });
+
+		fireEvent.mouseDown(screen.getByRole('combobox'));
+		// 选项门户到 body；按文案前缀找「20」（中英 locale 的 items_per_page 文案都收）。
+		const option20 = await waitFor(() => {
+			const opt = Array.from(document.querySelectorAll('.ant-select-item-option')).find((el) =>
+				el.textContent?.trim().startsWith('20'),
+			);
+			expect(opt).toBeTruthy();
+			return opt as HTMLElement;
+		});
+		fireEvent.click(option20);
+
+		await waitFor(() => {
+			expect(vi.mocked(useAuditLogs).mock.calls.at(-1)?.[0]).toMatchObject({ pageSize: 20 });
+		});
+	});
+
+	it('UP-29：导出逐页拉全量（pageSize=100）而非仅当前页；文件名用本地日期', async () => {
+		const createObjectURL = vi.fn<(blob: Blob) => string>(() => 'blob:test');
+		Object.defineProperty(URL, 'createObjectURL', {
+			value: createObjectURL,
+			configurable: true,
+			writable: true,
+		});
+		Object.defineProperty(URL, 'revokeObjectURL', {
+			value: vi.fn(),
+			configurable: true,
+			writable: true,
+		});
+		let downloadName = '';
+		const clickSpy = vi
+			.spyOn(HTMLAnchorElement.prototype, 'click')
+			.mockImplementation(function (this: HTMLAnchorElement) {
+				downloadName = this.download;
+			});
+
+		// 第一页拉满 100 条（表示还有后续页），第二页 1 条收尾 → 两页数据都要进 CSV。
+		const firstBatch = Array.from({ length: 100 }, (_, i) => ({
+			id: `exp-${i}`,
+			timestamp: '2026-10-04T08:00:00+08:00',
+			ip: `10.9.0.${i}`,
+			userAgent: 'Mozilla/5.0 Chrome',
+			status: 'success',
+			reason: '',
+			action: 'login',
+		}));
+		const lastBatch = [
+			{
+				id: 'exp-last',
+				timestamp: '2026-10-04T09:00:00+08:00',
+				ip: '10.9.9.9',
+				userAgent: 'Mozilla/5.0 Firefox',
+				status: 'failed',
+				reason: 'boom',
+				action: 'login',
+			},
+		];
+		vi.mocked(authMeAuditLogs)
+			.mockResolvedValueOnce({ items: firstBatch, total: 101 } as any)
+			.mockResolvedValueOnce({ items: lastBatch, total: 101 } as any);
+		// 页面本身只显示当前页 10 条 —— 旧实现导出只有这 10 条。
+		vi.mocked(useAuditLogs).mockReturnValue({
+			data: { items: firstBatch.slice(0, 10), total: 101 },
+			isLoading: false,
+			error: null,
+		} as any);
+
+		render(<LoginHistoryPage />, { wrapper: TestWrapper });
+		fireEvent.click(screen.getByRole('button', { name: /导出/ }));
+
+		await waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(1));
+		const csv = await createObjectURL.mock.calls[0][0].text();
+
+		// 两页都以导出规格请求（页大小 100，不是页面当前的 10）。
+		expect(vi.mocked(authMeAuditLogs).mock.calls[0][0]).toMatchObject({
+			page: 1,
+			pageSize: 100,
+			action: 'login',
+		});
+		expect(vi.mocked(authMeAuditLogs).mock.calls[1][0]).toMatchObject({ page: 2, pageSize: 100 });
+		// 第二页的行也进了 CSV（旧实现不含）。
+		expect(csv).toContain('"10.9.9.9"');
+		expect(csv).toContain('"boom"');
+
+		// 文件名 = 本地日期（toISOString 的 UTC 日期在东八区 0-8 点会写成前一天）。
+		const now = new Date();
+		const expectDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+			now.getDate(),
+		).padStart(2, '0')}`;
+		expect(downloadName).toBe(`login-history-${expectDate}.csv`);
+
+		clickSpy.mockRestore();
 	});
 });

@@ -1820,7 +1820,7 @@
   "loginHistory.title": "Login History",
   "loginHistory.subtitle": "View your account login records.",
   "loginHistory.export": "Export CSV",
-  "loginHistory.exportSuccess": "CSV exported successfully",
+  "loginHistory.exportSuccess": "Exported {{total}} records",
   "loginHistory.exportError": "Export failed",
   "loginHistory.filterAll": "All",
   "loginHistory.filterSuccess": "Success",

@@ -39,8 +39,9 @@ const STATUS_VARIANTS: Record<string, StatusVariant> = {
 export default function CommunicationHistoryPage() {
 	const { t } = useTranslation();
 	const [page, setPage] = useState(1);
+	// UP-79：pageSize 接通 state —— 旧实现是常量 15，antd 的尺寸切换控件显示但点了无效。
+	const [pageSize, setPageSize] = useState(15);
 	const [channelFilter, setChannelFilter] = useState('');
-	const pageSize = 15;
 
 	const { data, isLoading, error } = useCommunicationLogs({
 		page,
@@ -219,7 +220,11 @@ export default function CommunicationHistoryPage() {
 					current: page,
 					pageSize,
 					total,
-					onChange: setPage,
+					// UP-79：尺寸切换必须真实生效，旧实现吞掉第二个回调参数（pageSize 常量）。
+					onChange: (p: number, ps: number) => {
+						setPage(p);
+						if (ps !== pageSize) setPageSize(ps);
+					},
 					// 原来的手写翻页只在 totalPages > 1 时出现；hideOnSinglePage 保留「不足一页不显示分页条」。
 					hideOnSinglePage: true,
 				}}

@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '@autional-cn/shared';
 import { useAnnouncements } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
 import { LoadingScreen } from '@autional-cn/ui';
@@ -9,10 +10,30 @@ import { Megaphone, ChevronDown, ChevronRight, ChevronLeft, Eye, X } from 'lucid
 
 export default function AnnouncementsPage() {
 	const { t } = useTranslation();
+	const { user } = useAuth();
+	const userId = user?.id || '';
 	const [page, setPage] = useState(1);
 	const [expandedId, setExpandedId] = useState<string | null>(null);
+	// UP-88：忽略需跨刷新持久化（旧实现纯内存 state，刷新/切页后公告复活）。
+	// generated api 无用户面 dismiss 端点（dismissals 仅为公告聚合计数），以 per-user localStorage 兜底。
 	const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 	const pageSize = 10;
+	const dismissStorageKey = `announcements-dismissed:${userId}`;
+
+	useEffect(() => {
+		if (!userId) {
+			setDismissed(new Set());
+			return;
+		}
+		try {
+			const raw = localStorage.getItem(dismissStorageKey);
+			const parsed: unknown = raw ? JSON.parse(raw) : null;
+			setDismissed(new Set(Array.isArray(parsed) ? (parsed as string[]) : []));
+		} catch {
+			// 存储不可用/数据损坏：视为无忽略记录（本会话内仍可忽略）。
+			setDismissed(new Set());
+		}
+	}, [dismissStorageKey, userId]);
 
 	const { data, isLoading, error } = useAnnouncements({
 		page,
@@ -27,7 +48,16 @@ export default function AnnouncementsPage() {
 	const visibleList = list.filter((a: any) => !dismissed.has(a.id));
 
 	const handleDismiss = (id: string) => {
-		setDismissed((prev) => new Set(prev).add(id));
+		const next = new Set(dismissed);
+		next.add(id);
+		setDismissed(next);
+		if (userId) {
+			try {
+				localStorage.setItem(dismissStorageKey, JSON.stringify([...next]));
+			} catch {
+				// 存储不可用（隐私模式）：忽略仅本会话生效。
+			}
+		}
 		if (expandedId === id) setExpandedId(null);
 	};
 

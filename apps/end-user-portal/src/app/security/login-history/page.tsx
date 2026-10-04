@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLogs } from '@/hooks/queries';
 import type { AuditLogItem, AuditLogsParams } from '@/hooks/queries';
+import { authMeAuditLogs } from '@autional-cn/shared/generated/api';
 import { auditStatusKind, formatTime } from '@/lib/format';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
@@ -27,6 +28,10 @@ const STATUS_VARIANTS: Record<string, StatusVariant> = {
 	failed: 'danger',
 };
 
+// UP-29：全量导出的逐页规格与上限（50 页 × 100 条），防极端数据量拖死浏览器。
+const EXPORT_PAGE_SIZE = 100;
+const MAX_EXPORT_PAGES = 50;
+
 export default function LoginHistoryPage() {
 	const { t } = useTranslation();
 	const toast = useToast();
@@ -37,7 +42,9 @@ export default function LoginHistoryPage() {
 	const [keyword, setKeyword] = useState('');
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
-	const pageSize = 10;
+	// UP-28：pageSize 接通 state —— 旧实现是常量 10，antd 的尺寸切换控件显示但点了无效。
+	const [pageSize, setPageSize] = useState(10);
+	const [exporting, setExporting] = useState(false);
 
 	// 关键词防抖 300ms 后入参：输入过程不逐键打接口，定稿即回到第 1 页（UP-100 检索）。
 	useEffect(() => {
@@ -48,18 +55,21 @@ export default function LoginHistoryPage() {
 		return () => clearTimeout(id);
 	}, [keywordInput]);
 
-	const params: AuditLogsParams = { page, pageSize };
+	// 列表查询与 CSV 导出共用同一套筛选参数构造，保证导出内容与页面口径一致。
 	// UP-27：本页只呈现登录类事件（服务端按 action 枚举过滤，含成功/失败登录）。
 	// 全量操作流由「活动日志」页承担，避免用户按「登录历史」心智误读审计流水。
-	params.action = 'login';
-	// 状态筛选走服务端（UP-26）：'failed' 映射为 status_class=failure，跨页生效；
+	// UP-26：状态筛选走服务端（'failed' 映射为 status_class=failure），跨页生效；
 	// 旧实现只在当前页做客户端过滤，翻页后筛选失效且总数与列表矛盾。
-	if (statusFilter !== 'all') params.statusClass = statusFilter === 'failed' ? 'failure' : 'success';
-	if (keyword) params.keyword = keyword;
-	if (startDate) params.startDate = startDate;
-	if (endDate) params.endDate = endDate;
+	const buildParams = (p: number, ps: number): AuditLogsParams => {
+		const next: AuditLogsParams = { page: p, pageSize: ps, action: 'login' };
+		if (statusFilter !== 'all') next.statusClass = statusFilter === 'failed' ? 'failure' : 'success';
+		if (keyword) next.keyword = keyword;
+		if (startDate) next.startDate = startDate;
+		if (endDate) next.endDate = endDate;
+		return next;
+	};
 
-	const { data, isLoading, error } = useAuditLogs(params);
+	const { data, isLoading, error } = useAuditLogs(buildParams(page, pageSize));
 
 	const items: AuditLogItem[] = data?.items || [];
 	const total: number = data?.total || 0;
@@ -83,12 +93,24 @@ export default function LoginHistoryPage() {
 		return { browser, os: os ? `(${os})` : '' };
 	};
 
-	const handleExportCSV = () => {
-		if (items.length === 0) {
+	// UP-29：导出全量（跨页）而非仅当前页 —— 按同一筛选条件逐页拉取，
+	// 直到拉满 total 或遇到不足一页（修正「列表显示 300 条、CSV 只有 10 条」的欺骗性口径）。
+	const handleExportCSV = async () => {
+		if (total === 0) {
 			toast.info(t('loginHistory.empty'));
 			return;
 		}
+		setExporting(true);
 		try {
+			const all: AuditLogItem[] = [];
+			for (let p = 1; p <= MAX_EXPORT_PAGES; p++) {
+				const res = (await authMeAuditLogs(buildParams(p, EXPORT_PAGE_SIZE))) as {
+					items?: AuditLogItem[];
+				};
+				const pageItems = res?.items || [];
+				all.push(...pageItems);
+				if (pageItems.length < EXPORT_PAGE_SIZE || all.length >= total) break;
+			}
 			const headers = [
 				t('loginHistory.time'),
 				t('loginHistory.ip'),
@@ -96,7 +118,7 @@ export default function LoginHistoryPage() {
 				t('loginHistory.status'),
 				t('loginHistory.reason'),
 			];
-			const rows = items.map((item) => {
+			const rows = all.map((item) => {
 				const ua = parseUserAgent(item.userAgent);
 				const statusKind = auditStatusKind(item.status);
 				return [
@@ -123,12 +145,19 @@ export default function LoginHistoryPage() {
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
-			a.download = `login-history-${new Date().toISOString().slice(0, 10)}.csv`;
+			// 文件名用本地日期：toISOString 是 UTC，东八区 0-8 点导出会写成前一天。
+			const now = new Date();
+			const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+				now.getDate(),
+			).padStart(2, '0')}`;
+			a.download = `login-history-${localDate}.csv`;
 			a.click();
 			URL.revokeObjectURL(url);
-			toast.success(t('loginHistory.exportSuccess'));
+			toast.success(t('loginHistory.exportSuccess', { total: all.length }));
 		} catch {
 			toast.error(t('loginHistory.exportError'));
+		} finally {
+			setExporting(false);
 		}
 	};
 
@@ -215,7 +244,7 @@ export default function LoginHistoryPage() {
 				</div>
 				<button
 					onClick={handleExportCSV}
-					disabled={items.length === 0}
+					disabled={total === 0 || exporting}
 					className="flex items-center gap-1.5 rounded-md border border-neutral-200 bg-white px-3 py-1.5 text-sm font-medium text-neutral-700 hover:bg-neutral-50 transition-colors disabled:opacity-50"
 				>
 					<Download size={14} />
@@ -302,7 +331,11 @@ export default function LoginHistoryPage() {
 					current: page,
 					pageSize,
 					total,
-					onChange: setPage,
+					// UP-28：尺寸切换（antd 在 total>50 时显示）必须真实生效，旧实现吞掉第二个回调参数。
+					onChange: (p: number, ps: number) => {
+						setPage(p);
+						if (ps !== pageSize) setPageSize(ps);
+					},
 					// 原来的手写翻页只在超过一页时才出现；hideOnSinglePage 保留这个行为。
 					hideOnSinglePage: true,
 				}}

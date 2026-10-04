@@ -336,13 +336,16 @@ export default function StoragePage() {
 						<ArrowUp size={16} />
 					</button>
 				)}
-				<button
-					onClick={() => refetch()}
-					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
-					title={t('storage.refresh')}
-				>
-					<RefreshCw size={16} />
-				</button>
+				{/* UP-69：root 是虚拟根目录（无真实 API 记录），刷新只会重放同一空态 —— 隐藏避免控件空转。 */}
+				{currentFolder !== 'root' && (
+					<button
+						onClick={() => refetch()}
+						className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
+						title={t('storage.refresh')}
+					>
+						<RefreshCw size={16} />
+					</button>
+				)}
 				<button
 					onClick={() => setShowCreateFolder(true)}
 					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"

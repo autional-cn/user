@@ -36,7 +36,9 @@ export function useSessions(
 ): UseQueryResult<SessionInfo[], Error> {
 	const { userId } = useAuth();
 	return useQuery<SessionInfo[], Error>({
-		queryKey: queryKeys.sessions,
+		// UP-40：queryKey 必须携带 page/pageSize，否则翻页参数变了查询键不变
+		// → react-query 直接回放第一页缓存，翻页数据恒为第一页。
+		queryKey: [...queryKeys.sessions, page, pageSize],
 		queryFn: async () => {
 			const res = await authMeSessions({ page, page_size: pageSize });
 			return (res as { items?: SessionInfo[] }).items || [];

@@ -1820,7 +1820,7 @@
   "loginHistory.title": "登录历史",
   "loginHistory.subtitle": "查看你的账户登录记录。",
   "loginHistory.export": "导出 CSV",
-  "loginHistory.exportSuccess": "CSV 导出成功",
+  "loginHistory.exportSuccess": "已导出 {{total}} 条记录",
   "loginHistory.exportError": "导出失败",
   "loginHistory.filterAll": "全部",
   "loginHistory.filterSuccess": "成功",
