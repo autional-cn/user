@@ -1,9 +1,9 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import { useAuditLogs } from '@/hooks/queries';
-import type { AuditLogItem } from '@/hooks/queries';
+import type { AuditLogItem, AuditLogsParams } from '@/hooks/queries';
 import { auditStatusKind, formatTime } from '@/lib/format';
 import { LoadingScreen } from '@autional-cn/ui';
 import { ErrorState } from '@autional-cn/ui';
@@ -18,7 +18,7 @@ import {
 	XCircle,
 	Clock,
 	Monitor,
-	MapPin,
+	Search,
 } from 'lucide-react';
 
 // 状态 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
@@ -33,36 +33,37 @@ export default function LoginHistoryPage() {
 
 	const [page, setPage] = useState(1);
 	const [statusFilter, setStatusFilter] = useState<'all' | 'success' | 'failed'>('all');
+	const [keywordInput, setKeywordInput] = useState('');
+	const [keyword, setKeyword] = useState('');
 	const [startDate, setStartDate] = useState('');
 	const [endDate, setEndDate] = useState('');
 	const pageSize = 10;
 
-	const params: Record<string, unknown> = { page, pageSize };
+	// 关键词防抖 300ms 后入参：输入过程不逐键打接口，定稿即回到第 1 页（UP-100 检索）。
+	useEffect(() => {
+		const id = setTimeout(() => {
+			setKeyword(keywordInput.trim());
+			setPage(1);
+		}, 300);
+		return () => clearTimeout(id);
+	}, [keywordInput]);
+
+	const params: AuditLogsParams = { page, pageSize };
 	// UP-27：本页只呈现登录类事件（服务端按 action 枚举过滤，含成功/失败登录）。
 	// 全量操作流由「活动日志」页承担，避免用户按「登录历史」心智误读审计流水。
 	params.action = 'login';
+	// 状态筛选走服务端（UP-26）：'failed' 映射为 status_class=failure，跨页生效；
+	// 旧实现只在当前页做客户端过滤，翻页后筛选失效且总数与列表矛盾。
+	if (statusFilter !== 'all') params.statusClass = statusFilter === 'failed' ? 'failure' : 'success';
+	if (keyword) params.keyword = keyword;
 	if (startDate) params.startDate = startDate;
 	if (endDate) params.endDate = endDate;
 
-	const { data, isLoading, error } = useAuditLogs(
-		params as {
-			page?: number;
-			pageSize?: number;
-			startDate?: string;
-			endDate?: string;
-			action?: string;
-			status?: string;
-		},
-	);
+	const { data, isLoading, error } = useAuditLogs(params);
 
-	const allItems: AuditLogItem[] = data?.items || [];
+	const items: AuditLogItem[] = data?.items || [];
 	const total: number = data?.total || 0;
-
-	const items = useMemo(() => {
-		if (statusFilter === 'all') return allItems;
-		// 三态判定与表格/CSV 同一点（auditStatusKind）：'' 既不归成功也不归失败（UP-25）。
-		return allItems.filter((item) => auditStatusKind(item.status) === statusFilter);
-	}, [allItems, statusFilter]);
+	const hasFilters = statusFilter !== 'all' || !!keyword || !!startDate || !!endDate;
 
 	const parseUserAgent = (ua?: string): { browser: string; os: string } => {
 		if (!ua) return { browser: t('loginHistory.unknownBrowser'), os: '' };
@@ -92,7 +93,6 @@ export default function LoginHistoryPage() {
 				t('loginHistory.time'),
 				t('loginHistory.ip'),
 				t('loginHistory.device'),
-				t('loginHistory.location'),
 				t('loginHistory.status'),
 				t('loginHistory.reason'),
 			];
@@ -103,8 +103,6 @@ export default function LoginHistoryPage() {
 					item.timestamp || item.createdAt || '',
 					item.ip || '',
 					`${ua.browser} ${ua.os}`.trim(),
-					// 空值（''/undefined）与表格同显「—」（AC-02-2/3）。
-					item.location || '—',
 					// 三态：'' 既不算成功也不算失败（与表格同一判定点）。
 					statusKind === 'success'
 						? t('loginHistory.statusSuccess')
@@ -174,17 +172,6 @@ export default function LoginHistoryPage() {
 					</span>
 				);
 			},
-		},
-		{
-			title: (
-				<span className="flex items-center gap-1">
-					<MapPin size={14} />
-					{t('loginHistory.location')}
-				</span>
-			),
-			dataIndex: 'location',
-			key: 'location',
-			render: (v: string | undefined) => v || '—',
 		},
 		{
 			title: t('loginHistory.status'),
@@ -273,6 +260,21 @@ export default function LoginHistoryPage() {
 						setPage(1);
 					}}
 				/>
+				{/* 关键词检索（UP-100）：服务端按 IP / 设备 / 详情全文匹配，防抖后入参。 */}
+				<div className="relative">
+					<Search
+						size={14}
+						className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400"
+					/>
+					<input
+						type="text"
+						value={keywordInput}
+						onChange={(e) => setKeywordInput(e.target.value)}
+						placeholder={t('loginHistory.searchPlaceholder')}
+						aria-label={t('loginHistory.searchPlaceholder')}
+						className="h-8 w-56 rounded-md border border-neutral-300 bg-white pl-8 pr-2 text-xs text-neutral-900 placeholder:text-neutral-400 focus:border-primary-500 focus:outline-none"
+					/>
+				</div>
 			</div>
 
 			{/* 列定义只描述「这一页有哪些列」；表头 / 悬浮态 / 边框 / 行高 / 分页外观
@@ -290,7 +292,9 @@ export default function LoginHistoryPage() {
 					emptyText: (
 						<div className="flex flex-col items-center justify-center py-12 text-center">
 							<History size={40} className="text-neutral-300" />
-							<p className="mt-4 text-sm text-neutral-600">{t('loginHistory.empty')}</p>
+							<p className="mt-4 text-sm text-neutral-600">
+								{hasFilters ? t('loginHistory.noMatchingRecords') : t('loginHistory.empty')}
+							</p>
 						</div>
 					),
 				}}

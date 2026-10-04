@@ -8,7 +8,7 @@ import type { StatusVariant } from '@autional-cn/ui';
 import { DataTable } from '@autional-cn/ui/antd';
 import type { DataTableColumns } from '@autional-cn/ui/antd';
 import { SkeletonRow } from '@/components/ui/Skeleton';
-import { usePayments, useReceipt, type PaymentInfo, type ReceiptInfo } from '@/hooks/queries';
+import { usePayments, useReceipt, type PaymentInfo } from '@/hooks/queries';
 
 // 状态 → 设计系统徽标档位。只做映射，配色归设计系统（-soft/-text 是成对的、做过对比度验证）。
 // 原来这里是 7 条裸色阶（bg-amber-100 text-amber-700 之类）：配色散在业务侧，而且那套色阶
@@ -31,14 +31,16 @@ const STATUS_VARIANTS: Record<string, StatusVariant> = {
 export default function PaymentsPage() {
 	const { t } = useTranslation();
 	const [page, setPage] = useState(1);
-	const [receiptPaymentId, setReceiptPaymentId] = useState<string | null>(null);
+	// UP-66：弹窗日期必须用支付行的时间 —— 收据接口的 created_at 是收据生成时刻（=请求时刻，
+	// 每次打开都变）；改为保存整行，日期取 paidAt（支付完成）优先、回落 createdAt（支付创建）。
+	const [receiptPayment, setReceiptPayment] = useState<PaymentInfo | null>(null);
 	const {
 		data: paymentsData,
 		isLoading,
 		error: paymentsError,
 		refetch: refetchPayments,
 	} = usePayments({ page, pageSize: 20 });
-	const { data: receipt } = useReceipt(receiptPaymentId || '');
+	const { data: receipt } = useReceipt(receiptPayment?.paymentId || '');
 
 	const payments = paymentsData?.items || [];
 
@@ -90,6 +92,9 @@ export default function PaymentsPage() {
 
 	// 列定义：只描述**这一页有哪些列**。表头底色 / 悬浮态 / 边框 / 行高 / 分页外观，
 	// 由设计系统下发的组件级令牌决定 —— 与四个 portal 里其它数据表吃的是同一份令牌。
+	// 收据日期 = 支付时间（UP-66）：paidAt 优先，回落支付行 createdAt；不再读 receipt.createdAt。
+	const receiptDate = receiptPayment?.paidAt || receiptPayment?.createdAt;
+
 	const columns: DataTableColumns<PaymentInfo> = [
 		{
 			title: t('payments.date'),
@@ -138,7 +143,7 @@ export default function PaymentsPage() {
 			align: 'right',
 			render: (_: unknown, p: PaymentInfo) => (
 				<button
-					onClick={() => setReceiptPaymentId(p.paymentId || '')}
+					onClick={() => setReceiptPayment(p)}
 					className="inline-flex items-center gap-1 text-[var(--color-brand)] hover:text-primary-600 text-sm font-medium"
 				>
 					<Eye className="w-4 h-4" />
@@ -180,13 +185,13 @@ export default function PaymentsPage() {
 
 			{/* Receipt Modal */}
 			<Modal
-				open={receiptPaymentId !== null && !!receipt}
-				onClose={() => setReceiptPaymentId(null)}
+				open={receiptPayment !== null && !!receipt}
+				onClose={() => setReceiptPayment(null)}
 				title={t('payments.receiptTitle')}
 				maxWidth="md"
 				footer={
 					<button
-						onClick={() => setReceiptPaymentId(null)}
+						onClick={() => setReceiptPayment(null)}
 						className="w-full py-2.5 rounded-lg bg-[var(--color-brand)] text-white font-medium hover:bg-primary-600 transition-colors"
 					>
 						{t('common.close')}
@@ -210,7 +215,7 @@ export default function PaymentsPage() {
 						/>
 						<ReceiptRow
 							label={t('payments.date')}
-							value={receipt.createdAt ? new Date(receipt.createdAt).toLocaleDateString() : '-'}
+							value={receiptDate ? new Date(receiptDate).toLocaleDateString() : '-'}
 						/>
 						<ReceiptRow
 							label={t('payments.itemDescription')}
