@@ -157,7 +157,7 @@ export default function ActivityPage() {
 						<XCircle size={10} /> {t('activity.status.failed')}
 					</StatusBadge>
 				) : (
-					<span className="text-xs text-neutral-500">—</span>
+					<span className="text-xs text-neutral-600">—</span>
 				),
 		},
 	];

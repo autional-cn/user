@@ -260,7 +260,7 @@ export default function OnboardingPage() {
 			<div className="border-t border-neutral-200 pt-4">
 				<button
 					onClick={handleReset}
-					className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-600 transition-colors"
+					className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-600 transition-colors"
 				>
 					<RotateCcw size={14} />
 					{t('onboarding.reset', '重新开始入驻')}

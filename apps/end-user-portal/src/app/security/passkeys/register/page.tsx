@@ -138,7 +138,7 @@ export default function PasskeyRegisterPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-500 hover:text-neutral-600 transition-colors"
+					className="text-neutral-600 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
@@ -284,7 +284,7 @@ export default function PasskeyRegisterPage() {
 					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.successDesc')}
 					</p>
-					<p className="mt-2 text-sm text-neutral-500">
+					<p className="mt-2 text-sm text-neutral-600">
 						{t('security.passkeys.register.redirecting')}
 					</p>
 				</div>

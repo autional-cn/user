@@ -12,7 +12,7 @@ export default function NotFoundPage() {
 			</div>
 			<h1 className="mt-6 text-4xl font-bold text-neutral-900">404</h1>
 			<p className="mt-2 text-lg text-neutral-600">{t('notFound.title')}</p>
-			<p className="mt-1 text-sm text-neutral-500">{t('notFound.description')}</p>
+			<p className="mt-1 text-sm text-neutral-600">{t('notFound.description')}</p>
 			<Link
 				to="/"
 				className="mt-8 rounded-md bg-primary-600 px-6 py-2.5 text-sm font-medium text-white hover:bg-primary-700 transition-colors"

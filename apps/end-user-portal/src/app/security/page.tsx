@@ -528,7 +528,7 @@ export default function SecurityPage() {
 								<button
 									type="button"
 									onClick={() => setShowOld(!showOld)}
-									className="text-neutral-500 hover:text-neutral-600"
+									className="text-neutral-600 hover:text-neutral-600"
 								>
 									{showOld ? <EyeOff size={16} /> : <Eye size={16} />}
 								</button>
@@ -549,7 +549,7 @@ export default function SecurityPage() {
 								<button
 									type="button"
 									onClick={() => setShowNew(!showNew)}
-									className="text-neutral-500 hover:text-neutral-600"
+									className="text-neutral-600 hover:text-neutral-600"
 								>
 									{showNew ? <EyeOff size={16} /> : <Eye size={16} />}
 								</button>
@@ -985,7 +985,7 @@ export default function SecurityPage() {
 									className="h-40 w-40 rounded-md border border-neutral-200"
 								/>
 							) : (
-								<div className="flex h-40 w-40 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-500">
+								<div className="flex h-40 w-40 items-center justify-center rounded-md border border-neutral-200 bg-neutral-50 text-neutral-600">
 									{t('security.totpQrFail')}
 								</div>
 							)}

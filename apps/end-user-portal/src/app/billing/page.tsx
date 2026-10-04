@@ -151,7 +151,7 @@ export default function BillingPage() {
 			key: 'createdAt',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-neutral-500 text-xs">
+				<span className="text-neutral-600 text-xs">
 					{v ? new Date(v).toLocaleDateString() : '-'}
 				</span>
 			),
@@ -175,7 +175,7 @@ export default function BillingPage() {
 					</div>
 					<div className="grid grid-cols-2 gap-3 text-sm">
 						<div>
-							<span className="text-neutral-500">{t('billing.status')}</span>
+							<span className="text-neutral-600">{t('billing.status')}</span>
 							<p className="font-medium">
 								<span
 									className={`inline-block px-2 py-0.5 rounded text-xs ${planStatus === 'active' ? 'bg-success-soft text-success' : planStatus === 'trial' ? 'bg-info-soft text-info' : planStatus === 'cancelled' ? 'bg-danger-soft text-danger' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
@@ -195,7 +195,7 @@ export default function BillingPage() {
 							</p>
 						</div>
 						<div>
-							<span className="text-neutral-500">{t('billing.billingCycle')}</span>
+							<span className="text-neutral-600">{t('billing.billingCycle')}</span>
 							<p className="font-medium capitalize">
 								{t(
 									billingCycle === 'monthly'
@@ -207,7 +207,7 @@ export default function BillingPage() {
 							</p>
 						</div>
 						<div>
-							<span className="text-neutral-500">{t('billing.amount')}</span>
+							<span className="text-neutral-600">{t('billing.amount')}</span>
 							<p className="font-medium">
 								{currency === 'CNY' ? '¥' : ''}
 								{amount.toLocaleString()}/
@@ -215,13 +215,13 @@ export default function BillingPage() {
 							</p>
 						</div>
 						<div>
-							<span className="text-neutral-500">{t('billing.autoRenew')}</span>
+							<span className="text-neutral-600">{t('billing.autoRenew')}</span>
 							<p className={`font-medium ${autoRenew ? 'text-success-text' : 'text-neutral-600'}`}>
 								{autoRenew ? t('billing.autoRenewEnabled') : t('billing.autoRenewDisabled')}
 							</p>
 						</div>
 					</div>
-					<div className="mt-3 pt-3 border-t text-xs text-neutral-500 flex items-center gap-1">
+					<div className="mt-3 pt-3 border-t text-xs text-neutral-600 flex items-center gap-1">
 						<Calendar size={12} />
 						{periodStart} ~ {periodEnd}
 					</div>
@@ -243,18 +243,18 @@ export default function BillingPage() {
 						</div>
 						<div className="grid grid-cols-2 gap-3 text-sm">
 							<div>
-								<span className="text-neutral-500">{t('billing.mrr')}</span>
+								<span className="text-neutral-600">{t('billing.mrr')}</span>
 								<p className="font-medium">
 									{currency === 'CNY' ? '¥' : ''}
 									{(stats.mrr ?? 0).toLocaleString()}
 								</p>
 							</div>
 							<div>
-								<span className="text-neutral-500">{t('billing.activeUsers')}</span>
+								<span className="text-neutral-600">{t('billing.activeUsers')}</span>
 								<p className="font-medium">{stats.activeUsers ?? 0}</p>
 							</div>
 							<div>
-								<span className="text-neutral-500">{t('billing.retentionRate')}</span>
+								<span className="text-neutral-600">{t('billing.retentionRate')}</span>
 								<p className="font-medium">
 									{stats.retentionRate != null ? `${(stats.retentionRate * 100).toFixed(1)}%` : '-'}
 								</p>
@@ -344,7 +344,7 @@ function UsageCard({
 					style={{ width: `${Math.max(percent, 2)}%` }}
 				/>
 			</div>
-			<div className="text-xs text-neutral-500">
+			<div className="text-xs text-neutral-600">
 				{value} / {max}
 				{unit ? ` ${unit}` : ''} ({percent.toFixed(1)}%)
 			</div>

@@ -169,7 +169,7 @@ export default function WalletRechargePage() {
 						</button>
 					))}
 					<div className="relative">
-						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500">¥</span>
+						<span className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-600">¥</span>
 						<FormInput<RechargeFormData>
 							name="customAmount"
 							control={control}

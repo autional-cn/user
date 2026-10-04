@@ -152,7 +152,7 @@ export default function PaymentsPage() {
 				locale={{
 					// 原来表体里那行 colSpan 占位（图标 + 文案）整体搬进 locale，不再手写占位 <tr>
 					emptyText: (
-						<div className="py-4 text-center text-neutral-500">
+						<div className="py-4 text-center text-neutral-600">
 							<CreditCard className="w-8 h-8 mx-auto mb-2 opacity-30" />
 							{t('payments.empty')}
 						</div>

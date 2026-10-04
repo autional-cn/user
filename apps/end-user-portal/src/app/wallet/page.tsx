@@ -172,7 +172,7 @@ export default function WalletPage() {
 			key: 'createdAt',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-neutral-500 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+				<span className="text-neutral-600 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
 			),
 		},
 	];
@@ -218,7 +218,7 @@ export default function WalletPage() {
 			key: 'date',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-neutral-500 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
+				<span className="text-neutral-600 text-xs">{v ? new Date(v).toLocaleDateString() : '-'}</span>
 			),
 		},
 	];
@@ -360,7 +360,7 @@ export default function WalletPage() {
 												? ` · ${t('wallet.minPurchase', { amount: Number(c.minAmount).toFixed(2) })}`
 												: ''}
 										</div>
-										<div className="text-xs text-neutral-500 mt-1">
+										<div className="text-xs text-neutral-600 mt-1">
 											{t('wallet.validUntil')}{' '}
 											{c.validUntil ? new Date(c.validUntil).toLocaleDateString() : '-'}
 										</div>
@@ -391,7 +391,7 @@ export default function WalletPage() {
 							))}
 						</div>
 					) : (
-						<div className="text-center py-8 text-neutral-500 text-sm">{t('wallet.noCoupons')}</div>
+						<div className="text-center py-8 text-neutral-600 text-sm">{t('wallet.noCoupons')}</div>
 					)}
 				</div>
 			)}

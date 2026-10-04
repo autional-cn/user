@@ -62,7 +62,7 @@ export default function AnnouncementsPage() {
 								<div className="flex items-center gap-2">
 									<h3 className="text-base font-semibold text-neutral-900">{ann.title}</h3>
 									{ann.views != null && (
-										<span className="flex items-center gap-1 text-xs text-neutral-500">
+										<span className="flex items-center gap-1 text-xs text-neutral-600">
 											<Eye size={12} />
 											{ann.views}
 										</span>
@@ -75,7 +75,7 @@ export default function AnnouncementsPage() {
 									</p>
 								)}
 								<div className="mt-2 flex items-center justify-between">
-									<span className="text-xs text-neutral-500">
+									<span className="text-xs text-neutral-600">
 										{ann.publishAt
 											? t('announcements.published', { date: formatTime(ann.publishAt) })
 											: formatTime(ann.createdAt)}
@@ -86,12 +86,12 @@ export default function AnnouncementsPage() {
 												e.stopPropagation();
 												handleDismiss(ann.id);
 											}}
-											className="flex items-center gap-1 text-xs text-neutral-500 hover:text-neutral-600 transition-colors"
+											className="flex items-center gap-1 text-xs text-neutral-600 hover:text-neutral-600 transition-colors"
 										>
 											<X size={12} />
 											{t('announcements.dismiss', 'Dismiss')}
 										</button>
-										<span className="text-xs text-neutral-500">
+										<span className="text-xs text-neutral-600">
 											{expandedId === ann.id ? (
 												<ChevronDown size={14} className="text-neutral-500" />
 											) : (
@@ -118,7 +118,7 @@ export default function AnnouncementsPage() {
 										</span>
 									))}
 									{ann.expireAt && (
-										<span className="text-xs text-neutral-500">
+										<span className="text-xs text-neutral-600">
 											{t('announcements.expiresAt', 'Expires:')} {formatTime(ann.expireAt)}
 										</span>
 									)}

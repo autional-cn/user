@@ -259,14 +259,14 @@ export function IdentifierChangeDialog({ kind, open, onClose }: Props) {
 								<button
 									onClick={handleCancelChange}
 									disabled={cancelEmailMut.isPending || cancelPhoneMut.isPending}
-									className="text-sm text-danger-text hover:underline disabled:text-neutral-500"
+									className="text-sm text-danger-text hover:underline disabled:text-neutral-600"
 								>
 									{t('profile.identifierChange.cancelChange')}
 								</button>
 								<button
 									onClick={handleResend}
 									disabled={resendCooldown > 0}
-									className="text-sm text-primary-600 hover:underline disabled:text-neutral-500"
+									className="text-sm text-primary-600 hover:underline disabled:text-neutral-600"
 								>
 									{resendCooldown > 0
 										? t('profile.identifierChange.resendCooldown', { seconds: resendCooldown })

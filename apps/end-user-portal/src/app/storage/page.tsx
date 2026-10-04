@@ -380,7 +380,7 @@ export default function StoragePage() {
 									{entry.name}
 								</div>
 								{/* Meta */}
-								<div className="text-xs text-neutral-500 text-center space-y-0.5">
+								<div className="text-xs text-neutral-600 text-center space-y-0.5">
 									{entry._type === 'file' && entry.size !== undefined && (
 										<div>{formatBytes(entry.size)}</div>
 									)}

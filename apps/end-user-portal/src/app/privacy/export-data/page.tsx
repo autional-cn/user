@@ -67,7 +67,7 @@ export default function ExportDataPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.profile, tenantSlug)}
-					className="text-neutral-500 hover:text-neutral-600 transition-colors"
+					className="text-neutral-600 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
@@ -155,7 +155,7 @@ export default function ExportDataPage() {
 					</h3>
 					<p className="mt-2 text-sm text-neutral-600">{t('privacy.exportData.successDesc')}</p>
 					{exportId && (
-						<p className="mt-1 text-xs text-neutral-500">
+						<p className="mt-1 text-xs text-neutral-600">
 							{t('privacy.exportData.exportId')}: {exportId}
 						</p>
 					)}
@@ -165,7 +165,7 @@ export default function ExportDataPage() {
 							{t('privacy.exportData.download')}
 						</Button>
 					</div>
-					<p className="mt-2 text-xs text-neutral-500">{t('privacy.exportData.autoDownload')}</p>
+					<p className="mt-2 text-xs text-neutral-600">{t('privacy.exportData.autoDownload')}</p>
 				</div>
 			)}
 		</div>

@@ -203,7 +203,7 @@ export default function ConsentsPage() {
 											</span>
 										)}
 									</div>
-									<div className="mt-1 flex items-center gap-4 text-xs text-neutral-500">
+									<div className="mt-1 flex items-center gap-4 text-xs text-neutral-600">
 										<span>{field.fieldKey}</span>
 										{field.grantedAt && (
 											<span>
@@ -263,7 +263,7 @@ export default function ConsentsPage() {
 {/* 横向内边距归 Modal 的内容区（px-6 py-4），保留会与表头/表尾错位；这里只留本层自己的滚动与间距 */}
 				<div className="space-y-3 max-h-80 overflow-y-auto">
 					{availableFields.length === 0 ? (
-						<p className="text-center text-sm text-neutral-500 py-4">
+						<p className="text-center text-sm text-neutral-600 py-4">
 							{t('consents.allFieldsConsented')}
 						</p>
 					) : (

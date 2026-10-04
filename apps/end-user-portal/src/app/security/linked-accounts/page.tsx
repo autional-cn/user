@@ -155,7 +155,7 @@ export default function LinkedAccountsPage() {
 					<div className="flex flex-col items-center justify-center py-12 text-center">
 						<Link2 size={40} className="text-neutral-300" />
 						<p className="mt-4 text-sm text-neutral-600">{t('linkedAccounts.empty')}</p>
-						<p className="mt-1 text-xs text-neutral-500">{t('linkedAccounts.emptyHint')}</p>
+						<p className="mt-1 text-xs text-neutral-600">{t('linkedAccounts.emptyHint')}</p>
 					</div>
 				)}
 			</div>

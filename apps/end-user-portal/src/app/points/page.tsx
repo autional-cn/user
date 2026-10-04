@@ -137,7 +137,7 @@ export default function PointsPage() {
 			key: 'createdAt',
 			align: 'right',
 			render: (v: string | undefined) => (
-				<span className="text-neutral-500 text-xs">
+				<span className="text-neutral-600 text-xs">
 					{v ? new Date(v).toLocaleDateString() : '-'}
 				</span>
 			),
@@ -184,7 +184,7 @@ export default function PointsPage() {
 							? `${expiringData?.totalExpiring?.toLocaleString()}${t('points.pointsUnit')}`
 							: t('points.none')
 					}
-					valueClassName={(expiringData?.totalExpiring ?? 0) > 0 ? 'text-danger' : 'text-neutral-500'}
+					valueClassName={(expiringData?.totalExpiring ?? 0) > 0 ? 'text-danger' : 'text-neutral-600'}
 				/>
 			</div>
 

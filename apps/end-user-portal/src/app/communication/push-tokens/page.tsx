@@ -205,14 +205,14 @@ export default function PushTokensPage() {
 									<div>
 										<p className="text-sm font-semibold text-neutral-900">{t(meta.labelKey)}</p>
 										{token.deviceId && (
-											<p className="text-xs text-neutral-500 mt-0.5">{token.deviceId}</p>
+											<p className="text-xs text-neutral-600 mt-0.5">{token.deviceId}</p>
 										)}
 									</div>
 								</div>
 								<button
 									onClick={() => handleDelete(token.id)}
 									disabled={deleteMutation.isPending}
-									className="rounded-md p-1.5 text-neutral-500 hover:bg-danger-soft hover:text-danger-text transition-colors disabled:opacity-40"
+									className="rounded-md p-1.5 text-neutral-600 hover:bg-danger-soft hover:text-danger-text transition-colors disabled:opacity-40"
 									title={t('communication.pushTokens.delete', 'Delete')}
 								>
 									<Trash2 size={16} />
@@ -230,14 +230,14 @@ export default function PushTokensPage() {
 											: t('communication.pushTokens.inactive', 'Inactive')}
 									</span>
 								</div>
-								<p className="text-xs text-neutral-500 font-mono truncate" title={token.token}>
+								<p className="text-xs text-neutral-600 font-mono truncate" title={token.token}>
 									{token.token
 										? token.token.length > 30
 											? token.token.slice(0, 15) + '...' + token.token.slice(-10)
 											: token.token
 										: '--'}
 								</p>
-								<p className="text-xs text-neutral-500">{formatTime(token.createdAt)}</p>
+								<p className="text-xs text-neutral-600">{formatTime(token.createdAt)}</p>
 							</div>
 						</div>
 					);

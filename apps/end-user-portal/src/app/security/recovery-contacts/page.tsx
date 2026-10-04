@@ -111,7 +111,7 @@ export default function RecoveryContactsPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-500 hover:text-neutral-600 transition-colors"
+					className="text-neutral-600 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
@@ -180,7 +180,7 @@ export default function RecoveryContactsPage() {
 							<button
 								onClick={() => handleDelete(contact.id)}
 								disabled={deletingId === contact.id}
-								className="text-neutral-500 hover:text-danger-text transition-colors disabled:opacity-50"
+								className="text-neutral-600 hover:text-danger-text transition-colors disabled:opacity-50"
 							>
 								{deletingId === contact.id ? (
 									<Loader2 size={16} className="animate-spin" />
@@ -214,7 +214,7 @@ export default function RecoveryContactsPage() {
 								setFormError('root', { message: '' });
 								reset({ type: 'email', value: '' });
 							}}
-							className="text-neutral-500 hover:text-neutral-600"
+							className="text-neutral-600 hover:text-neutral-600"
 						>
 							<X size={18} />
 						</button>

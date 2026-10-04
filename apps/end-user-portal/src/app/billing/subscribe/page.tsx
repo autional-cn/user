@@ -216,13 +216,13 @@ export default function SubscribePage() {
 									<span className="text-3xl font-bold">¥{price}</span>
 									{billingCycle === 'yearly' && (
 										<div>
-											<span className="text-sm text-neutral-500 line-through">¥{originalPrice}</span>
+											<span className="text-sm text-neutral-600 line-through">¥{originalPrice}</span>
 											<span className="text-xs text-danger-text ml-1">
 												{t('billing.subscribe.yearlyBadge')}
 											</span>
 										</div>
 									)}
-									<span className="text-sm text-neutral-500"> /{getCycleLabel(billingCycle)}</span>
+									<span className="text-sm text-neutral-600"> /{getCycleLabel(billingCycle)}</span>
 								</div>
 
 								<ul className="text-left space-y-2 w-full pt-2">

@@ -31,7 +31,7 @@ const mockEvents = [
 		type: 'offline',
 		label: 'devices.activity.events.offline',
 		icon: WifiOff,
-		iconColor: 'text-neutral-500',
+		iconColor: 'text-neutral-600',
 		time: '2026-06-09T08:15:00Z',
 	},
 	{
@@ -102,7 +102,7 @@ export default function DeviceActivityPage() {
 
 			{deviceId && (
 				<div className="rounded-lg border border-neutral-200 bg-white p-4">
-					<p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+					<p className="text-xs font-medium text-neutral-600 uppercase tracking-wide">
 						{t('devices.activity.deviceId')}
 					</p>
 					<p className="mt-1 text-sm font-mono text-neutral-700">{deviceId}</p>

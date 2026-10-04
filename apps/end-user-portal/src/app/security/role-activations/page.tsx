@@ -278,7 +278,7 @@ export default function RoleActivationsPage() {
 						</h3>
 						<button
 							onClick={() => setShowForm(false)}
-							className="text-neutral-500 hover:text-neutral-600"
+							className="text-neutral-600 hover:text-neutral-600"
 						>
 							<X size={20} />
 						</button>

@@ -81,7 +81,7 @@ export default function DeleteAccountPage() {
 			<div className="flex items-center gap-3">
 				<Link
 					to={buildNavHref(ROUTES.security, tenantSlug)}
-					className="text-neutral-500 hover:text-neutral-600 transition-colors"
+					className="text-neutral-600 hover:text-neutral-600 transition-colors"
 				>
 					<ChevronLeft size={20} />
 				</Link>
