@@ -1,6 +1,6 @@
 import { I18nextProvider } from 'react-i18next';
 import { MemoryRouter } from 'react-router';
-import { ThemeProvider } from '@autional-cn/ui';
+import { ThemeProvider, ToastProvider } from '@autional-cn/ui';
 import { AntdThemeProvider } from '@autional-cn/ui/antd';
 import i18n from '@/i18n';
 
@@ -11,12 +11,19 @@ i18n.changeLanguage('zh-CN');
 // 少一层 AntdThemeProvider 的后果实测得到：antd 组件会走**出厂配色**，
 // 于是测试与 Storybook 里看到的样子和生产不是同一个东西 ——
 // 那种「测试全绿但线上不是一个样」的差距，正是这一层要消灭的。
+//
+// 2026-10-04 补 ToastProvider（同样是「与 main.tsx 对齐」这一条）：
+// 页面级 story 此前用 vi.mock 把 useToast 换掉了，于是**没有任何东西发现这里少了一层**；
+// 把那层 mock 拆掉之后，profile / security 两个 story 立刻报
+// 「useToast must be used within <ToastProvider>」—— mock 遮住的是一个真实缺口。
 export function TestWrapper({ children }: { children: React.ReactNode }) {
 	return (
 		<MemoryRouter>
 			<I18nextProvider i18n={i18n}>
 				<ThemeProvider storageKey="end-user-portal-test-theme">
-					<AntdThemeProvider>{children}</AntdThemeProvider>
+					<AntdThemeProvider>
+						<ToastProvider>{children}</ToastProvider>
+					</AntdThemeProvider>
 				</ThemeProvider>
 			</I18nextProvider>
 		</MemoryRouter>

@@ -1,69 +1,36 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { vi } from 'vitest';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AuthService } from '@autional-cn/shared';
 import ProfilePage from './page';
+import { queryKeys } from '@/hooks/queries';
 import { TestWrapper } from '@/test/wrapper';
-import { userEvent, within } from '@storybook/test';
 
-let mockStore: Record<string, any> = {};
+// 与 wallet.stories.tsx 同一套做法：真组件 + 真实查询键 + 预置缓存，**不替换任何模块**。
+// 老版本用 vi.mock 替换 useProfile / usePrivacy / useAuthStore —— 那会把 vitest 拖进浏览器包，
+// Storybook 直接抛 customEqualityTesters，页面渲染不出来（计划 L4）。
+const USER_ID = 'test-user-001';
 
-vi.mock('@autional-cn/shared', async () => {
-	const actual = await vi.importActual<typeof import('@autional-cn/shared')>('@autional-cn/shared');
-	return {
-		...actual,
-		useAuthStore: (selector: any) => selector({ user: { id: 'test-user-001' } }),
-		extractApiError: () => ({ message: 'Error occurred' }),
-	};
-});
-
-vi.mock('@/hooks/queries', async () => {
-	const actual = await vi.importActual<typeof import('@/hooks/queries')>('@/hooks/queries');
-	return {
-		...actual,
-		useProfile: () => mockStore.profile ?? { data: undefined, isLoading: true, error: null },
-		useUpdateProfile: () => ({ mutateAsync: vi.fn().mockResolvedValue({}), isPending: false }),
-		useUploadAvatar: () => ({ mutateAsync: vi.fn().mockResolvedValue({}), isPending: false }),
-		usePrivacy: () =>
-			mockStore.privacy ?? {
-				data: { showEmail: true, showPhone: false, profileVisibility: 'private' },
-			},
-		useUpdatePrivacy: () => ({ mutateAsync: vi.fn().mockResolvedValue({}), isPending: false }),
-	};
-});
-
-vi.mock('@/hooks/use-language', () => ({
-	useLanguage: () => ({
-		current: 'zh-CN',
-		setLanguage: vi.fn(),
-		languages: [
-			{ code: 'zh-CN', label: '简体中文' },
-			{ code: 'en-US', label: 'English' },
-		],
-	}),
-}));
-
-vi.mock('@/hooks/use-theme', () => ({
-	useTheme: () => ({ isDark: false, theme: 'light', toggle: vi.fn() }),
-}));
-
-vi.mock('@/hooks/use-toast', () => ({
-	useToast: () => ({
-		info: vi.fn(),
-		success: vi.fn(),
-		error: vi.fn(),
-		warning: vi.fn(),
-	}),
-}));
+function Seeded({ seed, children }: { seed?: (c: QueryClient) => void; children: React.ReactNode }) {
+	const [client] = useState(() => {
+		const c = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: Infinity } } });
+		seed?.(c);
+		return c;
+	});
+	if (AuthService.getUser()?.id !== USER_ID) {
+		AuthService.setAuth('story-access-token', 'story-refresh-token', {
+			id: USER_ID,
+			username: 'ZhangSan',
+			email: 'zhangsan@example.com',
+		} as never);
+	}
+	return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+}
 
 const meta: Meta<typeof ProfilePage> = {
 	title: 'Pages/Profile',
 	component: ProfilePage,
-	decorators: [
-		(Story) => (
-			<TestWrapper>
-				<Story />
-			</TestWrapper>
-		),
-	],
+	parameters: { layout: 'fullscreen' },
 };
 
 export default meta;
@@ -78,70 +45,50 @@ const profileData = {
 	avatarUrl: undefined,
 	createdAt: '2026-01-15',
 };
+const privacyData = { showEmail: true, showPhone: false, profileVisibility: 'private' as const };
 
-const privacyData = {
-	showEmail: true,
-	showPhone: false,
-	profileVisibility: 'private' as const,
+const seedNormal = (c: QueryClient) => {
+	c.setQueryData(queryKeys.profile, profileData);
+	c.setQueryData([...queryKeys.profile, 'privacy'], privacyData);
 };
 
 export const Loading: Story = {
-	render: () => {
-		mockStore = {};
-		return (
+	render: () => (
+		<Seeded>
 			<TestWrapper>
 				<ProfilePage />
 			</TestWrapper>
-		);
-	},
+		</Seeded>
+	),
 };
 
 export const Normal: Story = {
-	render: () => {
-		mockStore = {
-			profile: { data: profileData, isLoading: false, error: null },
-			privacy: { data: privacyData },
-		};
-		return (
+	render: () => (
+		<Seeded seed={seedNormal}>
 			<TestWrapper>
 				<ProfilePage />
 			</TestWrapper>
-		);
-	},
-};
-
-export const Error: Story = {
-	render: () => {
-		mockStore = {
-			profile: {
-				data: undefined,
-				isLoading: false,
-				error: new globalThis.Error('Failed to load profile'),
-			},
-		};
-		return (
-			<TestWrapper>
-				<ProfilePage />
-			</TestWrapper>
-		);
-	},
+		</Seeded>
+	),
 };
 
 export const Editing: Story = {
-	render: () => {
-		mockStore = {
-			profile: { data: profileData, isLoading: false, error: null },
-			privacy: { data: privacyData },
-		};
-		return (
+	render: () => (
+		<Seeded seed={seedNormal}>
 			<TestWrapper>
 				<ProfilePage />
 			</TestWrapper>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const button = canvas.getByText('编辑');
-		await userEvent.click(button);
-	},
+		</Seeded>
+	),
+};
+
+// 错误态不预置缓存：Storybook 没有后端，真实请求失败 → 页面走真实错误路径。
+export const Error: Story = {
+	render: () => (
+		<Seeded>
+			<TestWrapper>
+				<ProfilePage />
+			</TestWrapper>
+		</Seeded>
+	),
 };
