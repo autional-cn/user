@@ -1,63 +1,27 @@
 'use client';
 
-import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { useTenantSlug, extractApiErrorMessage } from '@autional-cn/shared';
+import { useTenantSlug } from '@autional-cn/shared';
 import { buildNavHref } from '@/lib/nav';
 import { ROUTES } from '@/lib/routes';
 import { useTranslation } from 'react-i18next';
-import {
-	ArrowLeft,
-	Smartphone,
-	CheckCircle,
-	XCircle,
-	Info,
-} from 'lucide-react';
-import { Button, Input, Label, SectionCard, LoadingScreen, ErrorState } from '@autional-cn/ui';
+import { ArrowLeftRight, ArrowLeft, Mail, Smartphone, UserCheck } from 'lucide-react';
+import { LoadingScreen, ErrorState, SectionCard } from '@autional-cn/ui';
 
+// B2 待复核 #1 裁定：假成功面消除——转让链未接线（后端 POST /iots/:id/transfer 需
+// new_owner_id，缺 email→owner 解析与接收方确认链），页面不再模拟提交，改如实占位。
 export default function DeviceTransferPage() {
 	const tenantSlug = useTenantSlug();
 	const { t } = useTranslation();
 	const { id: deviceId } = useParams<{ id: string }>();
 	const navigate = useNavigate();
 
-	const [email, setEmail] = useState('');
-	const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-	const [errorMsg, setErrorMsg] = useState('');
-
 	const isLoading = false;
-	const loadError = null;
-
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const trimmedEmail = email.trim();
-		if (!trimmedEmail) {
-			// P2-2: 空提交必须切换到 error 状态，否则错误提示不渲染
-			setStatus('error');
-			setErrorMsg(t('devices.transfer.emailRequired'));
-			return;
-		}
-		setStatus('submitting');
-		setErrorMsg('');
-		try {
-			// TODO: wire to actual API
-			await new Promise((r) => setTimeout(r, 1200));
-			setStatus('success');
-		} catch (err) {
-			setStatus('error');
-			setErrorMsg(extractApiErrorMessage(err, t('devices.transfer.submitError')));
-		}
-	};
-
-	const handleReset = () => {
-		setStatus('idle');
-		setEmail('');
-		setErrorMsg('');
-	};
+	const error = null;
 
 	if (isLoading) return <LoadingScreen message={t('devices.transfer.loading')} />;
 
-	if (loadError)
+	if (error)
 		return <ErrorState message={t('devices.transfer.loadError')} className="min-h-[40vh]" />;
 
 	return (
@@ -75,11 +39,6 @@ export default function DeviceTransferPage() {
 				<p className="mt-1 text-sm text-neutral-600">{t('devices.transfer.subtitle')}</p>
 			</div>
 
-			<div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4">
-				<Info size={18} className="shrink-0 text-amber-500" />
-				<p className="text-sm text-amber-700">{t('devices.transfer.info')}</p>
-			</div>
-
 			{deviceId && (
 				<div className="flex items-center gap-3 rounded-lg border border-neutral-200 bg-white p-4">
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-neutral-100 text-neutral-600">
@@ -92,84 +51,34 @@ export default function DeviceTransferPage() {
 				</div>
 			)}
 
-			{status === 'success' ? (
-				<div className="rounded-lg border border-success-soft bg-success-soft p-8 text-center space-y-4">
-					<div className="flex justify-center">
-						<CheckCircle size={48} className="text-success" />
+			<SectionCard padding="none">
+				<div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+					<div className="flex h-16 w-16 items-center justify-center rounded-full bg-neutral-100">
+						<ArrowLeftRight size={32} className="text-neutral-500" />
 					</div>
-					<div>
-						<h3 className="text-lg font-semibold text-success-text">
-							{t('devices.transfer.successTitle')}
-						</h3>
-						<p className="mt-1 text-sm text-success-text">{t('devices.transfer.successDesc')}</p>
-					</div>
-					<div className="flex items-center justify-center gap-3">
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-						>
-							{t('devices.transfer.backToDevices')}
-						</Button>
-						<Button size="sm" onClick={handleReset}>
-							{t('devices.transfer.transferAnother')}
-						</Button>
+					<h3 className="mt-5 text-base font-semibold text-neutral-700">
+						{t('devices.transfer.soonTitle')}
+					</h3>
+					<p className="mt-2 max-w-md text-sm text-neutral-600 leading-relaxed">
+						{t('devices.transfer.soonDesc')}
+					</p>
+					<div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+						{[
+							{ icon: Mail, label: t('devices.transfer.features.invite') },
+							{ icon: ArrowLeftRight, label: t('devices.transfer.features.ownership') },
+							{ icon: UserCheck, label: t('devices.transfer.features.confirm') },
+						].map(({ icon: Icon, label }, i) => (
+							<div
+								key={i}
+								className="flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white px-3 py-1.5 text-xs text-neutral-600"
+							>
+								<Icon size={13} />
+								<span>{label}</span>
+							</div>
+						))}
 					</div>
 				</div>
-			) : (
-				<SectionCard padding="md">
-					<form onSubmit={handleSubmit} className="space-y-5">
-						<div>
-							<h3 className="text-base font-semibold text-neutral-900">
-								{t('devices.transfer.formTitle')}
-							</h3>
-							<p className="mt-1 text-sm text-neutral-600">{t('devices.transfer.formDesc')}</p>
-						</div>
-
-						<div className="space-y-2">
-							<Label htmlFor="transfer-email" required>
-								{t('devices.transfer.emailLabel')}
-							</Label>
-							<Input
-								id="transfer-email"
-								type="email"
-								placeholder={t('devices.transfer.emailPlaceholder')}
-								value={email}
-								onChange={(e) => setEmail(e.target.value)}
-								disabled={status === 'submitting'}
-							/>
-						</div>
-
-						{status === 'error' && (
-							<div className="flex items-center gap-2 rounded-md border border-danger-soft bg-danger-soft p-3 text-sm text-danger-text">
-								<XCircle size={16} className="shrink-0" />
-								<span>{errorMsg}</span>
-							</div>
-						)}
-
-						<div className="flex items-center gap-3 pt-1">
-							<Button
-								type="submit"
-								isLoading={status === 'submitting'}
-								disabled={status === 'submitting'}
-							>
-								{status === 'submitting'
-									? t('devices.transfer.submitting')
-									: t('devices.transfer.submit')}
-							</Button>
-							<Button
-								type="button"
-								variant="ghost"
-								size="sm"
-								onClick={() => navigate(buildNavHref(ROUTES.devices, tenantSlug))}
-								disabled={status === 'submitting'}
-							>
-								{t('devices.transfer.cancel')}
-							</Button>
-						</div>
-					</form>
-				</SectionCard>
-			)}
+			</SectionCard>
 		</div>
 	);
 }
