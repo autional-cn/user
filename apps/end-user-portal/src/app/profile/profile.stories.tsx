@@ -5,6 +5,7 @@ import { AuthService } from '@autional-cn/shared';
 import ProfilePage from './page';
 import { queryKeys } from '@/hooks/queries';
 import { TestWrapper } from '@/test/wrapper';
+import { PortalChrome } from '@/test/portal-chrome';
 
 // 与 wallet.stories.tsx 同一套做法：真组件 + 真实查询键 + 预置缓存，**不替换任何模块**。
 // 老版本用 vi.mock 替换 useProfile / usePrivacy / useAuthStore —— 那会把 vitest 拖进浏览器包，
@@ -31,6 +32,12 @@ const meta: Meta<typeof ProfilePage> = {
 	title: 'Pages/Profile',
 	component: ProfilePage,
 	parameters: { layout: 'fullscreen' },
+	// 页面 story 一律套上真实外壳：外框归 AppShell，页面自己不再带内边距（第 28 轮）。
+	decorators: [(Story) => (
+		<PortalChrome>
+			<Story />
+		</PortalChrome>
+	)],
 };
 
 export default meta;

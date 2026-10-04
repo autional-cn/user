@@ -5,6 +5,7 @@ import { AuthService } from '@autional-cn/shared';
 import WalletPage from './page';
 import { queryKeys } from '@/hooks/queries';
 import { TestWrapper } from '@/test/wrapper';
+import { PortalChrome } from '@/test/portal-chrome';
 
 // 这个 story 渲染的是**真实的页面组件**，只把「取数」换成预置的查询缓存。
 //
@@ -47,6 +48,12 @@ const meta: Meta<typeof WalletPage> = {
 	title: 'Pages/Wallet',
 	component: WalletPage,
 	parameters: { layout: 'fullscreen' },
+	// 页面 story 一律套上真实外壳：外框归 AppShell，页面自己不再带内边距（第 28 轮）。
+	decorators: [(Story) => (
+		<PortalChrome>
+			<Story />
+		</PortalChrome>
+	)],
 };
 
 export default meta;

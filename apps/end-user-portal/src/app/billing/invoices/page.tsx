@@ -85,7 +85,7 @@ export default function InvoicesPage() {
 
 	if (isLoading)
 		return (
-			<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+			<div className="max-w-4xl mx-auto space-y-6">
 				<SkeletonRow />
 				<SkeletonRow />
 				<SkeletonRow />
@@ -184,7 +184,7 @@ export default function InvoicesPage() {
 	];
 
 	return (
-		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+		<div className="max-w-4xl mx-auto space-y-6">
 			<h1 className="text-2xl font-bold">{t('billing.invoices.title')}</h1>
 
 			{/* rowKey 用 id 兜 invoiceNumber：两者都可能为空，兜底成 '-' 会让多行同 key（React 会告警）。

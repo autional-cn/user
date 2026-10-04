@@ -148,7 +148,7 @@ export default function WalletRechargePage() {
 	);
 
 	return (
-		<div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
+		<div className="max-w-2xl mx-auto space-y-6">
 			<h1 className="text-2xl font-bold">{t('wallet.recharge.title')}</h1>
 
 			<div className="bg-white rounded-lg border p-6 flex items-center gap-4">

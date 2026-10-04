@@ -48,7 +48,7 @@ export default function CompliancePage() {
 
 	if (loading)
 		return (
-			<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+			<div className="max-w-4xl mx-auto space-y-6">
 				<SkeletonCard />
 				<SkeletonCard />
 			</div>
@@ -82,7 +82,7 @@ export default function CompliancePage() {
 	const hasStandards = standards.length > 0;
 
 	return (
-		<div className="max-w-3xl mx-auto py-8 px-4">
+		<div className="max-w-3xl mx-auto">
 			<div className="mb-8">
 				<h1 className="text-2xl font-bold flex items-center gap-2">
 					<ShieldCheck className="w-7 h-7 text-[var(--color-brand)]" />

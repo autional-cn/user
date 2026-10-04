@@ -138,7 +138,7 @@ export default function SessionsPage() {
 
 	if (isLoading)
 		return (
-			<div className="space-y-4 px-4 py-8">
+			<div className="space-y-4">
 				<SkeletonRow />
 				<SkeletonRow />
 				<SkeletonRow />

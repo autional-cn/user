@@ -5,6 +5,7 @@ import { useAuthStore } from '@autional-cn/shared';
 import InvoicesPage from './page';
 import { queryKeys } from '@/hooks/queries';
 import { TestWrapper } from '@/test/wrapper';
+import { PortalChrome } from '@/test/portal-chrome';
 
 // 这个 story 是**表格改造的视觉证据**：渲染的是真实页面组件，只把「取数」换成了预置的查询缓存。
 // 表头底色 / 边框 / 行高 / 分页外观全部来自设计系统下发的 antd 组件级令牌 ——
@@ -32,6 +33,12 @@ const meta: Meta<typeof InvoicesPage> = {
 	title: 'Pages/Invoices',
 	component: InvoicesPage,
 	parameters: { layout: 'fullscreen' },
+	// 页面 story 一律套上真实外壳：外框归 AppShell，页面自己不再带内边距（第 28 轮）。
+	decorators: [(Story) => (
+		<PortalChrome>
+			<Story />
+		</PortalChrome>
+	)],
 };
 
 export default meta;

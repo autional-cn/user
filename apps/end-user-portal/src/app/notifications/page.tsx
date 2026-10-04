@@ -114,7 +114,7 @@ export default function NotificationsPage() {
 
 	if (isLoading)
 		return (
-			<div className="space-y-3 px-4 py-8">
+			<div className="space-y-3">
 				<SkeletonRow />
 				<SkeletonRow />
 				<SkeletonRow />

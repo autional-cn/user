@@ -71,7 +71,7 @@ export default function DevicesPage() {
 
 	if (thingsLoading)
 		return (
-			<div className="space-y-4 px-4 py-8">
+			<div className="space-y-4">
 				<SkeletonCard />
 				<SkeletonCard />
 			</div>

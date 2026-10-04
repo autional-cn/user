@@ -60,7 +60,7 @@ export default function BillingPage() {
 
 	if (subLoading)
 		return (
-			<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+			<div className="max-w-4xl mx-auto space-y-6">
 				<SkeletonCard />
 				<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 					<SkeletonCard />
@@ -189,7 +189,7 @@ export default function BillingPage() {
 	];
 
 	return (
-		<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+		<div className="max-w-4xl mx-auto space-y-6">
 			<h1 className="text-2xl font-bold">{t('billing.title')}</h1>
 
 			{/* UP-57：订阅 / 发票 / 支付三路由原零站内入口，账单页补快速入口。 */}

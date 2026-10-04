@@ -152,7 +152,7 @@ export default function SubscribePage() {
 
 	if (plansLoading)
 		return (
-			<div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+			<div className="max-w-4xl mx-auto space-y-6">
 				<SkeletonCard />
 				<SkeletonCard />
 				<SkeletonCard />
@@ -173,7 +173,7 @@ export default function SubscribePage() {
 	};
 
 	return (
-		<div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+		<div className="max-w-4xl mx-auto space-y-6">
 			<div className="text-center space-y-2">
 				<h1 className="text-3xl font-bold">{t('billing.subscribe.title')}</h1>
 				<p className="text-neutral-600">{t('billing.subscribe.subtitle')}</p>
