@@ -25,30 +25,33 @@ export default function ExportDataPage() {
 	const [step, setStep] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 	const [errorMsg, setErrorMsg] = useState('');
 	const [downloadUrl, setDownloadUrl] = useState('');
-	const [exportId, setExportId] = useState('');
 	// UP-95：PII 导出原为单击直发。补轻确认（neutral 档），不升级为 step-up 级重认证闸门。
 	const [confirmOpen, setConfirmOpen] = useState(false);
+
+	// UP-105：后端按设计内联返回导出数据（ExportMyDataResponse），不再依赖 downloadUrl 字段——
+	// 将响应序列化为 JSON 文件并触发下载，令「文件将自动下载」承诺成立。
+	const triggerDownload = (url: string) => {
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = `autional-personal-data-${new Date().toISOString().slice(0, 10)}.json`;
+		document.body.appendChild(a);
+		a.click();
+		a.remove();
+	};
 
 	const handleExport = async () => {
 		setStep('loading');
 		setErrorMsg('');
 
 		try {
-			const res = (await authMeExportDataPost()) as {
-				exportId?: string;
-				downloadUrl?: string;
-				status?: string;
-			};
-			const data = res;
+			const res = await authMeExportDataPost();
+			const blob = new Blob([JSON.stringify(res ?? {}, null, 2)], { type: 'application/json' });
+			const url = URL.createObjectURL(blob);
 
-			setExportId(data.exportId || '');
-			setDownloadUrl(data.downloadUrl || '');
+			setDownloadUrl(url);
 			setStep('success');
 			toast.success(t('privacy.exportData.success'));
-
-			if (data.downloadUrl) {
-				window.open(data.downloadUrl, '_blank');
-			}
+			triggerDownload(url);
 		} catch (err: any) {
 			const msg = extractApiError(err, t('privacy.exportData.error')).message;
 			setErrorMsg(msg);
@@ -59,7 +62,7 @@ export default function ExportDataPage() {
 
 	const handleDownload = () => {
 		if (downloadUrl) {
-			window.open(downloadUrl, '_blank');
+			triggerDownload(downloadUrl);
 		}
 	};
 
@@ -155,11 +158,6 @@ export default function ExportDataPage() {
 					description={
 						<>
 							<span className="block">{t('privacy.exportData.successDesc')}</span>
-							{exportId && (
-								<span className="mt-1 block text-xs">
-									{t('privacy.exportData.exportId')}: {exportId}
-								</span>
-							)}
 							<span className="mt-1 block text-xs">{t('privacy.exportData.autoDownload')}</span>
 						</>
 					}
@@ -177,7 +175,7 @@ export default function ExportDataPage() {
 				title={t('privacy.exportData.confirmTitle', '确认导出个人数据')}
 				description={t(
 					'privacy.exportData.confirmDesc',
-					'将生成包含您个人数据的导出文件，以下载链接形式提供。请确认由您本人操作。',
+					'将生成包含您个人数据的 JSON 文件并开始下载。请确认由您本人操作。',
 				)}
 				variant="neutral"
 				confirmText={t('privacy.exportData.confirmAction', '开始导出')}
