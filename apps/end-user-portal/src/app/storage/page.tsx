@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { useAuth, extractApiErrorMessage, apiClient } from '@autional-cn/shared';
+import { useAuth, extractApiErrorMessage, extractList, apiClient } from '@autional-cn/shared';
 import * as Generated from '@autional-cn/shared/generated/api';
 import type { FileMetadataResponse, FolderMetadataResponse } from '@autional-cn/shared/generated/types';
 import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Modal } from '@autional-cn/ui';
@@ -74,15 +74,18 @@ export default function StoragePage() {
 	const {
 		data: folderData,
 		isLoading: folderLoading,
+		isFetching: folderFetching,
 		isError,
 		error,
 		refetch,
 	} = useQuery({
 		queryKey: ['storage', 'folder', currentFolder],
 		queryFn: async () => {
-			// root 是虚拟根目录，无真实 API 记录（2026-08-16 修复：不发请求避免 404）
+			// root 无 folder 记录（虚拟根目录）；根目录文件 = parent_id IS NULL，
+			// GET /files 不填 parent_id 即列根目录文件（is_directory=false，仅文件）
 			if (currentFolder === 'root') {
-				return { folder: undefined, contents: [] as FileMetadataResponse[] } as {
+				const res = await Generated.files({ page_size: 100 });
+				return { folder: undefined, contents: extractList<FileMetadataResponse>(res) } as {
 					folder?: FolderMetadataResponse;
 					contents?: FileMetadataResponse[];
 				};
@@ -335,17 +338,15 @@ export default function StoragePage() {
 						<ArrowUp size={16} />
 					</button>
 				)}
-				{/* UP-69：root 是虚拟根目录（无真实 API 记录），刷新只会重放同一空态 —— 隐藏避免控件空转。 */}
-				{currentFolder !== 'root' && (
-					<button
-						onClick={() => refetch()}
-						aria-label={t('storage.refresh')}
-						className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
-						title={t('storage.refresh')}
-					>
-						<RefreshCw size={16} />
-					</button>
-				)}
+				<button
+					onClick={() => refetch()}
+					disabled={folderFetching}
+					aria-label={t('storage.refresh')}
+					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50 disabled:opacity-50"
+					title={t('storage.refresh')}
+				>
+					<RefreshCw size={16} className={folderFetching ? 'animate-spin' : ''} />
+				</button>
 				<button
 					onClick={() => setShowCreateFolder(true)}
 					className="flex items-center gap-1.5 px-3 py-2 border rounded-md text-sm hover:bg-neutral-50"
