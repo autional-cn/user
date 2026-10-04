@@ -122,6 +122,25 @@ describe('SecurityPage TOTP 二维码字段（UP-16 / AC-201, AC-202）', () => 
 		expect(screen.getByText('开启 TOTP 验证')).toBeInTheDocument();
 	});
 
+	it('裸 base64（后端 GenerateQRCode 真实形状，无 data: 前缀）→ 渲染归一带 data:image/png;base64, 前缀', async () => {
+		vi.mocked(useEnableTOTP).mockReturnValue({
+			mutateAsync: vi.fn().mockResolvedValue({
+				secret: 'BARE-BASE64-SECRET',
+				qrCode:
+					'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+			}),
+			isPending: false,
+		} as never);
+
+		render(<SecurityPage />, { wrapper: TestWrapper });
+		fireEvent.click(totpCardAction());
+
+		const img = await screen.findByAltText('TOTP QR Code');
+		const src = img.getAttribute('src') || '';
+		expect(src.startsWith('data:image/png;base64,')).toBe(true);
+		expect(src).toContain('iVBORw0KGgo');
+	});
+
 	it('qrCode 缺失（仅 qrCodeUrl）：totpQrFail 占位 + secret 手动输入可见，不卡死', async () => {
 		vi.mocked(useEnableTOTP).mockReturnValue({
 			mutateAsync: vi.fn().mockResolvedValue({

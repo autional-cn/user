@@ -65,6 +65,11 @@ const passwordSchema = z
 
 type PasswordForm = z.infer<typeof passwordSchema>;
 
+// mfa 后端 GenerateQRCode 返回裸 base64（无 data: 前缀，UP-16 线上实证）；渲染前归一，已带前缀原样透传。
+function toQrImageSrc(qrCode: string): string {
+	return qrCode.startsWith('data:') ? qrCode : `data:image/png;base64,${qrCode}`;
+}
+
 export default function SecurityPage() {
 	const tenantSlug = useTenantSlug();
 
@@ -1037,7 +1042,7 @@ export default function SecurityPage() {
 						<div className="flex flex-col items-center gap-3">
 							{totpSetup.qrCode ? (
 								<img
-									src={totpSetup.qrCode}
+									src={toQrImageSrc(totpSetup.qrCode)}
 									alt="TOTP QR Code"
 									className="h-40 w-40 rounded-md border border-neutral-200"
 								/>
