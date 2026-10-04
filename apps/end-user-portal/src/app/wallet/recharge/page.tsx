@@ -1,19 +1,12 @@
 'use client';
 
-import {
-	useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth,
-	useTenantSlug } from '@autional-cn/shared';
+import { useAuth, useTenantSlug } from '@autional-cn/shared';
 import { paymentsByPayments } from '@autional-cn/shared/generated/api';
-import { Alert,
-	SectionCard,
-	ConsolePageHeader,
-	LoadingScreen,
-	ErrorState,
-	EmptyState } from '@autional-cn/ui';
+import { Alert, SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState } from '@autional-cn/ui';
 import { FormInput } from '@autional-cn/ui/rhf';
 import { useTranslation } from 'react-i18next';
 import { Wallet, CreditCard, CheckCircle, XCircle, Loader2 } from 'lucide-react';

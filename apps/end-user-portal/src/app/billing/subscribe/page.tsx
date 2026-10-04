@@ -1,12 +1,9 @@
 'use client';
 
-import {
-	useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@autional-cn/shared';
-import { Alert,
-	ConsolePageHeader,
-	ErrorState } from '@autional-cn/ui';
+import { Alert, ConsolePageHeader, ErrorState } from '@autional-cn/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { useTenant } from '@/hooks/use-tenant';
 import {

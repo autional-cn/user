@@ -14,7 +14,8 @@ import {
 	useThingsList,
 	type FamilyMember,
 } from '@/hooks/queries';
-import { ConsolePageHeader,
+import {
+	ConsolePageHeader,
 	ErrorState,
 	Button,
 	Input,

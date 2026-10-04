@@ -1,18 +1,10 @@
 'use client';
-import {
-	useState,
-	useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { extractApiErrorMessage } from '@autional-cn/shared';
-import { Alert,
-	SectionCard,
-	Button,
-	StatusBadge,
-	showToast } from '@autional-cn/ui';
-import { ShieldCheck,
-	ExternalLink
-} from 'lucide-react';
+import { Alert, SectionCard, Button, StatusBadge, showToast } from '@autional-cn/ui';
+import { ShieldCheck, ExternalLink } from 'lucide-react';
 
 interface VerificationInfo {
 	status: string;
