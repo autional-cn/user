@@ -362,7 +362,7 @@ export default function StoragePage() {
 				</button>
 				<button
 					onClick={() => fileInputRef.current?.click()}
-					className="flex items-center gap-1.5 px-3 py-2 bg-[var(--color-brand)] text-white rounded-md text-sm hover:bg-[var(--color-brand)]/90"
+					className="flex items-center gap-1.5 px-3 py-2 bg-[var(--color-brand)] text-white rounded-md text-sm hover:bg-brand/90"
 				>
 					<Upload size={16} />
 					<span className="hidden sm:inline">{t('storage.upload')}</span>
