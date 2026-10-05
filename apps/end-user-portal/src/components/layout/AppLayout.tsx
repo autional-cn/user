@@ -259,7 +259,7 @@ export default function AppLayout() {
 				<div className="flex flex-col gap-4 p-4">
 					{navSections.map((section) => (
 						<div key={section.header}>
-							<h3 className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+							<h3 className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)] dark:text-neutral-500">
 								{section.header}
 							</h3>
 							<div className="flex flex-col gap-1">
@@ -329,7 +329,10 @@ export default function AppLayout() {
 					</button>
 
 					{/* Language switcher */}
-					<LanguageSwitcher className="rounded-md px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors dark:text-neutral-400 dark:hover:text-neutral-200" />
+					{/* 文字档不能停在 neutral-500（#8896a6 对白底 3.02:1，12px 正文要 4.5:1）——
+					   这是 L24 的目标页第一次把真实顶栏渲染进闸门时当场量出来的：图标档 3:1 的门槛
+					   与文字档 4.5:1 的门槛不是一回事，同一个色阶不能两边都用。 */}
+					<LanguageSwitcher className="rounded-md px-2 py-1 text-sm text-neutral-600 hover:bg-neutral-100 hover:text-neutral-700 transition-colors dark:text-neutral-400 dark:hover:text-neutral-200" />
 
 					{/* Theme toggle */}
 					<ThemeToggle

@@ -285,7 +285,7 @@ export default function LoginHistoryPage() {
 				<div className="relative">
 					<Search
 						size={14}
-						className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400"
+						className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-500"
 					/>
 					<input
 						type="text"

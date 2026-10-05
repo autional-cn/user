@@ -132,7 +132,7 @@ export default function FamilyAccessPage() {
 										{thing.name || t('devices.things.unknownDevice')}
 									</span>
 								</span>
-								<ChevronRight size={16} className="text-neutral-400" />
+								<ChevronRight size={16} className="text-neutral-500" />
 							</Link>
 						))}
 					</div>

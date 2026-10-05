@@ -412,7 +412,7 @@ function EntryLink({
 				<Icon size={18} />
 			</span>
 			<span className="flex-1 text-sm font-medium">{label}</span>
-			<ChevronRight size={16} className="text-neutral-400" />
+			<ChevronRight size={16} className="text-neutral-500" />
 		</Link>
 	);
 }
