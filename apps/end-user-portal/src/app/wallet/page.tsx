@@ -28,7 +28,7 @@ import {
 	TrendingUp,
 	TrendingDown,
 	Ticket,
-	ArrowRightLeft,
+	ArrowLeftRight,
 } from 'lucide-react';
 
 export default function WalletPage() {
@@ -273,7 +273,7 @@ export default function WalletPage() {
 					<StatBox
 						label={t('wallet.transactionCount')}
 						value={stats.transactionCount?.toLocaleString()}
-						icon={<ArrowRightLeft className="w-4 h-4 text-info" />}
+						icon={<ArrowLeftRight className="w-4 h-4 text-info" />}
 					/>
 					<StatBox
 						label={t('wallet.totalDeposits')}
