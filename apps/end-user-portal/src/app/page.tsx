@@ -212,7 +212,7 @@ export default function DashboardPage() {
 						<Link
 							key={item.to}
 							to={item.to}
-							className="group flex items-start gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-sm transition hover:shadow-md hover:border-neutral-300"
+							className="group flex items-start gap-4 rounded-lg border border-neutral-200 bg-white p-5 shadow-card transition hover:shadow-md hover:border-neutral-300"
 						>
 							<div
 								className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-md ${item.color}`}

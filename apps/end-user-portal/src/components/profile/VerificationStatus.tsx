@@ -47,7 +47,7 @@ export function VerificationStatus() {
 		return (
 			<div
 				id={SKELETON_PLACEHOLDER}
-				className="animate-pulse rounded-lg border border-neutral-200 bg-white p-5 shadow-sm"
+				className="animate-pulse rounded-lg border border-neutral-200 bg-white p-5 shadow-card"
 			>
 				<div className="flex items-center gap-3">
 					<div className="h-10 w-10 rounded-md bg-neutral-200" />

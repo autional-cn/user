@@ -256,7 +256,7 @@ export default function LoginHistoryPage() {
 							}}
 							className={`rounded-xs px-3 py-1 text-xs font-medium transition-colors ${
 								statusFilter === f
-									? 'bg-white text-neutral-900 shadow-sm'
+									? 'bg-white text-neutral-900 shadow-card'
 									: 'text-neutral-600 hover:text-neutral-700'
 							}`}
 						>

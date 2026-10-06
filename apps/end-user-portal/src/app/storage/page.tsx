@@ -421,7 +421,7 @@ export default function StoragePage() {
 								{/* Context Menu */}
 								{contextMenu?.entry === entry && (
 									<div
-										className="absolute top-8 right-2 z-50 bg-white border rounded-lg shadow-lg py-1 min-w-[140px]"
+										className="absolute top-8 right-2 z-50 bg-white border rounded-lg shadow-brand py-1 min-w-[140px]"
 										onClick={(e) => e.stopPropagation()}
 									>
 										{entry._type === 'file' && (

@@ -460,7 +460,7 @@ export default function SecurityPage() {
 			<div className="grid gap-4 sm:grid-cols-2">
 				<Link
 					to={buildNavHref(ROUTES.roleActivations, tenantSlug)}
-					className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-neutral-300 transition-all"
+					className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-4 shadow-card hover:shadow-md hover:border-neutral-300 transition-all"
 				>
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
 						<KeyRound size={20} />
@@ -473,7 +473,7 @@ export default function SecurityPage() {
 				</Link>
 				<Link
 					to={buildNavHref(ROUTES.linkedAccounts, tenantSlug)}
-					className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-4 shadow-sm hover:shadow-md hover:border-neutral-300 transition-all"
+					className="flex items-center gap-4 rounded-lg border border-neutral-200 bg-white p-4 shadow-card hover:shadow-md hover:border-neutral-300 transition-all"
 				>
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary-50 text-primary-700">
 						<ExternalLink size={20} />
@@ -858,7 +858,7 @@ export default function SecurityPage() {
 			</Modal>
 
 			{/* Account Deletion */}
-			<div className="rounded-lg border border-danger/30 bg-danger/5 p-6 shadow-sm">
+			<div className="rounded-lg border border-danger/30 bg-danger/5 p-6 shadow-card">
 				<div className="flex items-start gap-3">
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-danger/10 text-danger">
 						<AlertTriangle size={20} />
