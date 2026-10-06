@@ -52,11 +52,11 @@ importers:
         specifier: 0.1.0-rc.4
         version: 0.1.0-rc.4(tailwindcss@3.4.19)
       '@autional-cn/tokens':
-        specifier: 0.1.0-rc.9
-        version: 0.1.0-rc.9
+        specifier: 0.1.0-rc.10
+        version: 0.1.0-rc.10
       '@autional-cn/ui':
         specifier: 0.1.0-rc.41
-        version: 0.1.0-rc.41(@autional-cn/tokens@0.1.0-rc.9)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.23)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
+        version: 0.1.0-rc.41(@autional-cn/tokens@0.1.0-rc.10)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.23)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@hookform/resolvers':
         specifier: 3.10.0
         version: 3.10.0(react-hook-form@7.78.0(react@19.2.5))
@@ -263,6 +263,9 @@ packages:
     resolution: {integrity: sha512-D09o43AnQyHrG6x1YyQOPu0RenZDQBcQixk0nXTIHYl0Pibupf7xDMVvGRxY9oeQClHOoQxounSwpmwwX0wByw==}
     peerDependencies:
       tailwindcss: '>=3.0.0'
+
+  '@autional-cn/tokens@0.1.0-rc.10':
+    resolution: {integrity: sha512-zI9puFR/KphC0Z/vZ3Uib7F2QU0IJf7c2IVdri6xlYmzMX5ToX4ZqN2fnZQehgVMGxnOl3riIZZHOZCGNTsDHQ==}
 
   '@autional-cn/tokens@0.1.0-rc.9':
     resolution: {integrity: sha512-5u8FWsukYsk2Gs/3lUf9RV2Z2japUec2YdEsfJeeQ0ZwfRZij4q55Tkiyg8p80sDnrsl3fR7YNGsiu87aUnSCQ==}
@@ -3813,8 +3816,8 @@ packages:
     resolution: {integrity: sha512-9ns8odR8e9q3otKeHj3DE80jZYKg6zVeZKE+zQmRKXFoVUcuiTGeO6iusDhPRoIQQPVPRvH+SfBhrTud4eczuw==}
     engines: {node: '>=4'}
 
-  regenerate@1.4.2:
-    resolution: {integrity: sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==}
+  regenerate@1.5.0:
+    resolution: {integrity: sha512-1s+CxXjJ71i7LNVy8nYwg47XV4y6lAnOEhsMtSKq3WpmPfhl9LuKlTqKIn/3yUpE8lBz+W+TT88Bxyhnr0U4yw==}
 
   regexp.prototype.flags@1.5.4:
     resolution: {integrity: sha512-dYqgNSZbDwkaJ2ceRd9ojCGjBq+mOm9LmtXnAnEGyHhN/5R7iDW2TRw3h+o/jCFxus3P2LfWIIiwowAjANm7IA==}
@@ -4727,13 +4730,15 @@ snapshots:
       '@autional-cn/tokens': 0.1.0-rc.9
       tailwindcss: 3.4.19
 
+  '@autional-cn/tokens@0.1.0-rc.10': {}
+
   '@autional-cn/tokens@0.1.0-rc.9': {}
 
   '@autional-cn/tsconfig@0.1.0-rc': {}
 
-  '@autional-cn/ui@0.1.0-rc.41(@autional-cn/tokens@0.1.0-rc.9)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.23)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
+  '@autional-cn/ui@0.1.0-rc.41(@autional-cn/tokens@0.1.0-rc.10)(antd@6.5.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(dayjs@1.11.23)(i18next@26.0.10(typescript@5.8.3))(lucide-react@0.509.0(react@19.2.5))(react-dom@19.2.5(react@19.2.5))(react-hook-form@7.78.0(react@19.2.5))(react-i18next@17.0.7(i18next@26.0.10(typescript@5.8.3))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.8.3))(react-router@7.15.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)':
     dependencies:
-      '@autional-cn/tokens': 0.1.0-rc.9
+      '@autional-cn/tokens': 0.1.0-rc.10
       i18next: 26.0.10(typescript@5.8.3)
       lucide-react: 0.509.0(react@19.2.5)
       react: 19.2.5
@@ -8443,9 +8448,9 @@ snapshots:
 
   regenerate-unicode-properties@10.3.0:
     dependencies:
-      regenerate: 1.4.2
+      regenerate: 1.5.0
 
-  regenerate@1.4.2: {}
+  regenerate@1.5.0: {}
 
   regexp.prototype.flags@1.5.4:
     dependencies:
@@ -8458,7 +8463,7 @@ snapshots:
 
   regexpu-core@6.5.2:
     dependencies:
-      regenerate: 1.4.2
+      regenerate: 1.5.0
       regenerate-unicode-properties: 10.3.0
       regjsgen: 0.8.0
       regjsparser: 0.13.3

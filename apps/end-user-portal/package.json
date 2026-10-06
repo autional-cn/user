@@ -20,7 +20,7 @@
   "dependencies": {
     "@autional-cn/shared": "0.1.0-rc.31",
     "@autional-cn/tailwind-preset": "0.1.0-rc.4",
-    "@autional-cn/tokens": "0.1.0-rc.9",
+    "@autional-cn/tokens": "0.1.0-rc.10",
     "@autional-cn/ui": "0.1.0-rc.41",
     "@hookform/resolvers": "3.10.0",
     "@tanstack/react-query": "5.100.9",
