@@ -254,7 +254,7 @@ export default function LoginHistoryPage() {
 								setStatusFilter(f);
 								setPage(1);
 							}}
-							className={`rounded px-3 py-1 text-xs font-medium transition-colors ${
+							className={`rounded-xs px-3 py-1 text-xs font-medium transition-colors ${
 								statusFilter === f
 									? 'bg-white text-neutral-900 shadow-sm'
 									: 'text-neutral-600 hover:text-neutral-700'

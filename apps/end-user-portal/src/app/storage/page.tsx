@@ -413,7 +413,7 @@ export default function StoragePage() {
 											e.stopPropagation();
 											setContextMenu(contextMenu?.entry === entry ? null : { entry, x: 0, y: 0 });
 										}}
-										className="p-1 rounded hover:bg-neutral-200"
+										className="p-1 rounded-xs hover:bg-neutral-200"
 									>
 										<MoreVertical size={14} />
 									</button>

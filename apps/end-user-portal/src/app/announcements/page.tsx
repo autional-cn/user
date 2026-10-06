@@ -145,7 +145,7 @@ export default function AnnouncementsPage() {
 									{ann.targetRoles?.map((role: string) => (
 										<span
 											key={role}
-											className="rounded bg-neutral-200 px-2 py-0.5 text-xs font-medium text-neutral-600"
+											className="rounded-xs bg-neutral-200 px-2 py-0.5 text-xs font-medium text-neutral-600"
 										>
 											{role}
 										</span>

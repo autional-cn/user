@@ -233,12 +233,12 @@ export default function DashboardPage() {
 			{/* Tips */}
 			{isStatsLoading ? (
 				<div className="rounded-lg border border-neutral-200 bg-white p-6 animate-pulse">
-					<div className="h-6 w-1/3 rounded bg-neutral-200" />
+					<div className="h-6 w-1/3 rounded-xs bg-neutral-200" />
 					<div className="mt-4 space-y-3">
-						<div className="h-4 w-2/3 rounded bg-neutral-100" />
-						<div className="h-4 w-3/4 rounded bg-neutral-100" />
-						<div className="h-4 w-1/2 rounded bg-neutral-100" />
-						<div className="h-4 w-5/6 rounded bg-neutral-100" />
+						<div className="h-4 w-2/3 rounded-xs bg-neutral-100" />
+						<div className="h-4 w-3/4 rounded-xs bg-neutral-100" />
+						<div className="h-4 w-1/2 rounded-xs bg-neutral-100" />
+						<div className="h-4 w-5/6 rounded-xs bg-neutral-100" />
 					</div>
 				</div>
 			) : (

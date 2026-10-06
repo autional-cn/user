@@ -52,8 +52,8 @@ export function VerificationStatus() {
 				<div className="flex items-center gap-3">
 					<div className="h-10 w-10 rounded-md bg-neutral-200" />
 					<div className="flex-1 space-y-2">
-						<div className="h-4 w-1/3 rounded bg-neutral-200" />
-						<div className="h-3 w-2/3 rounded bg-neutral-100" />
+						<div className="h-4 w-1/3 rounded-xs bg-neutral-200" />
+						<div className="h-3 w-2/3 rounded-xs bg-neutral-100" />
 					</div>
 				</div>
 			</div>

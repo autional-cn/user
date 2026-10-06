@@ -181,7 +181,7 @@ export default function NotificationsPage() {
 											<span className="inline-block h-2 w-2 rounded-full bg-primary-500" />
 										)}
 										<span
-											className={`rounded px-1.5 py-0.5 text-xs font-medium ${meta.bg} ${meta.color}`}
+											className={`rounded-xs px-1.5 py-0.5 text-xs font-medium ${meta.bg} ${meta.color}`}
 										>
 											{meta.label}
 										</span>

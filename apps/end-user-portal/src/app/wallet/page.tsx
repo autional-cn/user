@@ -391,7 +391,7 @@ export default function WalletPage() {
 									</div>
 									<span
 										className={cn(
-											'text-xs px-2 py-0.5 rounded',
+											'text-xs px-2 py-0.5 rounded-xs',
 											c.status === 'unused'
 												? 'bg-success-soft text-success'
 												: c.status === 'used'

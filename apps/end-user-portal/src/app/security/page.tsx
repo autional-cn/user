@@ -560,7 +560,7 @@ export default function SecurityPage() {
 									{[1, 2, 3, 4, 5].map((i) => (
 										<div
 											key={i}
-											className={`h-1 flex-1 rounded ${i <= strength.score ? strength.color : 'bg-neutral-200'}`}
+											className={`h-1 flex-1 rounded-xs ${i <= strength.score ? strength.color : 'bg-neutral-200'}`}
 										/>
 									))}
 								</div>
@@ -986,7 +986,7 @@ export default function SecurityPage() {
 								{backupCodes.map((code, idx) => (
 									<code
 										key={idx}
-										className="rounded bg-white px-2 py-1 text-center text-sm font-mono text-neutral-800 border border-amber-100"
+										className="rounded-xs bg-white px-2 py-1 text-center text-sm font-mono text-neutral-800 border border-amber-100"
 									>
 										{code}
 									</code>

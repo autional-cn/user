@@ -227,7 +227,7 @@ export default function BillingPage() {
 							<span className="text-neutral-600">{t('billing.status')}</span>
 							<p className="font-medium">
 								<span
-									className={`inline-block px-2 py-0.5 rounded text-xs ${planStatus === 'active' ? 'bg-success-soft text-success' : planStatus === 'trial' ? 'bg-info-soft text-info' : planStatus === 'cancelled' ? 'bg-danger-soft text-danger' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
+									className={`inline-block px-2 py-0.5 rounded-xs text-xs ${planStatus === 'active' ? 'bg-success-soft text-success' : planStatus === 'trial' ? 'bg-info-soft text-info' : planStatus === 'cancelled' ? 'bg-danger-soft text-danger' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
 								>
 									{t(
 										planStatus === 'active'
