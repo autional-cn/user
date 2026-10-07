@@ -75,7 +75,7 @@ export default function AnnouncementsPage() {
 				{visibleList.map((ann: any) => (
 					<div
 						key={ann.id}
-						className="rounded-lg border border-neutral-200 bg-white shadow-card overflow-hidden transition-shadow hover:shadow-md"
+						className="rounded-lg border border-neutral-200 bg-white shadow-card overflow-hidden transition-colors hover:border-neutral-300"
 					>
 						{/* UP-87：此前外层整卡 button 内又嵌「忽略」button（HTML 非法，AT 行为不确定；
 						    整卡可访问名 144 字符）。展开=透明覆盖 button（aria-label 取标题）；

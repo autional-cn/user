@@ -382,7 +382,7 @@ export default function StoragePage() {
 						return (
 							<div
 								key={id}
-								className="bg-white rounded-lg border p-4 hover:shadow-md transition-shadow cursor-pointer relative group"
+								className="bg-white rounded-lg border p-4 transition-colors cursor-pointer relative group hover:border-neutral-300"
 								onDoubleClick={() =>
 									entry._type === 'folder' && id && navigateTo(id, entry.name || '')
 								}

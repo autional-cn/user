@@ -218,7 +218,7 @@ export default function AppLayout() {
 			{/* UP-09：skip link —— 键盘/读屏用户跳过侧栏直达主内容（全站首个可聚焦元素，聚焦时可见）。 */}
 			<a
 				href="#main-content"
-				className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-700 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:bg-neutral-800 dark:focus:text-primary-400"
+				className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-primary-700 focus:shadow-card focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:bg-neutral-800 dark:focus:text-primary-400"
 			>
 				{t('nav.skipToContent')}
 			</a>

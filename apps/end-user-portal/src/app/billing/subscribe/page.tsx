@@ -224,7 +224,7 @@ export default function SubscribePage() {
 								isSelected
 									? `ring-2 ${planActiveColors[plan.plan] || 'ring-[var(--color-brand)] bg-primary-50'}`
 									: planColors[plan.plan] || 'border-neutral-300'
-							} hover:shadow-lg`}
+							} hover:border-neutral-400`}
 						>
 							{/* UP-60：整卡选择此前是 div[onClick] —— 无键盘可达、无选中态语义。
 							    透明覆盖按钮承担指针+键盘交互（Enter/Space 可选卡）；卡内订阅按钮抬到 z-10 之上。 */}
