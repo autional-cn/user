@@ -56,8 +56,8 @@ export default function NotificationsPage() {
 			},
 			billing: {
 				icon: CreditCard,
-				color: 'text-amber-700',
-				bg: 'bg-amber-50',
+				color: 'text-warning-text',
+				bg: 'bg-warning-soft',
 				label: t('notifications.type.billing'),
 			},
 			activity: {

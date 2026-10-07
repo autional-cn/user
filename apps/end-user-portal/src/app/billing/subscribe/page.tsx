@@ -27,22 +27,24 @@ const CYCLE_DISCOUNT: Record<string, number> = {
 
 const planIcons: Record<string, React.ReactNode> = {
 	free: <Zap className="w-8 h-8 text-neutral-500" />,
-	basic: <Zap className="w-8 h-8 text-info" />,
-	pro: <Crown className="w-8 h-8 text-amber-500" />,
+	// 套餐档位是**分类**不是状态（DESIGN.md §3：并列的分类走 chart-N）——
+	// 原来 big basic 用 info 语义令牌、pro 用 amber 品牌色阶、enterprise 用 chart-7，三种语言混在一张表里。
+	basic: <Zap className="w-8 h-8 text-chart-3" />,
+	pro: <Crown className="w-8 h-8 text-chart-4" />,
 	enterprise: <Building2 className="w-8 h-8 text-chart-7" />,
 };
 
 const planColors: Record<string, string> = {
 	free: 'border-neutral-300',
-	basic: 'border-info',
-	pro: 'border-amber-300',
+	basic: 'border-chart-3',
+	pro: 'border-chart-4',
 	enterprise: 'border-chart-7',
 };
 
 const planActiveColors: Record<string, string> = {
 	free: 'ring-neutral-300 bg-neutral-50',
-	basic: 'ring-info bg-info-soft',
-	pro: 'ring-amber-500 bg-amber-50',
+	basic: 'ring-chart-3 bg-chart-3/10',
+	pro: 'ring-chart-4 bg-chart-4/10',
 	enterprise: 'ring-chart-7 bg-chart-7/10',
 };
 

@@ -227,7 +227,7 @@ export default function BillingPage() {
 							<span className="text-neutral-600">{t('billing.status')}</span>
 							<p className="font-medium">
 								<span
-									className={`inline-block px-2 py-0.5 rounded-xs text-xs ${planStatus === 'active' ? 'bg-success-soft text-success' : planStatus === 'trial' ? 'bg-info-soft text-info' : planStatus === 'cancelled' ? 'bg-danger-soft text-danger' : planStatus === 'past_due' ? 'bg-amber-50 text-amber-600' : 'bg-neutral-200 text-neutral-600'}`}
+									className={`inline-block px-2 py-0.5 rounded-xs text-xs ${planStatus === 'active' ? 'bg-success-soft text-success' : planStatus === 'trial' ? 'bg-info-soft text-info' : planStatus === 'cancelled' ? 'bg-danger-soft text-danger' : planStatus === 'past_due' ? 'bg-warning-soft text-warning-text' : 'bg-neutral-200 text-neutral-600'}`}
 								>
 									{t(
 										planStatus === 'active'
@@ -445,7 +445,7 @@ function UsageCard({
 				<>
 					<div className="w-full bg-neutral-200 rounded-full h-2 mb-1">
 						<div
-							className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-danger' : percent > 60 ? 'bg-amber-500' : 'bg-success'}`}
+							className={`h-2 rounded-full transition-all ${percent > 80 ? 'bg-danger' : percent > 60 ? 'bg-warning' : 'bg-success'}`}
 							style={{ width: `${Math.max(percent, 2)}%` }}
 						/>
 					</div>
