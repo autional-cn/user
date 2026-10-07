@@ -222,10 +222,17 @@ export default function AppLayout() {
 			>
 				{t('nav.skipToContent')}
 			</a>
+			{/*
+			 * L16 顺带查出：brand 槽是侧栏顶部的**产品名**，这里却填了 t('dashboard.title')（=「总览」）
+			 * —— 于是全站每个页面的侧栏都写着「总览」。按舰队口径改成 app.brand
+			 * （admin 用 'Autional'，platform 用 'Autional 平台管理'）。
+			 * 注意：JSX **属性位置**不能放表达式容器注释（只有子节点位置合法）——
+			 * 第一版就把它塞在 brand= 上方，eslint 直接 Parsing error，被 lint 闸门当场抓住。
+			 */}
 			<AppShell
 			brand={
 				<span className="truncate text-lg font-bold text-primary-700 dark:text-primary-400">
-					{t('dashboard.title')}
+					{t('app.brand')}
 				</span>
 			}
 			sidebarExtra={
@@ -296,9 +303,14 @@ export default function AppLayout() {
 					>
 						<Menu size={20} />
 					</button>
-					<h1 className="text-base font-semibold text-neutral-800 dark:text-neutral-200">
-						{t('dashboard.title')}
-					</h1>
+					{/*
+					 * L16：顶栏左侧从「写死的标题」换成面包屑。
+					 * 原来这里恒显 t('dashboard.title')（=「总览」），而全站 30+ 个页面里只有一个是总览
+					 * —— 也就是说每个用户在任何页面看到的都是错的标题。页面的真标题归页面自己
+					 * （ConsolePageHeader 渲染 h1），外壳只负责**位置感**，而位置感正是面包屑的职责。
+					 * 这也是舰队里另外两个在册门户（admin / platform）早就收敛到的形态：headerLeft=<Breadcrumb />。
+					 */}
+					<Breadcrumb />
 				</>
 			}
 			headerRight={
@@ -358,7 +370,6 @@ export default function AppLayout() {
 			onMobileClose={() => setSidebarOpen(false)}
 			closeLabel={t('nav.closeMenu')}
 		>
-			<Breadcrumb />
 			{/* UP-09：skip link 落点 —— tabIndex=-1 使程序化/锚点聚焦可落于容器；outline-none 防聚焦描边闪现在整块内容上。 */}
 			<div id="main-content" tabIndex={-1} className="outline-none">
 				<Outlet />

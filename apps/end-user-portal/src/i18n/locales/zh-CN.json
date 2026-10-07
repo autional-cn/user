@@ -1,4 +1,5 @@
 {
+  "app.brand": "Autional",
   "common": {
     "loading": "加载中...",
     "loadingData": "加载数据中...",
