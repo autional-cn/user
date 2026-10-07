@@ -307,7 +307,7 @@ export default function AppLayout() {
 					 * L16：顶栏左侧从「写死的标题」换成面包屑。
 					 * 原来这里恒显 t('dashboard.title')（=「总览」），而全站 30+ 个页面里只有一个是总览
 					 * —— 也就是说每个用户在任何页面看到的都是错的标题。页面的真标题归页面自己
-					 * （ConsolePageHeader 渲染 h1），外壳只负责**位置感**，而位置感正是面包屑的职责。
+					 * （AppPageHeader 渲染 h1），外壳只负责**位置感**，而位置感正是面包屑的职责。
 					 * 这也是舰队里另外两个在册门户（admin / platform）早就收敛到的形态：headerLeft=<Breadcrumb />。
 					 */}
 					<Breadcrumb />

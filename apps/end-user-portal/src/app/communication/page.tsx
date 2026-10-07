@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCommunicationLogs } from '@/hooks/queries';
 import { formatTime } from '@/lib/format';
-import { ConsolePageHeader, ErrorState, StatusBadge } from '@autional/ui';
+import { AppPageHeader, ErrorState, StatusBadge } from '@autional/ui';
 import type { StatusVariant } from '@autional/ui';
 import { DataTable } from '@autional/ui/antd';
 import type { DataTableColumns } from '@autional/ui/antd';
@@ -159,7 +159,7 @@ export default function CommunicationHistoryPage() {
 
 	return (
 		<div className="space-y-6">
-			<ConsolePageHeader
+			<AppPageHeader
 				title={t('communication.historyTitle', 'Communication History')}
 				description={total > 0
 					? t('communication.totalLogs', { total })

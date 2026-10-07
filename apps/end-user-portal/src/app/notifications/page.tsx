@@ -19,7 +19,7 @@ import {
 	useMarkNotificationRead,
 	useMarkAllNotificationsRead,
 } from '@/hooks/queries';
-import { SectionCard, ConsolePageHeader, ErrorState, EmptyState } from '@autional/ui';
+import { SectionCard, AppPageHeader, ErrorState, EmptyState } from '@autional/ui';
 import { SkeletonRow } from '@/components/ui/Skeleton';
 
 export default function NotificationsPage() {
@@ -125,7 +125,7 @@ export default function NotificationsPage() {
 
 	return (
 		<div className="space-y-6">
-			<ConsolePageHeader
+			<AppPageHeader
 				title={t('notifications.title')}
 				description={
 					<>

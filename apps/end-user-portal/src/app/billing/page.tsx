@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { SectionCard, ConsolePageHeader, ErrorState, EmptyState, StatusBadge } from '@autional/ui';
+import { SectionCard, AppPageHeader, ErrorState, EmptyState, StatusBadge } from '@autional/ui';
 import type { StatusVariant } from '@autional/ui';
 import { DataTable } from '@autional/ui/antd';
 import type { DataTableColumns } from '@autional/ui/antd';
@@ -190,7 +190,7 @@ export default function BillingPage() {
 
 	return (
 		<div className="max-w-4xl mx-auto space-y-6">
-			<ConsolePageHeader title={t('billing.title')} />
+			<AppPageHeader title={t('billing.title')} />
 
 			{/* UP-57：订阅 / 发票 / 支付三路由原零站内入口，账单页补快速入口。 */}
 			<div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

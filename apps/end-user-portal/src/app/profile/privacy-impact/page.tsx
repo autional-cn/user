@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router';
 import { useAuth, useTenantSlug } from '@autional/shared';
 import { profilesPrivacyImpactByProfiles } from '@autional/shared/generated/api';
-import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional/ui';
+import { SectionCard, AppPageHeader, LoadingScreen } from '@autional/ui';
 import { ErrorState, EmptyState, StatusBadge } from '@autional/ui';
 import type { StatusVariant } from '@autional/ui';
 import { DataTable } from '@autional/ui/antd';
@@ -258,7 +258,7 @@ export default function PrivacyImpactPage() {
 
 	return (
 		<div className="space-y-6">
-			<ConsolePageHeader
+			<AppPageHeader
 				title={t('privacyImpact.title')}
 				description={t('privacyImpact.subtitle')}
 			/>

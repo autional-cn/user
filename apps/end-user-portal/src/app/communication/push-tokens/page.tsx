@@ -11,7 +11,7 @@ import {
 } from '@/hooks/queries';
 import { useToast } from '@/hooks/use-toast';
 import { formatTime } from '@/lib/format';
-import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, ConfirmDialog } from '@autional/ui';
+import { SectionCard, AppPageHeader, LoadingScreen, ErrorState, ConfirmDialog } from '@autional/ui';
 import { Link } from 'react-router';
 import { Smartphone, Monitor, Globe, Laptop, Plus, Trash2, ChevronLeft } from 'lucide-react';
 
@@ -93,7 +93,7 @@ export default function PushTokensPage() {
 				<ChevronLeft size={14} />
 				{t('communication.backToHistory', 'History')}
 			</Link>
-			<ConsolePageHeader
+			<AppPageHeader
 				title={t('communication.pushTokens.title', 'Push Tokens')}
 				description={t(
 					'communication.pushTokens.description',

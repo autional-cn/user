@@ -10,7 +10,7 @@ import {
 	useUnreadNotifications,
 	useMFAStatus,
 } from '@/hooks/queries';
-import { SectionCard, ConsolePageHeader, ErrorState } from '@autional/ui';
+import { SectionCard, AppPageHeader, ErrorState } from '@autional/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { ROUTES } from '@/lib/routes';
 import { buildNavHref } from '@/lib/nav';
@@ -88,7 +88,7 @@ export default function DashboardPage() {
 		<div className="space-y-8">
 			{/* Welcome header —— 头像留在标题里（aria-hidden，不进可访问名），
 			    问候语优先 displayName（UP-08）。 */}
-			<ConsolePageHeader
+			<AppPageHeader
 				title={
 					<span className="flex items-center gap-3">
 						<span

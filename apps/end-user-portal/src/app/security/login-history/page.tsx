@@ -7,7 +7,7 @@ import type { AuditLogItem, AuditLogsParams } from '@/hooks/queries';
 import { authMeAuditLogs } from '@autional/shared/generated/api';
 import { auditStatusKind, formatTime } from '@/lib/format';
 import { parseUserAgent } from '@/lib/user-agent';
-import { SectionCard, ConsolePageHeader, LoadingScreen } from '@autional/ui';
+import { SectionCard, AppPageHeader, LoadingScreen } from '@autional/ui';
 import { ErrorState } from '@autional/ui';
 import { StatusBadge } from '@autional/ui';
 import type { StatusVariant } from '@autional/ui';
@@ -225,7 +225,7 @@ export default function LoginHistoryPage() {
 
 	return (
 		<div className="space-y-6">
-			<ConsolePageHeader
+			<AppPageHeader
 				title={t('loginHistory.title')}
 				description={t('loginHistory.subtitle')}
 				actions={

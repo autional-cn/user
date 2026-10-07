@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SectionCard, ConsolePageHeader, ErrorState, EmptyState } from '@autional/ui';
+import { SectionCard, AppPageHeader, ErrorState, EmptyState } from '@autional/ui';
 import { SkeletonCard } from '@/components/ui/Skeleton';
 import { ShieldCheck, Award, FileSearch, ChevronRight } from 'lucide-react';
 import { extractApiError } from '@autional/shared';
@@ -83,7 +83,7 @@ export default function CompliancePage() {
 
 	return (
 		<div className="max-w-3xl mx-auto">
-			<ConsolePageHeader
+			<AppPageHeader
 				title={
 					<span className="flex items-center gap-2">
 						<ShieldCheck className="h-5 w-5 text-[var(--color-brand)]" />
