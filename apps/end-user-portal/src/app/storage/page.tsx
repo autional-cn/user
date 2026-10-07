@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth, extractApiErrorMessage, extractList, apiClient } from '@autional/shared';
 import * as Generated from '@autional/shared/generated/api';
 import type { FileMetadataResponse, FolderMetadataResponse } from '@autional/shared/generated/types';
-import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Modal } from '@autional/ui';
+import { SectionCard, ConsolePageHeader, LoadingScreen, ErrorState, EmptyState, Modal, Input } from '@autional/ui';
 import { useToast } from '@/hooks/use-toast';
 import { isNotFoundError } from '@/lib/api-error';
 import {
@@ -325,14 +325,16 @@ export default function StoragePage() {
 
 			{/* Toolbar */}
 			<div className="flex items-center gap-2 flex-wrap">
-				<div className="relative flex-1 min-w-[200px] max-w-sm">
-					<Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" />
-					<input
+				{/* 图标几何交给设计系统的 Input prefix 槽（第 61 轮）—— 原来这里手写着
+				    absolute 图标 + 算出来的 pl-9（= 12 起点 + 16 图标 + 8 间隙）。 */}
+				<div className="flex-1 min-w-[200px] max-w-sm">
+					<Input
 						type="text"
+						size="sm"
 						placeholder={t('storage.search')}
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
-						className="w-full pl-9 pr-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
+						prefix={<Search size={16} />}
 					/>
 				</div>
 				{folderStack.length > 0 && (
