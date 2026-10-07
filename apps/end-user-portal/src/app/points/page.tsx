@@ -189,7 +189,7 @@ export default function PointsPage() {
 					value={value?.cashValue != null ? `¥${value.cashValue}` : '-'}
 				/>
 				<Card
-					icon={<Shield className="w-5 h-5 text-purple-500" />}
+					icon={<Shield className="w-5 h-5 text-chart-7" />}
 					label={t('points.riskScore')}
 					/* UP-51：等级此前仅靠颜色传达（绿=低风险），色觉障碍用户丢失语义 —— 颜色+文字双通道。 */
 					value={

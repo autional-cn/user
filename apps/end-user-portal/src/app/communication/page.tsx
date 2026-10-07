@@ -14,7 +14,7 @@ import { Mail, Smartphone, Bell, History, Filter } from 'lucide-react';
 const channelMeta: Record<string, { icon: typeof Mail; labelKey: string; color: string }> = {
 	sms: { icon: Smartphone, labelKey: 'communication.channel.sms', color: 'text-success' },
 	email: { icon: Mail, labelKey: 'communication.channel.email', color: 'text-info' },
-	push: { icon: Bell, labelKey: 'communication.channel.push', color: 'text-purple-700' },
+	push: { icon: Bell, labelKey: 'communication.channel.push', color: 'text-chart-7' },
 };
 
 const channelOptions = ['', 'sms', 'email', 'push'];

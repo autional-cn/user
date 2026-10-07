@@ -23,7 +23,7 @@ const platformMeta: Record<string, { icon: typeof Smartphone; labelKey: string; 
 		color: 'text-success',
 	},
 	web: { icon: Globe, labelKey: 'communication.platform.web', color: 'text-info' },
-	desktop: { icon: Monitor, labelKey: 'communication.platform.desktop', color: 'text-purple-700' },
+	desktop: { icon: Monitor, labelKey: 'communication.platform.desktop', color: 'text-chart-7' },
 };
 
 export default function PushTokensPage() {

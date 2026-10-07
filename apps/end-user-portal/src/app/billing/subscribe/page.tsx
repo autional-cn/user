@@ -29,21 +29,21 @@ const planIcons: Record<string, React.ReactNode> = {
 	free: <Zap className="w-8 h-8 text-neutral-500" />,
 	basic: <Zap className="w-8 h-8 text-info" />,
 	pro: <Crown className="w-8 h-8 text-amber-500" />,
-	enterprise: <Building2 className="w-8 h-8 text-purple-500" />,
+	enterprise: <Building2 className="w-8 h-8 text-chart-7" />,
 };
 
 const planColors: Record<string, string> = {
 	free: 'border-neutral-300',
 	basic: 'border-info',
 	pro: 'border-amber-300',
-	enterprise: 'border-purple-300',
+	enterprise: 'border-chart-7',
 };
 
 const planActiveColors: Record<string, string> = {
 	free: 'ring-neutral-300 bg-neutral-50',
 	basic: 'ring-info bg-info-soft',
 	pro: 'ring-amber-500 bg-amber-50',
-	enterprise: 'ring-purple-500 bg-purple-50',
+	enterprise: 'ring-chart-7 bg-chart-7/10',
 };
 
 // UP-58：服务端 features 是语言包键原文（service-core lang_base 缺包/缺键时原样返回键、丢参数），

@@ -68,14 +68,14 @@ export default function NotificationsPage() {
 			},
 			account: {
 				icon: Info,
-				color: 'text-purple-700',
-				bg: 'bg-purple-50',
+				color: 'text-primary-900',
+				bg: 'bg-chart-7/10',
 				label: t('notifications.type.account'),
 			},
 			marketing: {
 				icon: Info,
-				color: 'text-pink-700',
-				bg: 'bg-pink-50',
+				color: 'text-primary-900',
+				bg: 'bg-chart-4/10',
 				label: t('notifications.type.marketing'),
 			},
 			// 公告类通知：服务端发布公告时创建的通知 type = "announcement"（announcement_service.go）。

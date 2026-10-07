@@ -71,7 +71,7 @@ export default function DashboardPage() {
 			label: t('nav.sessions'),
 			desc: t('dashboard.quickLinkSessions'),
 			icon: Monitor,
-			color: 'bg-purple-50 text-purple-700',
+			color: 'bg-chart-7/10 text-primary-900',
 		},
 		{
 			to: buildNavHref(ROUTES.notifications, tenantSlug),

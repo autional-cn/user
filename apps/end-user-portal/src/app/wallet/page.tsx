@@ -257,7 +257,7 @@ export default function WalletPage() {
 					value={`${currency === 'CNY' ? '¥' : ''}${Number(frozen).toLocaleString(undefined, { minimumFractionDigits: 2 })}`}
 				/>
 				<Card
-					icon={<Receipt className="w-5 h-5 text-purple-500" />}
+					icon={<Receipt className="w-5 h-5 text-chart-7" />}
 					label={t('wallet.currency')}
 					value={currency}
 				/>

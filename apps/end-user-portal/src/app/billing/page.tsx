@@ -279,7 +279,7 @@ export default function BillingPage() {
 				{stats && (
 					<SectionCard>
 						<div className="flex items-center gap-3 mb-3">
-							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-purple-50 text-purple-700">
+							<div className="flex h-10 w-10 items-center justify-center rounded-md bg-chart-7/10 text-chart-7">
 								<BarChart3 size={20} />
 							</div>
 							<div>
@@ -355,7 +355,7 @@ export default function BillingPage() {
 						percent={apiPercent}
 					/>
 					<UsageCard
-						icon={<HardDrive className="w-5 h-5 text-purple-500" />}
+						icon={<HardDrive className="w-5 h-5 text-chart-7" />}
 						label={t('billing.storageUsage')}
 						value={`${(usage?.storageGb ?? 0).toLocaleString()} GB`}
 						max={maxStorage}
