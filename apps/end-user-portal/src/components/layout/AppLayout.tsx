@@ -241,7 +241,7 @@ export default function AppLayout() {
 						<div className="relative">
 							<Building2
 								size={14}
-								className="absolute left-2.5 top-1/2 -translate-y-1/2 text-neutral-400"
+								className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)]"
 							/>
 							<select
 								value={currentTenant.id}
@@ -256,7 +256,7 @@ export default function AppLayout() {
 							</select>
 							<ChevronDown
 								size={14}
-								className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none"
+								className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none"
 							/>
 						</div>
 					</div>
@@ -325,7 +325,7 @@ export default function AppLayout() {
 					>
 						<Bell size={18} />
 						{unreadCount > 0 && (
-							<span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white leading-none">
+							<span className="absolute -top-0.5 -right-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white leading-none">
 								{unreadCount > 99 ? '99+' : unreadCount}
 							</span>
 						)}
